@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('host', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('package_id')->constrained('packages');
+            $table->foreignId('package_id')->nullable()->constrained('packages');
             $table->string('name')->nullable();
             $table->string('email');
             $table->string('password');
-            $table->string('mobile')->unique();
+            $table->string('mobile')->unique()->nullable();
             $table->string('created_by')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

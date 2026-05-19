@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\GuestListimport;
 use App\Models\Ceramonies;
 use App\Models\GuestCategory;
+use App\Models\GuestFamilyMember;
 use App\Models\GuestList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,18 +78,33 @@ class GuestListController extends Controller
             'circle' => 'nullable',
             'country' => 'nullable',
             'location_map' => 'nullable',
+            'family' => 'nullable|array',
+            'family.*.name' => 'required_with:family|string',
+            'family.*.mobile' => 'nullable',
+            'family.*.whatsapp_number' => 'nullable',
+            'family.*.realtion' => 'nullable',
+            'family.*.age' => 'nullable',
+            'family.*.email' => 'nullable',
+            'family.*.gender' => 'nullable',
         ]);
         $validated['host_id'] = Auth::id();
-        GuestList::create($validated);
+        $guest = GuestList::create($validated);
+        if($request->has('family')){
+            foreach($request->family as $member){
+                $guest->familyMembers()->create($member);
+            }
+        }
         return redirect()->route('host.guestlist.index')->with('success', 'Guest Added Successfully');
     }
 
     public function edit($id)
     {
-        $guestlist = GuestList::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
+        $guestlist = GuestList::with('familyMembers')
+        ->where('id', $id)
+        ->where('host_id', Auth::id())->firstOrFail();
         $ceramonies = Ceramonies::where('host_id', Auth::id())->get();
         $categories = GuestCategory::where('host_id', Auth::id())->get();
-        return view('host.guestlist.edit', compact('guestlist', 'ceramonies', 'categories'));
+        return view('host.guestlist.edit', compact('guestlist', 'ceramonies', 'categories', ));
     }
 
     public function update(Request $request, $id)
@@ -121,6 +137,14 @@ class GuestListController extends Controller
             'country' => 'nullable',
             'location_map' => 'nullable',
             'ceremony_ids' => 'nullable|array',
+            'family' => 'nullable|array',
+            'family.*.name' => 'required_with:family|string',
+            'family.*.mobile' => 'nullable',
+            'family.*.whatsapp_number' => 'nullable',
+            'family.*.realtion' => 'nullable',
+            'family.*.age' => 'nullable',
+            'family.*.email' => 'nullable',
+            'family.*.gender' => 'nullable',
         ]);
 
         if ($request->has('ceremony_ids')) {
@@ -131,6 +155,27 @@ class GuestListController extends Controller
         } else {
             $guestlist->assigned_ceremonies = '';
             $guestlist->ceramony_id = null;
+        }
+
+        if($request->has('family')){
+            GuestFamilyMember::where('guest_list_id', $guestlist->id)->delete();
+           
+            foreach($request->family as $member){
+                $newMember = new \App\Models\GuestFamilyMember();
+            
+            // FORCE the ID here
+            $newMember->guest_list_id = $guestlist->id; 
+            
+            // Assign other fields
+            $newMember->name = $member['name'];
+            $newMember->mobile = $member['mobile'] ?? null;
+            $newMember->whatsapp_number = $member['whatsapp_number'] ?? null;
+            $newMember->relation = $member['relation'] ?? null;
+            $newMember->gender = $member['gender'] ?? null;
+            $newMember->age = $member['age'] ?? null;
+            
+            $newMember->save();
+            }
         }
         $guestlist->update($validated);
         return redirect()->route('host.guestlist.index')->with('Success', 'Guest List Updated');

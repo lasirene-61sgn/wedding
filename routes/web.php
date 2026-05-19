@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PackageSelectController;
 use App\Http\Controllers\Admin\PlannerLoginController;
 use App\Http\Controllers\Admin\VendorLoginController;
 use App\Http\Controllers\Admin\VenueLoginController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Guest\GuestInvitationController;
 use App\Http\Controllers\Host\AlbumController;
 use App\Http\Controllers\Host\CeramonyController as HostCeramonyController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Host\GuestCategoryController;
 use App\Http\Controllers\Host\GuestListController;
 use App\Http\Controllers\Host\HostLoginController;
 use App\Http\Controllers\Host\InvitationController;
+use App\Http\Controllers\Host\PackageController;
 use App\Http\Controllers\Host\PictureController;
 use App\Http\Controllers\Host\ProfileController;
 use App\Http\Controllers\Host\ReportController;
@@ -53,12 +55,41 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
     Route::get('/login', [HostLoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [HostLoginController::class, 'login'])->name('login.submit');
+    Route::get('/register', [HostLoginController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [HostLoginController::class, 'register'])->name('register.submit');
+    Route::get('/auth/google', [HostLoginController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [HostLoginController::class, 'handleGoogleCallback']);
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+        ->name('password.request');
+    Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'requestOtp'])
+        ->name('password.otp.send');
+    Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyForm'])
+        ->name('password.verify.view');
+
+    // 2. This processes the submitted 6-digit code
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])
+        ->name('password.verify.submit');
+    // 1. Show the form where they type their new password
+    Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetPasswordForm'])
+        ->name('password.reset.view');
+
+    // 2. Process and save the new password to the host database table
+    Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'updatePassword'])
+        ->name('password.reset.submit');
+
 
     Route::middleware(['auth:host'])->group(function () {
+        Route::get('/set-password', [HostLoginController::class, 'showSetPasswordForm'])->name('set-password.view');
+        Route::post('/set-password', [HostLoginController::class, 'storeSetPassword'])->name('set-password.submit');
+        Route::get('/select-package', [PackageController::class, 'index'])->name('packages.index');
+        Route::post('/select-package', [PackageController::class, 'select'])->name('packages.select');
         Route::get('/dashboard', [HostLoginController::class, 'dashboard'])->name('dashboard');
+        Route::get('/logout', [HostLoginController::class, 'logout'])->name('host.login');
         Route::post('/logout', [HostLoginController::class, 'logout'])->name('logout');
 
+        Route::post('venue/update/{id}', [VenueController::class, 'update'])->name('venue.custom_update');
         Route::resource('venue', VenueController::class);
+        Route::post('/host/venue/store', [VenueController::class, 'store'])->name('host.venue.store');
         Route::resource('ceramony', HostCeramonyController::class);
 
         // Gallery Resources
@@ -80,7 +111,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::resource('categories', GuestCategoryController::class);
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     });
 });
 

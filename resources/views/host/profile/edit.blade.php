@@ -42,6 +42,13 @@
                                 <input type="email" name="email" class="form-control rounded-3" value="{{ old('email', $host->email) }}" placeholder="Enter your email">
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label small fw-bold">MobileNumber</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-whatsapp"></i></span>
+                                    <input type="text" name="mobile" class="form-control rounded-3 border-start-0" value="{{ old('mobile', $host->mobile) }}" placeholder="mobile number">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label small fw-bold">WhatsApp Number</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-whatsapp"></i></span>

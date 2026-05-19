@@ -31,7 +31,7 @@
         }
     </script>
 </head>
-<body class="h-full flex items-center justify-center bg-gradient-to-br from-stone-50 via-wedding-cream to-stone-100 px-3 py-4">
+<body class="h-full flex items-center justify-center bg-gradient-to-br from-stone-50 via-wedding-cream to-stone-100 px-3 py-6">
 
 <div class="w-full max-w-[440px] mx-auto">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-stone-200">
@@ -60,7 +60,20 @@
                 </div>
             @endif
 
-            {{-- login.submit matches your Route::post('/login')->name('login.submit') inside 'host.' group --}}
+            <!-- <div class="mb-6">
+                <a href="{{ route('host.google.login') }}" 
+                   class="w-full flex items-center justify-center gap-3 bg-white border border-stone-300 py-3 rounded-lg hover:bg-stone-50 transition-all duration-200 shadow-sm active:scale-[0.98]">
+                    <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt="Google Logo">
+                    <span class="text-sm font-semibold text-stone-700 font-sans">Continue with Google</span>
+                </a>
+
+                <div class="relative flex items-center my-6">
+                    <div class="flex-grow border-t border-stone-200"></div>
+                    <span class="flex-shrink mx-4 text-stone-400 text-[10px] uppercase tracking-[0.2em] font-medium">Or email login</span>
+                    <div class="flex-grow border-t border-stone-200"></div>
+                </div>
+            </div> -->
+
             <form action="{{ route('host.login.submit') }}" method="POST" class="space-y-5">
                 @csrf
                 
@@ -94,15 +107,15 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <label class="flex items-center cursor-pointer">
                         <input type="checkbox" name="remember" class="w-4 h-4 text-wedding-primary border-stone-300 rounded focus:ring-wedding-primary/30">
-                        <span class="ml-2 text-sm text-stone-600">Keep me signed in</span>
+                        <span class="ml-2 text-sm text-stone-600 font-sans">Keep me signed in</span>
                     </label>
-                    <a href="#" class="text-sm text-wedding-primary hover:text-wedding-dark font-medium hover:underline transition">
+                    <a href="{{ route('host.password.request') }}" class="text-sm text-wedding-primary hover:text-wedding-dark font-medium hover:underline transition font-sans">
                         Forgot password?
                     </a>
                 </div>
 
                 <button type="submit" 
-                        class="w-full bg-wedding-dark hover:bg-wedding-primary text-white font-medium py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] focus:outline-none flex items-center justify-center gap-2">
+                        class="w-full bg-wedding-dark hover:bg-wedding-primary text-white font-medium py-3.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] focus:outline-none flex items-center justify-center gap-2 font-sans">
                     <span>Access Dashboard</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -110,29 +123,15 @@
                 </button>
             </form>
 
-            <div class="mt-5 pt-4 border-t border-stone-100">
-                <div class="flex items-start gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-wedding-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <p class="text-xs text-stone-500">
-                        Your wedding data is private and secure.
-                    </p>
-                </div>
+            <div class="mt-8 pt-6 border-t border-stone-100 text-center">
+                <p class="text-stone-600 text-sm font-sans">
+                    Don't have an account yet? 
+                    <a href="{{ route('host.register') }}" class="text-wedding-primary font-bold hover:text-wedding-dark transition ml-1 underline underline-offset-4 decoration-wedding-gold/40 hover:decoration-wedding-primary">
+                        Create Host Account
+                    </a>
+                </p>
             </div>
         </div>
-
-        <div class="bg-wedding-cream px-6 py-3.5 border-t border-stone-100 text-center">
-            <p class="text-xs text-stone-400">
-                Host access only • <span class="text-wedding-primary font-medium">Wedding Manager</span>
-            </p>
-        </div>
-    </div>
-    
-    {{-- Branding --}}
-    <div class="text-center mt-4">
-        <p class="text-sm text-stone-600 font-serif font-medium">Elena & James</p>
-        <p class="text-xs text-stone-400">September 21, 2024 • Napa Valley</p>
     </div>
 </div>
 

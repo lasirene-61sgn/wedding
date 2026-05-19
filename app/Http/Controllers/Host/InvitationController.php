@@ -82,7 +82,7 @@ class InvitationController extends Controller
         $validated = $request->validate([
             'venue_id' => 'required|exists:venue_names,id',
             'invite' => 'required|in:brideparents,groomparents,bride,groom,weddingcouple',
-            'theme' => 'nullable|in:classic,royal,modern',
+            'theme' => 'nullable|in:classic,royal,floral',
             'bride_name' => 'required',
             'bride_number' => 'required',
             'bride_email' => 'required',

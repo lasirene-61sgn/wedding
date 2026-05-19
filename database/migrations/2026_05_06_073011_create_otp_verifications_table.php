@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('save_dates', function (Blueprint $table) {
+        Schema::create('otp_verifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('host_id')->constrained('host')->onDelete('cascade');
-            $table->foreignId('invitation_id')->constrained('invitations')->onDelete('cascade');
-            $table->string('image');
-            $table->text('message')->nullable();
+            $table->string('identifier')->index();
+            $table->string('otp');
+            $table->string('token')->unique();
+            $table->timestamp('expires_at');
+            $table->timestamp('verified_at')->nullable();
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('save_dates');
+        Schema::dropIfExists('otp_verifications');
     }
 };

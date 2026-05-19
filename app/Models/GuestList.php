@@ -26,4 +26,8 @@ class GuestList extends Model
     public function category(){
         return $this->belongsTo(GuestCategory::class, 'category_id');
     }
+
+    public function familyMembers(){
+        return $this->hasMany(GuestFamilyMember::class, 'guest_list_id');
+    }
 }

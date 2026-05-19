@@ -1,13 +1,13 @@
 @extends('layouts.host')
 
 @section('content')
-<div style="max-width: 1000px; margin: 30px auto; font-family: 'Inter', sans-serif; padding: 0 20px;">
+<div style="max-width: 1100px; margin: 30px auto; font-family: 'Inter', sans-serif; padding: 0 20px;">
     
     <div style="background: white; border-radius: 24px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);">
         <div style="background: #1e293b; padding: 30px; color: white; display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h2 style="margin: 0; font-size: 22px;">Edit Guest: {{ $guestlist->guest_name }}</h2>
-                <p style="margin: 5px 0 0; opacity: 0.7; font-size: 14px;">Complete profile and automated address lookup.</p>
+                <p style="margin: 5px 0 0; opacity: 0.7; font-size: 14px;">Complete profile, address, and family management.</p>
             </div>
             <a href="{{ route('host.guestlist.index') }}" style="color: white; text-decoration: none; font-size: 14px; opacity: 0.8;">&larr; Back to List</a>
         </div>
@@ -44,6 +44,14 @@
                         <input type="text" name="whatsapp_number" value="{{ $guestlist->whatsapp_number }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
                     </div>
                     <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Email Address</label>
+                        <input type="email" name="guest_email" value="{{ $guestlist->guest_email }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Alternate Number</label>
+                        <input type="text" name="alternate_number" value="{{ $guestlist->alternate_number }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    </div>
+                    <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Gender</label>
                         <select name="gender" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
                             <option value="">Select</option>
@@ -63,6 +71,52 @@
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Age</label>
                         <input type="text" name="age" value="{{ $guestlist->age }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
                     </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px; border-top: 1px solid #f1f5f9; padding-top: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <label style="font-weight: 700; color: #4f46e5; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Family Members</label>
+                    <button type="button" onclick="addFamilyMember()" style="background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600;">+ Add Family Member</button>
+                </div>
+
+                <div id="family-container">
+                    @forelse($guestlist->familyMembers as $index => $member)
+                        <div class="family-row" style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 0.8fr 50px; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 10px; align-items: end;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Name</label>
+                                <input type="text" name="family[{{ $index }}][name]" value="{{ $member->name }}" required style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Mobile</label>
+                                <input type="text" name="family[{{ $index }}][mobile]" value="{{ $member->mobile }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">WhatsApp</label>
+                                <input type="text" name="family[{{ $index }}][whatsapp_number]" value="{{ $member->whatsapp_number }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Relation</label>
+                                <input type="text" name="family[{{ $index }}][relation]" value="{{ $member->relation }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Gender</label>
+                                <select name="family[{{ $index }}][gender]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                    <option value="">Select</option>
+                                    <option value="male" {{ $member->gender == 'male' ? 'selected' : '' }}>Male</option>
+                                    <option value="female" {{ $member->gender == 'female' ? 'selected' : '' }}>Female</option>
+                                    <option value="other" {{ $member->gender == 'other' ? 'selected' : '' }}>Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Age</label>
+                                <input type="text" name="family[{{ $index }}][age]" value="{{ $member->age }}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            </div>
+                            <button type="button" onclick="this.parentElement.remove()" style="background: #ef4444; color: white; border: none; height: 38px; width: 38px; border-radius: 8px; cursor: pointer;">&times;</button>
+                        </div>
+                    @empty
+                        <p id="no-family-text" style="font-size: 13px; color: #94a3b8; font-style: italic;">No family members added yet.</p>
+                    @endforelse
                 </div>
             </div>
 
@@ -88,7 +142,7 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Circle</label>
                         <input type="text" name="circle" id="circle" value="{{ $guestlist->circle }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
@@ -107,12 +161,16 @@
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px;">
                      <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Floor</label>
+                        <input type="text" name="floor" value="{{ $guestlist->floor }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    </div>
+                    <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Country</label>
                         <input type="text" name="country" id="country" value="{{ $guestlist->country ?? 'India' }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
                     </div>
-                    <div>
+                    <div style="grid-column: span 2;">
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Google Maps URL</label>
                         <input type="text" name="location_map" value="{{ $guestlist->location_map }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; color: #4f46e5;">
                     </div>
@@ -127,6 +185,54 @@
 </div>
 
 <script>
+let familyIndex = {{ count($guestlist->familyMembers) }};
+
+function addFamilyMember() {
+    const container = document.getElementById('family-container');
+    const noText = document.getElementById('no-family-text');
+    if(noText) noText.remove();
+
+    const row = document.createElement('div');
+    row.className = 'family-row';
+    row.style = "display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 0.8fr 50px; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 10px; align-items: end;";
+    
+    row.innerHTML = `
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Name</label>
+            <input type="text" name="family[${familyIndex}][name]" required style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Mobile</label>
+            <input type="text" name="family[${familyIndex}][mobile]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">WhatsApp</label>
+            <input type="text" name="family[${familyIndex}][whatsapp_number]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Relation</label>
+            <input type="text" name="family[${familyIndex}][relation]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        </div>
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Gender</label>
+            <select name="family[${familyIndex}][gender]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 5px;">Age</label>
+            <input type="text" name="family[${familyIndex}][age]" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" style="background: #ef4444; color: white; border: none; height: 38px; width: 38px; border-radius: 8px; cursor: pointer;">&times;</button>
+    `;
+    
+    container.appendChild(row);
+    familyIndex++;
+}
+
 function fetchAddress() {
     let pincode = document.getElementById('pincode').value;
     if (pincode.length === 6) {
@@ -134,8 +240,7 @@ function fetchAddress() {
             .then(response => response.json())
             .then(data => {
                 if (data[0].Status === "Success") {
-                    let postOffice = data[0].PostOffice[0]; // Picking the first available post office
-                    
+                    let postOffice = data[0].PostOffice[0];
                     document.getElementById('area_name').value = postOffice.Name;
                     document.getElementById('district').value = postOffice.District;
                     document.getElementById('state').value = postOffice.State;
