@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Auth;
 class VenueController extends Controller
 {
     public function index(){
-        $venues = VenueName::where('host_id',Auth::id())->get();
+        $venues = VenueName::where(function($query){
+            $query->where('host_id', Auth::id())->orWhereNull('host_id');
+        })->get();
         return view('host.venue.index', compact('venues'));
     }
 

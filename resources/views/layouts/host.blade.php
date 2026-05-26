@@ -254,6 +254,13 @@
             </li>
             @endif
 
+             @if(in_array('reports', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.reports.index') }}" class="nav-link {{ request()->routeIs('host.reports.*') ? 'active' : '' }}">
+                    <i class="bi bi-report"></i> reports
+                </a>
+            </li>
+            @endif
             <li class="nav-item">
                 <a href="{{ route('host.profile.edit') }}" class="nav-link {{ request()->routeIs('host.profile.*') ? 'active' : '' }}">
                     <i class="bi bi-person-gear"></i> Profile Settings

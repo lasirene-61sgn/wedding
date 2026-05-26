@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminGuestListController;
 use App\Http\Controllers\Admin\AdminLoginController;
 use App\Http\Controllers\Admin\CategoryVenueController;
 use App\Http\Controllers\Admin\CeramonyController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Admin\PackageSelectController;
 use App\Http\Controllers\Admin\PlannerLoginController;
 use App\Http\Controllers\Admin\VendorLoginController;
 use App\Http\Controllers\Admin\VenueLoginController;
+use App\Http\Controllers\Admin\AdminVenueController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Guest\GuestInvitationController;
 use App\Http\Controllers\Host\AlbumController;
@@ -25,9 +27,33 @@ use App\Http\Controllers\Host\ReportController;
 use App\Http\Controllers\Host\SaveDateController;
 use App\Http\Controllers\Host\VenueController;
 use App\Http\Controllers\Host\VideoController;
+use App\Http\Controllers\GuestRSVPController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/test-whatsapp', function() {
+    // Fetches the absolute latest guest added to your database, ignoring Auth rules
+    $guest = \App\Models\GuestList::latest()->first(); 
+        
+    if (!$guest) {
+        return "The guest_lists table is completely empty. Please insert at least one test guest row into your database first, then refresh this page.";
+    }
+
+    // Temporarily force a phone number and relation for this explicit test run
+    // Replace with your actual phone number to see the message on your device
+    $guest->guest_number = '9361590913'; 
+    $guest->whatsapp_number = '9361590913';
+    $guest->relation = 'groom'; // Options: bride, groom_parent, groom
+
+    $service = new \App\Services\InvitationService();
+    
+    // Fire the public delivery engine
+    $service->sendBulkInvitations($guest, ['whatsapp'], 'Haldi, Mehendi, Reception');
+    
+    return "API execution triggered using Guest ID [{$guest->id}]: {$guest->guest_name}. Check your storage/logs/laravel.log now!";
+});
+Route::get('/rsvp/{id}', [GuestRSVPController::class, 'showPortal'])->name('guest.rsvp.portal');
+Route::post('/rsvp/{id}/update', [GuestRSVPController::class, 'updateStatus'])->name('guest.rsvp.update');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -43,6 +69,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::resource('categoryvenue', CategoryVenueController::class);
         Route::resource('ceramony', CeramonyController::class);
         Route::resource('invitation', HostInvitationController::class);
+        Route::get('/guestlist', [AdminGuestListController::class, 'index'])->name('guestlist.index');
+        Route::get('/guestlist/{id}', [AdminGuestListController::class, 'show'])->name('guestlist.show');
+        Route::get('/guestlist/{id}/edit', [AdminGuestListController::class, 'edit'])->name('guestlist.edit');
+        Route::put('/guestlist/{id}/update', [AdminGuestListController::class, 'update'])->name('guestlist.update');
+        Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.forceDelete');
+        Route::resource('venue', AdminVenueController::class);
     });
 
     Route::middleware(['auth:host'])->group(function () {

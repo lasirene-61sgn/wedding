@@ -1,135 +1,193 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mt-4 mb-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-white">
-            <h4 class="mb-0">Edit Host: {{ $host->name }}</h4>
+<div class="container mx-auto px-4 mt-6 mb-12">
+    <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100">
+            <h4 class="text-xl font-semibold text-gray-800">Edit Host: {{ $host->name }}</h4>
         </div>
-        <div class="card-body">
+        
+        <div class="p-6">
             <form action="{{ route('admin.host.update', $host->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <h5 class="text-primary mb-3">Basic Information</h5>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $host->name) }}">
-                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                <!-- Basic Information -->
+                <h5 class="text-indigo-600 font-bold uppercase tracking-wider text-sm mb-4">Basic Information</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" name="name" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('name') border-red-500 @enderror" 
+                            value="{{ old('name', $host->name) }}">
+                        @error('name') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $host->email) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" name="email" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('email') border-red-500 @enderror" 
+                            value="{{ old('email', $host->email) }}">
+                        @error('email') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Primary Mobile</label>
-                        <input type="text" name="mobile" class="form-control @error('mobile') is-invalid @enderror" value="{{ old('mobile', $host->mobile) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Primary Mobile</label>
+                        <input type="text" name="mobile" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('mobile') border-red-500 @enderror" 
+                            value="{{ old('mobile', $host->mobile) }}">
+                        @error('mobile') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">Alternate Number</label>
-                        <input type="text" name="alternate_number" class="form-control" value="{{ old('alternate_number', $host->alternate_number) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Alternate Number</label>
+                        <input type="text" name="alternate_number" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('alternate_number', $host->alternate_number) }}">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">WhatsApp Number</label>
-                        <input type="text" name="whatsapp_number" class="form-control" value="{{ old('whatsapp_number', $host->whatsapp_number) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
+                        <input type="text" name="whatsapp_number" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('whatsapp_number', $host->whatsapp_number) }}">
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">New Password <span class="text-muted small">(Leave blank to keep current)</span></label>
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            New Password <span class="text-gray-400 font-normal text-xs">(Leave blank to keep current)</span>
+                        </label>
+                        <input type="password" name="password" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('password') border-red-500 @enderror">
+                        @error('password') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
-                <hr>
+                <hr class="my-8 border-gray-100">
 
-                <h5 class="text-primary mb-3">Address & Profile Details</h5>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Pincode</label>
-                        <input type="text" name="pincode" id="pincode" class="form-control" value="{{ old('pincode', $host->pincode) }}" maxlength="6">
+                <!-- Address Section -->
+                <h5 class="text-indigo-600 font-bold uppercase tracking-wider text-sm mb-4">Address & Profile Details</h5>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
+                        <input type="text" name="pincode" id="pincode" maxlength="6"
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('pincode', $host->pincode) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Complex Name</label>
-                        <input type="text" name="complex_name" class="form-control" value="{{ old('complex_name', $host->complex_name) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Complex Name</label>
+                        <input type="text" name="complex_name" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('complex_name', $host->complex_name) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Floor / Door No</label>
-                        <div class="input-group">
-                            <input type="text" name="floor" class="form-control" placeholder="Floor" value="{{ old('floor', $host->floor) }}">
-                            <input type="text" name="door_no" class="form-control" placeholder="Door" value="{{ old('door_no', $host->door_no) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Floor / Door No</label>
+                        <div class="flex">
+                            <input type="text" name="floor" placeholder="Floor" 
+                                class="w-1/2 rounded-l-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                value="{{ old('floor', $host->floor) }}">
+                            <input type="text" name="door_no" placeholder="Door" 
+                                class="w-1/2 rounded-r-md border-t border-b border-r border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                                value="{{ old('door_no', $host->door_no) }}">
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Street/Area</label>
-                        <input type="text" name="street_name" id="area_name" class="form-control" value="{{ old('street_name', $host->street_name) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Street/Area</label>
+                        <input type="text" name="street_name" id="area_name" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('street_name', $host->street_name) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">City</label>
-                        <input type="text" name="city" id="city" class="form-control" value="{{ old('city', $host->city) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                        <input type="text" name="city" id="city" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('city', $host->city) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">District</label>
-                        <input type="text" name="district" id="district" class="form-control" value="{{ old('district', $host->district) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">District</label>
+                        <input type="text" name="district" id="district" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('district', $host->district) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">State</label>
-                        <input type="text" name="state" id="state" class="form-control" value="{{ old('state', $host->state) }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                        <input type="text" name="state" id="state" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('state', $host->state) }}">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Country</label>
-                        <input type="text" name="country" id="country" class="form-control" value="{{ old('country', $host->country ?? 'India') }}">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                        <input type="text" name="country" id="country" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" 
+                            value="{{ old('country', $host->country ?? 'India') }}">
                     </div>
                 </div>
 
-                <hr>
+                <hr class="my-8 border-gray-100">
 
-                <h5 class="text-primary mb-3">Access Control & Plan</h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Package & Status</label>
-                        <div class="input-group mb-2">
-                            <select name="package_id" class="form-select">
+                <!-- Access Section -->
+                <h5 class="text-indigo-600 font-bold uppercase tracking-wider text-sm mb-4">Access Control & Plan</h5>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Package & Status</label>
+                        <div class="flex space-x-2">
+                            <select name="package_id" class="w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 @foreach($packages as $package)
                                     <option value="{{ $package->id }}" {{ old('package_id', $host->package_id) == $package->id ? 'selected' : '' }}>
                                         {{ $package->package_name }}
                                     </option>
                                 @endforeach
                             </select>
-                            <select name="status" class="form-select">
+                            <select name="status" class="w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="active" {{ old('status', $host->status) == 'active' ? 'selected' : '' }}>Active</option>
                                 <option value="inactive" {{ old('status', $host->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Sidebar Permissions</label>
-                        <div class="d-flex flex-wrap gap-3 border p-2 rounded">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sidebar Permissions</label>
+                        <div class="flex flex-wrap gap-4 border border-gray-200 p-4 rounded-md bg-gray-50">
                             @php
                                 $modules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
                                 $currentPermissions = $host->permissions ?? [];
                             @endphp
                             @foreach($modules as $module)
                                 @php $slug = Str::slug($module); @endphp
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="permissions[]" value="{{ $slug }}" 
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="permissions[]" value="{{ $slug }}" 
                                         id="perm_{{ $loop->index }}" 
+                                        class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                                         {{ in_array($slug, $currentPermissions) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="perm_{{ $loop->index }}">{{ $module }}</label>
+                                    <label for="perm_{{ $loop->index }}" class="ml-2 text-sm text-gray-600">{{ $module }}</label>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4">
-                    <button type="submit" class="btn btn-primary px-5 shadow-sm">Update Host Account</button>
-                    <a href="{{ route('admin.host.index') }}" class="btn btn-light px-4">Cancel</a>
+                <!-- Form Actions -->
+                <div class="flex items-center space-x-4 pt-6 border-t border-gray-100">
+                    <button type="submit" class="px-8 py-2.5 bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                        Update Host Account
+                    </button>
+                    <a href="{{ route('admin.host.index') }}" class="px-6 py-2.5 bg-white text-gray-700 font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $('#pincode').on('keyup', function() {

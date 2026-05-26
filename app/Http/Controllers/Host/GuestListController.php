@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\InvitationService;
 
 class GuestListController extends Controller
 {
@@ -62,7 +63,7 @@ class GuestListController extends Controller
                 }),
             ],
             'guest_email' => 'nullable',
-            'relation' => 'nullable|in:bride,groom',
+            'relation' => 'nullable|in:bride,groom,bride_parent,groom_parent',
             'gender' => 'nullable|in:male,female,other',
             'alternate_number' => 'nullable',
             'whatsapp_number' => 'nullable',
@@ -120,7 +121,7 @@ class GuestListController extends Controller
                 })->ignore($id), // Ignore the current guest's ID so you can save edits
             ],
             'guest_email' => 'nullable',
-            'relation' => 'nullable|in:bride,groom',
+            'relation' => 'nullable|in:bride,groom,bride_parent,groom_parent',
             'gender' => 'nullable|in:male,female,other',
             'alternate_number' => 'nullable',
             'whatsapp_number' => 'nullable',
@@ -183,7 +184,7 @@ class GuestListController extends Controller
 
     public function destroy($id)
     {
-        $guest = GuestList::where('host_id', Auth::id())->firstOrFail();
+        $guest = GuestList::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
         $guest->delete();
         return redirect()->route('host.guestlist.index')->with('Suceess', 'Guest Deleted');
     }
@@ -197,7 +198,7 @@ class GuestListController extends Controller
         return redirect()->route('host.guestlist.index')->with('Success', 'Guest List Imported');
     }
 
-    public function bulkSend(Request $request)
+    public function bulkSend(Request $request, InvitationService $invitationService)
     {
         $request->validate([
             'ids' => 'required|array',
@@ -208,22 +209,27 @@ class GuestListController extends Controller
         $category = GuestCategory::find($request->category_id);
 
         // FIX: Remove json_decode. Laravel's $casts already made this an array.
-        $ceremonyIds = $category->ceremony_ids;
+        $ceremonyIds = $category ? ($category->ceremony_ids ?? []) : [];
 
         $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)
             ->pluck('ceramony_name')
             ->implode(', ');
 
-        $channels = implode(', ', $request->channels ?? []);
+        $selectedChannels = $request->channels ?? [];
+        $channelsString = implode(', ', $selectedChannels);
         $guests = GuestList::whereIn('id', $request->ids)
             ->where('host_id', Auth::id())
             ->get();
 
         foreach ($guests as $guest) {
+
+        if(count($selectedChannels) > 0){
+            $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
+        }
             $guest->update([
                 'category_id' => $request->category_id,
                 'assigned_ceremonies' => $allCeremonyNames,
-                'send_via' => $channels,
+                'send_via' => $channelsString,
                 'invitation_sent' => $request->has('channels') ? true : $guest->invitation_sent,
                 // Optional: Store the first ceremony ID for relation consistency
                 'ceramony_id' => $ceremonyIds[0] ?? $guest->ceramony_id,

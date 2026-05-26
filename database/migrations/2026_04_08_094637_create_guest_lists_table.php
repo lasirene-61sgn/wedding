@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('guest_name');
             $table->string('guest_number');
             $table->string('guest_email')->nullable();
-            $table->enum('relation', ['bride', 'groom'])->nullable();
+            $table->enum('relation', ['bride', 'groom', 'bride_parent', 'groom_parent'])->nullable();
             $table->enum('gender',['male', 'female', 'other'])->nullable();
             $table->string('alternate_number')->nullable();
             $table->string('whatsapp_number')->nullable();

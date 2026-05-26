@@ -1,28 +1,83 @@
-<div class="modal fade" id="venueModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content shadow-lg border-0">
-            <div class="modal-header bg-dark text-white">
-                <h5 id="modalTitle">Add Venue</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- Main Modal Wrapper (Hidden by default using 'hidden'. Toggle this class with JavaScript) -->
+<div id="venueModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-hidden="true">
+    <!-- Backdrop overlay -->
+    <div class="fixed inset-0 bg-black/50 transition-opacity"></div>
+
+    <!-- Modal Positioning Container -->
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-3xl border border-gray-100">
+            
+            <!-- Modal Header -->
+            <div class="bg-gray-900 px-6 py-4 flex items-center justify-between">
+                <h5 id="modalTitle" class="text-lg font-bold text-white tracking-wide">Add Venue</h5>
+                <button type="button" class="text-gray-400 hover:text-white transition-colors text-2xl font-semibold leading-none focus:outline-none" onclick="document.getElementById('venueModal').classList.add('hidden')">
+                    &times;
+                </button>
             </div>
-            <div class="modal-body">
+            
+            <!-- Modal Body -->
+            <div class="p-6">
                 <form id="venueForm">
                     @csrf
                     <input type="hidden" id="v_id">
-                    <div class="row g-3">
-                        <div class="col-md-6"><label>Venue Name</label><input type="text" id="v_name" class="form-control" required></div>
-                        <div class="col-md-6"><label>Pincode</label><input type="text" id="v_pin" class="form-control" maxlength="6" required></div>
-                        <div class="col-md-4"><label>Area</label><select id="v_area" class="form-select"></select></div>
-                        <div class="col-md-4"><label>District</label><input type="text" id="v_district" class="form-control" readonly></div>
-                        <div class="col-md-4"><label>State</label><input type="text" id="v_state" class="form-control" readonly></div>
-                        <div class="col-md-6"><label>Landmark</label><input type="text" id="v_wedding_location" class="form-control"></div>
-                        <div class="col-md-6"><label>Map Link</label><input type="text" id="v_location_map" class="form-control"></div>
-                        <div class="col-12"><label>Address</label><textarea id="v_addr" class="form-control" rows="2" required></textarea></div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <!-- Venue Name -->
+                        <div class="md:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Venue Name</label>
+                            <input type="text" id="v_name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        </div>
+                        
+                        <!-- Pincode -->
+                        <div class="md:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Pincode</label>
+                            <input type="text" id="v_pin" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" maxlength="6" required>
+                        </div>
+                        
+                        <!-- Area Dropdown -->
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Area</label>
+                            <select id="v_area" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm bg-white py-2 px-3"></select>
+                        </div>
+                        
+                        <!-- District (Readonly) -->
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">District</label>
+                            <input type="text" id="v_district" class="block w-full rounded-md border-gray-200 bg-gray-50 text-gray-500 text-sm py-2 px-3 cursor-not-allowed" readonly>
+                        </div>
+                        
+                        <!-- State (Readonly) -->
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">State</label>
+                            <input type="text" id="v_state" class="block w-full rounded-md border-gray-200 bg-gray-50 text-gray-500 text-sm py-2 px-3 cursor-not-allowed" readonly>
+                        </div>
+                        
+                        <!-- Landmark -->
+                        <div class="md:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Landmark</label>
+                            <input type="text" id="v_wedding_location" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        </div>
+                        
+                        <!-- Map Link -->
+                        <div class="md:col-span-6">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Map Link</label>
+                            <input type="text" id="v_location_map" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        </div>
+                        
+                        <!-- Address TextArea -->
+                        <div class="md:col-span-12">
+                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Address</label>
+                            <textarea id="v_addr" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" rows="2" required></textarea>
+                        </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" id="saveVenueBtn" class="btn btn-primary w-100 shadow">Save Venue</button>
+            
+            <!-- Modal Footer -->
+            <div class="px-6 pb-6 pt-2">
+                <button type="button" id="saveVenueBtn" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                    Save Venue
+                </button>
             </div>
         </div>
     </div>

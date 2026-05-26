@@ -192,6 +192,8 @@
                         <option value="">Select...</option>
                         <option value="bride" {{ old('relation') == 'bride' ? 'selected' : '' }}>Bride Side</option>
                         <option value="groom" {{ old('relation') == 'groom' ? 'selected' : '' }}>Groom Side</option>
+                        <option value="bride_parent" {{ old('relation') == 'bride_parent' ? 'selected' : '' }}>Bride Parent</option>
+                        <option value="groom_parent" {{ old('relation') == 'groom_parent' ? 'selected' : '' }}>Groom Parent</option>
                     </select>
                 </div>
 
