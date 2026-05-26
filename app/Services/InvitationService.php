@@ -109,302 +109,295 @@ class InvitationService
     }
 
     protected function sendEmail(\App\Models\GuestList $guest, string $ceremonyNames)
-{
-    try {
+    {
+        try {
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | MSG91 Configuration
         |--------------------------------------------------------------------------
         */
 
-        $authKey = env('MSG91_AUTH_KEY');
+            $authKey = env('MSG91_AUTH_KEY');
 
-        $fromEmail = env('MAIL_FROM_ADDRESS');
+            $fromEmail = env('MAIL_FROM_ADDRESS');
 
-        $fromName = env('MAIL_FROM_NAME');
+            $fromName = env('MAIL_FROM_NAME');
 
-        $mailDomain = explode('@', $fromEmail)[1] ?? 'localhost.com';
+            $mailDomain = explode('@', $fromEmail)[1] ?? 'localhost.com';
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Fetch Invitation Data
         |--------------------------------------------------------------------------
         */
 
-        $invitation = \App\Models\Invitation::where(
-            'host_id',
-            $guest->host_id
-        )->latest()->first();
+            $invitation = \App\Models\Invitation::where(
+                'host_id',
+                $guest->host_id
+            )->latest()->first();
 
-        if (!$invitation) {
+            if (!$invitation) {
 
-            \Log::error('Invitation data not found', [
+                Log::error('Invitation data not found', [
 
-                'guest_id' => $guest->id
-            ]);
+                    'guest_id' => $guest->id
+                ]);
 
-            return;
-        }
+                return;
+            }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Ceremony Data
         |--------------------------------------------------------------------------
         */
 
-        $ceremony = \App\Models\Ceramonies::where(
-            'host_id',
-            $guest->host_id
-        )->latest()->first();
+            $ceremony = \App\Models\Ceramonies::where(
+                'host_id',
+                $guest->host_id
+            )->latest()->first();
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Wedding Date
         |--------------------------------------------------------------------------
         */
 
-        $weddingDate = $ceremony->ceramony_date
-            ?? $invitation->wedding_date
-            ?? date('d F Y');
+            $weddingDate = $ceremony->ceramony_date
+                ?? $invitation->wedding_date
+                ?? date('d F Y');
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | RSVP Link
         |--------------------------------------------------------------------------
         */
 
-        $shortLink = route('guest.rsvp.portal', [
-            'id' => $guest->id
-        ]);
+            $shortLink = route('guest.rsvp.portal', [
+                'id' => $guest->id
+            ]);
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Relation
         |--------------------------------------------------------------------------
         */
 
-        $relation = strtolower(trim($guest->relation ?? ''));
+            $relation = strtolower(trim($guest->relation ?? ''));
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Template Variables
         |--------------------------------------------------------------------------
         */
 
-        $templateId = '';
+            $templateId = '';
 
-        $emailVariables = [];
+            $emailVariables = [];
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Bride / Groom Invitation
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $relation === 'bride'
-            || $relation === 'groom'
-        ) {
+            if (
+                $relation === 'bride'
+                || $relation === 'groom'
+            ) {
 
-            $templateId = 'invite_org_6';
+                $templateId = 'invite_org_6';
 
-            $emailVariables = [
+                $emailVariables = [
 
-                'brideName' => $invitation->bride_name ?? '',
+                    'brideName' => $invitation->bride_name ?? '',
 
-                'groomName' => $invitation->groom_name ?? '',
+                    'groomName' => $invitation->groom_name ?? '',
 
-                'date' => $weddingDate,
+                    'date' => $weddingDate,
 
-                'shortLink' => $shortLink,
-            ];
-        }
+                    'shortLink' => $shortLink,
+                ];
+            }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Groom Parents Invitation
         |--------------------------------------------------------------------------
-        */
+        */ elseif ($relation === 'groom_parent') {
 
-        elseif ($relation === 'groom_parent') {
+                $templateId = 'invite_org_4';
 
-            $templateId = 'invite_org_4';
+                $emailVariables = [
 
-            $emailVariables = [
-
-                'groomMotherName'
+                    'groomMotherName'
                     => $invitation->groom_mother_name ?? '',
 
-                'groomFatherName'
+                    'groomFatherName'
                     => $invitation->groom_father_name ?? '',
 
-                'date' => $weddingDate,
+                    'date' => $weddingDate,
 
-                'shortLink' => $shortLink,
-            ];
-        }
+                    'shortLink' => $shortLink,
+                ];
+            }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Bride Parents Invitation
         |--------------------------------------------------------------------------
-        */
+        */ elseif ($relation === 'bride_parent') {
 
-        elseif ($relation === 'bride_parent') {
+                $templateId = 'invite_org_5';
 
-            $templateId = 'invite_org_5';
+                $emailVariables = [
 
-            $emailVariables = [
-
-                'brideMotherName'
+                    'brideMotherName'
                     => $invitation->bride_mother_name ?? '',
 
-                'brideFatherName'
+                    'brideFatherName'
                     => $invitation->bride_father_name ?? '',
 
-                'date' => $weddingDate,
+                    'date' => $weddingDate,
 
-                'shortLink' => $shortLink,
-            ];
-        }
+                    'shortLink' => $shortLink,
+                ];
+            }
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Unknown Relation
         |--------------------------------------------------------------------------
-        */
+        */ else {
 
-        else {
+                Log::warning('Unknown Relation', [
 
-            \Log::warning('Unknown Relation', [
+                    'guest_id' => $guest->id,
 
-                'guest_id' => $guest->id,
+                    'relation' => $relation,
+                ]);
 
-                'relation' => $relation,
-            ]);
+                return;
+            }
 
-            return;
-        }
-
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Debug Logs
         |--------------------------------------------------------------------------
         */
 
-        \Log::info('MSG91 Final Payload', [
+            Log::info('MSG91 Final Payload', [
 
-            'guest_id' => $guest->id,
+                'guest_id' => $guest->id,
 
-            'relation' => $relation,
+                'relation' => $relation,
 
-            'template_id' => $templateId,
+                'template_id' => $templateId,
 
-            'variables' => $emailVariables,
-        ]);
+                'variables' => $emailVariables,
+            ]);
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Final Payload
         |--------------------------------------------------------------------------
         */
 
-        $payload = [
+            $payload = [
 
-            'template_id' => $templateId,
+                'template_id' => $templateId,
 
-            'domain' => $mailDomain,
+                'domain' => $mailDomain,
 
-            'from' => [
+                'from' => [
 
-                'name' => $fromName,
+                    'name' => $fromName,
 
-                'email' => $fromEmail,
-            ],
+                    'email' => $fromEmail,
+                ],
 
-            'recipients' => [
+                'recipients' => [
 
-                [
+                    [
 
-                    'to' => [
+                        'to' => [
 
-                        [
+                            [
 
-                            'name' => $guest->guest_name,
+                                'name' => $guest->guest_name,
 
-                            'email' => $guest->guest_email,
-                        ]
-                    ],
+                                'email' => $guest->guest_email,
+                            ]
+                        ],
 
-                    'variables' => $emailVariables,
+                        'variables' => $emailVariables,
+                    ]
                 ]
-            ]
-        ];
+            ];
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Send Email
         |--------------------------------------------------------------------------
         */
 
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
 
-            'accept' => 'application/json',
+                'accept' => 'application/json',
 
-            'content-type' => 'application/json',
+                'content-type' => 'application/json',
 
-            'authkey' => $authKey,
+                'authkey' => $authKey,
 
-        ])->post(
-            'https://control.msg91.com/api/v5/email/send',
-            $payload
-        );
+            ])->post(
+                'https://control.msg91.com/api/v5/email/send',
+                $payload
+            );
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Response Logs
         |--------------------------------------------------------------------------
         */
 
-        \Log::info(
-            "MSG91 Email Status for Guest ID [{$guest->id}]: "
-            . $response->status()
-        );
+            Log::info(
+                "MSG91 Email Status for Guest ID [{$guest->id}]: "
+                    . $response->status()
+            );
 
-        \Log::info(
-            "MSG91 Email Response Body: "
-            . $response->body()
-        );
+            Log::info(
+                "MSG91 Email Response Body: "
+                    . $response->body()
+            );
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Failure Logs
         |--------------------------------------------------------------------------
         */
 
-        if (!$response->successful()) {
+            if (!$response->successful()) {
 
-            \Log::error('MSG91 Email Failed', [
+                Log::error('MSG91 Email Failed', [
+
+                    'guest_id' => $guest->id,
+
+                    'response' => $response->body(),
+                ]);
+            }
+        } catch (\Exception $e) {
+
+            Log::error('MSG91 Email Exception', [
 
                 'guest_id' => $guest->id,
 
-                'response' => $response->body(),
+                'message' => $e->getMessage(),
+
+                'line' => $e->getLine(),
+
+                'file' => $e->getFile(),
             ]);
         }
-
-    } catch (\Exception $e) {
-
-        \Log::error('MSG91 Email Exception', [
-
-            'guest_id' => $guest->id,
-
-            'message' => $e->getMessage(),
-
-            'line' => $e->getLine(),
-
-            'file' => $e->getFile(),
-        ]);
     }
-}
 }

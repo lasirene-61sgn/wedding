@@ -12,9 +12,9 @@
         --bg-card: #ffffff;
         --border-color: #eee5e7;
         --border-focus: #ff6b6b;
-        --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-        --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
         --radius-sm: 8px;
         --radius-md: 16px;
         --radius-lg: 24px;
@@ -46,17 +46,34 @@
         width: 280px;
         height: 280px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(255,107,107,0.06) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(255, 107, 107, 0.06) 0%, transparent 70%);
         z-index: 0;
         pointer-events: none;
         animation: float 18s ease-in-out infinite;
     }
-    .auth-page-wrapper::before { top: -140px; right: -80px; animation-delay: 0s; }
-    .auth-page-wrapper::after { bottom: -120px; left: -100px; animation-delay: -9s; }
+
+    .auth-page-wrapper::before {
+        top: -140px;
+        right: -80px;
+        animation-delay: 0s;
+    }
+
+    .auth-page-wrapper::after {
+        bottom: -120px;
+        left: -100px;
+        animation-delay: -9s;
+    }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0) scale(1); }
-        50% { transform: translateY(-20px) scale(1.05); }
+
+        0%,
+        100% {
+            transform: translateY(0) scale(1);
+        }
+
+        50% {
+            transform: translateY(-20px) scale(1.05);
+        }
     }
 
     /* ===== AUTH CARD ===== */
@@ -74,8 +91,15 @@
     }
 
     @keyframes cardFadeIn {
-        from { opacity: 0; transform: translateY(20px) scale(0.98); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
 
     /* ===== HEADER SECTION ===== */
@@ -101,8 +125,15 @@
     }
 
     @keyframes pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.3); }
-        50% { box-shadow: 0 0 0 12px rgba(255, 107, 107, 0); }
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 0 12px rgba(255, 107, 107, 0);
+        }
     }
 
     .auth-title {
@@ -142,8 +173,15 @@
     }
 
     @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .alert-success {
@@ -210,9 +248,19 @@
     }
 
     @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-6px); }
-        75% { transform: translateX(6px); }
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-6px);
+        }
+
+        75% {
+            transform: translateX(6px);
+        }
     }
 
     /* ===== FORM GROUP & LABEL ===== */
@@ -261,7 +309,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+        background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.25), transparent);
         transform: translateX(-100%);
         transition: transform 0.6s ease;
     }
@@ -301,14 +349,16 @@
         top: 50%;
         left: 50%;
         margin: -11px;
-        border: 2.5px solid rgba(255,255,255,0.35);
+        border: 2.5px solid rgba(255, 255, 255, 0.35);
         border-top-color: #fff;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     /* ===== RESEND SECTION ===== */
@@ -395,14 +445,14 @@
     }
 
     /* ===== RESPONSIVE BREAKPOINTS ===== */
-    
+
     /* Tablet: 768px and below */
     @media (max-width: 768px) {
         :root {
             --otp-gap: 6px;
             --otp-size: clamp(44px, 11vw, 52px);
         }
-        
+
         .otp-container {
             gap: var(--otp-gap);
         }
@@ -414,26 +464,26 @@
             padding: clamp(20px, 5vw, 32px);
             border-radius: var(--radius-md);
         }
-        
+
         :root {
             --otp-gap: 4px;
             --otp-size: clamp(40px, 10vw, 48px);
         }
-        
+
         .otp-container {
             gap: var(--otp-gap);
             flex-wrap: wrap;
         }
-        
+
         .otp-input {
             width: calc((100% - (var(--otp-gap) * 5)) / 6);
             min-width: 36px;
         }
-        
+
         .auth-subtitle {
             font-size: clamp(13px, 4vw, 14px);
         }
-        
+
         .resend-section,
         .auth-footer {
             font-size: clamp(13px, 4vw, 14px);
@@ -446,11 +496,11 @@
             max-width: 480px;
             padding: 48px;
         }
-        
+
         .auth-title {
             font-size: 28px;
         }
-        
+
         :root {
             --otp-size: 60px;
         }
@@ -462,17 +512,22 @@
             --border-color: #888;
             --text-secondary: #222;
         }
+
         .otp-input:focus {
             box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.5);
         }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
+
+        *,
+        *::before,
+        *::after {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
         }
+
         .auth-page-wrapper::before,
         .auth-page-wrapper::after {
             display: none;
@@ -500,34 +555,33 @@
         </div>
 
         {{-- Alert Notification Banner --}}
-        <div id="alert-container" class="alert-banner" role="alert" aria-live="polite"></div>
+        <div id="alert-container" class="alert-banner" role="alert" aria-live="polite" style="display: none;"></div>
 
         <form id="otp-verify-form" action="{{ route('host.password.verify.submit') }}" method="POST" novalidate>
             @csrf
-            <input type="hidden" name="identifier" value="{{ $identifier ?? '' }}">
+            <input type="hidden" id="hidden-identifier" name="identifier" value="{{ $identifier ?? '' }}">
             <input type="hidden" name="channel" value="{{ $channel ?? 'email' }}">
 
             <div class="form-group">
                 <label for="otp-input-1" class="form-label">Enter 6‑Digit Secure Code</label>
-                
+
                 <div class="otp-container" role="group" aria-label="One-time password input">
                     @for($i = 1; $i <= 6; $i++)
-                        <input 
-                            type="text" 
-                            id="otp-input-{{ $i }}"
-                            class="otp-input"
-                            maxlength="1"
-                            pattern="[0-9]"
-                            inputmode="numeric"
-                            autocomplete="one-time-code"
-                            aria-label="Digit {{ $i }} of 6"
-                            data-index="{{ $i }}"
-                        >
-                    @endfor
+                        <input
+                        type="text"
+                        id="otp-input-{{ $i }}"
+                        class="otp-input"
+                        maxlength="1"
+                        pattern="[0-9]"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        aria-label="Digit {{ $i }} of 6"
+                        data-index="{{ $i }}">
+                        @endfor
                 </div>
-                
+
                 <p class="form-hint">
-                    <span aria-hidden="true">🔐</span> 
+                    <span aria-hidden="true">🔐</span>
                     Code expires in <strong>5 minutes</strong>. Don't share it with anyone.
                 </p>
             </div>
@@ -540,29 +594,43 @@
         {{-- Resend OTP Section --}}
         <div class="resend-section">
             <p class="resend-text">Didn't receive the code?</p>
-            <button 
-                type="button" 
-                id="resend-btn" 
+            <button
+                type="button"
+                id="resend-btn"
                 class="resend-button"
-                aria-live="polite"
-            >
+                aria-live="polite">
                 <span id="resend-text">Resend Code</span>
                 <span id="resend-timer" class="timer" hidden>(<span id="timer-count">60</span>s)</span>
             </button>
         </div>
-
-        
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById('otp-verify-form');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
         const alertContainer = document.getElementById('alert-container');
+        const otpInputs = document.querySelectorAll('.otp-input');
 
-        form.addEventListener('submit', function (e) {
+        // --- UX Feature: Auto-focus next box and handle backspaces ---
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (input.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // --- Form Submission Handling ---
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
 
             submitBtn.disabled = true;
@@ -570,33 +638,77 @@
             alertContainer.style.display = "none";
             alertContainer.className = "alert-banner";
 
-            const formData = new FormData(form);
+            // 1. Gather the identifier value cleanly from hidden field or URL fallback
+            let identifier = document.getElementById('hidden-identifier').value;
+            if (!identifier) {
+                const urlParams = new URLSearchParams(window.location.search);
+                identifier = urlParams.get('identifier');
+            }
 
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alertContainer.innerText = data.message;
-                    alertContainer.classList.add('alert-success');
-                    
-                    // Redirect to the Reset Password interface, passing the validated session token
-                    setTimeout(() => {
-                        window.location.href = "{{ url('host/forgot-password/reset') }}?token=" + data.token;
-                    }, 1500);
-                } else {
-                    throw new Error(data.message || 'Verification failed.');
-                }
-            })
-            .catch(error => {
+            // 2. Stitch the 6 individual inputs into a single string
+            let unifiedOtp = "";
+            otpInputs.forEach(input => {
+                unifiedOtp += input.value.trim();
+            });
+
+            // Simple frontend verification check before executing payload
+            if (unifiedOtp.length < 6) {
+                alertContainer.innerText = "Please complete entering the 6-digit code.";
+                alertContainer.classList.add('alert-error');
+                alertContainer.style.display = "block";
                 submitBtn.disabled = false;
                 btnText.innerText = "Validate & Verify Code";
-                alertContainer.innerText = error.message;
-                alertContainer.classList.add('alert-error');
-            });
+                return;
+            }
+
+            // 3. Construct payload exactly how your backend wants it
+            const payload = {
+                identifier: identifier,
+                otp: unifiedOtp
+            };
+
+            // 4. Fire JSON POST request
+            fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        let errorMessage = data.message || 'Verification failed.';
+                        if (data.errors) {
+                            errorMessage = Object.values(data.errors).flat().join(', ');
+                        }
+                        throw new Error(errorMessage);
+                    }
+                    return data;
+                })
+                .then(data => {
+                    if (data.status === 'success' || data.success === true || data.token) {
+                        alertContainer.innerText = data.message || "OTP Verified Successfully!";
+                        alertContainer.classList.add('alert-success');
+                        alertContainer.style.display = "block";
+
+                        setTimeout(() => {
+                            window.location.href = "{{ url('host/forgot-password/reset') }}?token=" + (data.token || data.data.token);
+                        }, 1500);
+                    } else {
+                        throw new Error(data.message || 'Verification failed.');
+                    }
+                })
+                .catch(error => {
+                    submitBtn.disabled = false;
+                    btnText.innerText = "Validate & Verify Code";
+                    alertContainer.innerText = error.message;
+                    alertContainer.classList.add('alert-error');
+                    alertContainer.style.display = "block";
+                });
         });
     });
 </script>
