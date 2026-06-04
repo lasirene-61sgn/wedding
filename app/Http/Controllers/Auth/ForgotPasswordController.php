@@ -131,8 +131,8 @@ class ForgotPasswordController extends Controller
             }
 
             // 3. Locate the Host record
-            // Note: Change 'phone' to 'mobile' below if your DB column is named mobile
             $user = Host::where('email', $verification->identifier)
+                ->orWhere('mobile', $verification->identifier)
                 ->first();
 
             if (!$user) {

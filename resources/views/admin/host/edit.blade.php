@@ -156,7 +156,9 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Sidebar Permissions</label>
                         <div class="flex flex-wrap gap-4 border border-gray-200 p-4 rounded-md bg-gray-50">
                             @php
-                                $modules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
+                                $modules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories', 'vendors', 'timeline', 'budget',
+                                'tasks', 'checklist', 'mood-board', 'logistics', 'accommodation', 'menus', 'members', 'helping-staff', 'messaging', 'chat', 
+                                'call-center', 'contacts', 'notifications', 'documents', 'contracts', 'automation', 'setup', 'master', ''];
                                 $currentPermissions = $host->permissions ?? [];
                             @endphp
                             @foreach($modules as $module)

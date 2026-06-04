@@ -178,7 +178,9 @@
                             <label class="text-sm font-semibold text-gray-600">Sidebar Module Permissions</label>
                             <div class="flex flex-wrap gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50/50">
                                 @php
-                                    $modules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
+                                    $modules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories', 'vendors', 'timeline', 'budget',
+                                'tasks', 'checklist', 'mood-board', 'logistics', 'accommodation', 'menus', 'members', 'helping-staff', 'messaging', 'chat', 
+                                'call-center', 'contacts', 'notifications', 'documents', 'contracts', 'automation', 'setup', 'master',''];
                                 @endphp
                                 @foreach($modules as $module)
                                 <label for="perm_{{ $loop->index }}" class="inline-flex items-center gap-2 bg-white px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer select-none hover:bg-gray-50 transition-colors">

@@ -549,8 +549,9 @@
             <div class="auth-logo" aria-hidden="true">✨</div>
             <h2 class="auth-title">Verify Your OTP</h2>
             <p class="auth-subtitle">
-                A secure 6‑digit code has been sent to:<br>
-                <strong>{{ $identifier ?? 'your contact' }}</strong>
+                A secure 6‑digit code has been sent via 
+                <strong>{{ strtoupper($channel ?? 'SMS') }}</strong> to:<br>
+                <strong>{{ $identifier ?? 'your contact address' }}</strong>
             </p>
         </div>
 
@@ -560,7 +561,7 @@
         <form id="otp-verify-form" action="{{ route('host.password.verify.submit') }}" method="POST" novalidate>
             @csrf
             <input type="hidden" id="hidden-identifier" name="identifier" value="{{ $identifier ?? '' }}">
-            <input type="hidden" name="channel" value="{{ $channel ?? 'email' }}">
+            <input type="hidden" id="hidden-channel" name="channel" value="{{ $channel ?? 'sms' }}">
 
             <div class="form-group">
                 <label for="otp-input-1" class="form-label">Enter 6‑Digit Secure Code</label>
@@ -577,12 +578,12 @@
                         autocomplete="one-time-code"
                         aria-label="Digit {{ $i }} of 6"
                         data-index="{{ $i }}">
-                        @endfor
+                    @endfor
                 </div>
 
                 <p class="form-hint">
                     <span aria-hidden="true">🔐</span>
-                    Code expires in <strong>5 minutes</strong>. Don't share it with anyone.
+                    Code expires in <strong>15 minutes</strong>. Don't share it with anyone.
                 </p>
             </div>
 
@@ -638,11 +639,16 @@
             alertContainer.style.display = "none";
             alertContainer.className = "alert-banner";
 
-            // 1. Gather the identifier value cleanly from hidden field or URL fallback
+            // 1. Gather values cleanly from fields or fallbacks
             let identifier = document.getElementById('hidden-identifier').value;
+            let channel = document.getElementById('hidden-channel').value;
+            
+            const urlParams = new URLSearchParams(window.location.search);
             if (!identifier) {
-                const urlParams = new URLSearchParams(window.location.search);
                 identifier = urlParams.get('identifier');
+            }
+            if (!channel && urlParams.has('channel')) {
+                channel = urlParams.get('channel');
             }
 
             // 2. Stitch the 6 individual inputs into a single string
@@ -651,7 +657,7 @@
                 unifiedOtp += input.value.trim();
             });
 
-            // Simple frontend verification check before executing payload
+            // Frontend payload verification
             if (unifiedOtp.length < 6) {
                 alertContainer.innerText = "Please complete entering the 6-digit code.";
                 alertContainer.classList.add('alert-error');
@@ -661,19 +667,21 @@
                 return;
             }
 
-            // 3. Construct payload exactly how your backend wants it
+            // 3. Construct payload including channel type
             const payload = {
                 identifier: identifier,
+                channel: channel || 'sms',
                 otp: unifiedOtp
             };
 
-            // 4. Fire JSON POST request
+            // 4. Fire JSON POST request to Laravel backend
             fetch(form.action, {
                     method: 'POST',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value // Crucial for Laravel Verification
                     },
                     body: JSON.stringify(payload)
                 })

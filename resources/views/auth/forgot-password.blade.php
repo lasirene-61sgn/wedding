@@ -533,10 +533,10 @@
                         <span>WhatsApp</span>
                     </label>
 
-                    <label class="option-label" tabindex="0">
+                    <!-- <label class="option-label" tabindex="0">
                         <input type="radio" name="channel" value="sms" class="sr-only">
                         <span>SMS</span>
-                    </label>
+                    </label> -->
                 </div>
             </div>
 

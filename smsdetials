@@ -1,0 +1,14 @@
+bride_groom_invit - for couple template name
+##alphanumeric## & ##alphanumeric##, We cordially invite you for our wedding ceremony on ##alphanumeric##. From La Sirene Exim.
+template id -6a17d05b5e19870c280f5242
+
+
+Invite_Groom - for groom paremts
+##var1## and ##var2## seeking your present and bless our Son's Wedding Ceremony. Your event access details available in ##var3##. La Sirene Exim.
+template id - 68a598a35af05446a26303f9
+
+
+Invite_Bride - for bride parents 
+##var1## and ##var2## seeking your present and Bless our Daughter's Wedding Ceremony. Your event access details available in ##var3##.
+La Sirene Exim.
+template id - 68a577370fc63d1e78442d26

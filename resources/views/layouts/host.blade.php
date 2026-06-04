@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $user->name ?? 'Host' }} Panel | Wedding Management</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
+
     <style>
         :root {
             --primary-color: #1e293b;
@@ -32,25 +33,31 @@
         }
 
         /* Sidebar Styling */
-        #sidebar { 
-            width: var(--sidebar-width); 
-            position: fixed; 
-            height: 100vh; 
-            background: #ffffff; 
-            color: var(--primary-color); 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        #sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            height: 100vh;
+            background: #ffffff;
+            color: var(--primary-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1050;
             overflow-y: auto;
             border-right: 1px solid #e2e8f0;
             scrollbar-width: thin;
         }
 
-        #sidebar::-webkit-scrollbar { width: 4px; }
-        #sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        #main-content { 
-            margin-left: var(--sidebar-width); 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        #sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        #main-content {
+            margin-left: var(--sidebar-width);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -61,8 +68,8 @@
             margin: 4px 15px;
         }
 
-        .nav-link { 
-            color: var(--secondary-color); 
+        .nav-link {
+            color: var(--secondary-color);
             padding: 12px 18px;
             display: flex;
             align-items: center;
@@ -78,15 +85,15 @@
             transition: all 0.2s ease;
         }
 
-        .nav-link:hover { 
-            color: var(--accent-color); 
-            background: #f1f5f9; 
+        .nav-link:hover {
+            color: var(--accent-color);
+            background: #f1f5f9;
             transform: translateX(5px);
         }
 
-        .nav-link.active { 
-            color: #ffffff; 
-            background: var(--accent-color); 
+        .nav-link.active {
+            color: #ffffff;
+            background: var(--accent-color);
             box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
         }
 
@@ -99,7 +106,7 @@
             padding: 30px 25px;
             margin-bottom: 10px;
         }
-        
+
         .brand-logo {
             font-family: 'Playfair Display', serif;
             font-size: 22px;
@@ -125,11 +132,23 @@
         }
 
         /* Mobile Adjustments */
-        @media (max-width: 992px) { 
-            #sidebar { margin-left: calc(-1 * var(--sidebar-width)); } 
-            #sidebar.active { margin-left: 0; box-shadow: 20px 0 25px -5px rgba(0, 0, 0, 0.1); } 
-            #main-content { margin-left: 0; } 
-            .sidebar-overlay.show { display: block; }
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+
+            #sidebar.active {
+                margin-left: 0;
+                box-shadow: 20px 0 25px -5px rgba(0, 0, 0, 0.1);
+            }
+
+            #main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
         }
 
         .sidebar-overlay {
@@ -177,10 +196,11 @@
     </style>
     @stack('styles')
 </head>
+
 <body>
     @php
-        $user = Auth::guard('host')->user();
-        $perms = $user->permissions ?? [];
+    $user = Auth::guard('host')->user();
+    $perms = $user->permissions ?? [];
     @endphp
 
     <div class="sidebar-overlay" id="overlay"></div>
@@ -194,17 +214,19 @@
         </div>
 
         <ul class="nav flex-column">
+            <!-- Dashboard -->
             <li class="nav-item">
                 <a href="{{ route('host.dashboard') }}" class="nav-link {{ request()->routeIs('host.dashboard') ? 'active' : '' }}">
                     <i class="bi bi-grid-1x2"></i> Dashboard
                 </a>
             </li>
 
+            <!-- Management -->
             <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Management</div>
 
             @if(in_array('ceremonies', $perms))
             <li class="nav-item">
-                <a href="{{ route('host.ceramony.index') }}" class="nav-link {{ request()->routeIs('host.ceramony.*') ? 'active' : '' }}">
+                <a href="{{ route('host.ceramony.index') }}" class="nav-link {{ request()->routeIs('host.ceremony.*') ? 'active' : '' }}">
                     <i class="bi bi-calendar4-event"></i> Ceremonies
                 </a>
             </li>
@@ -218,6 +240,14 @@
             </li>
             @endif
 
+            @if(in_array('vendors', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.vendors.index') }}" class="nav-link {{ request()->routeIs('host.vendors.*') ? 'active' : '' }}">
+                    <i class="bi bi-shop"></i> Vendors
+                </a>
+            </li>
+            @endif
+
             @if(in_array('gallery', $perms))
             <li class="nav-item">
                 <a href="{{ route('host.picture.index') }}" class="nav-link {{ request()->routeIs('host.picture.*') ? 'active' : '' }}">
@@ -226,6 +256,50 @@
             </li>
             @endif
 
+            <!-- Planning Tools -->
+            <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Planning Tools</div>
+
+            @if(in_array('timeline', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.timeline.index') }}" class="nav-link {{ request()->routeIs('host.timeline.*') ? 'active' : '' }}">
+                    <i class="bi bi-clock-history"></i> Timeline
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('budget', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.budget.index') }}" class="nav-link {{ request()->routeIs('host.budget.*') ? 'active' : '' }}">
+                    <i class="bi bi-wallet2"></i> Budget
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('tasks', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.tasks.index') }}" class="nav-link {{ request()->routeIs('host.tasks.*') ? 'active' : '' }}">
+                    <i class="bi bi-list-task"></i> Tasks
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('checklist', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.checklist.index') }}" class="nav-link {{ request()->routeIs('host.checklist.*') ? 'active' : '' }}">
+                    <i class="bi bi-check2-square"></i> Checklist
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('mood-board', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.moodboard.index') }}" class="nav-link {{ request()->routeIs('host.moodboard.*') ? 'active' : '' }}">
+                    <i class="bi bi-palette"></i> Mood Board
+                </a>
+            </li>
+            @endif
+
+            <!-- Invitation Tools -->
             <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Invitation Tools</div>
 
             @if(in_array('invitation', $perms))
@@ -244,6 +318,136 @@
             </li>
             @endif
 
+            <!-- Operations & Logistics -->
+            <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Operations</div>
+
+            @if(in_array('logistics', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.logistics.index') }}" class="nav-link {{ request()->routeIs('host.logistics.*') ? 'active' : '' }}">
+                    <i class="bi bi-truck"></i> Logistics
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('accommodation', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.accommodation.index') }}" class="nav-link {{ request()->routeIs('host.accommodation.*') ? 'active' : '' }}">
+                    <i class="bi bi-building-house"></i> Accommodation
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('menus', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.menus.index') }}" class="nav-link {{ request()->routeIs('host.menus.*') ? 'active' : '' }}">
+                    <i class="bi bi-egg-fried"></i> Menus
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('members', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.members.index') }}" class="nav-link {{ request()->routeIs('host.members.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-vcard"></i> Members
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('helping-staff', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.helpingstaff.index') }}" class="nav-link {{ request()->routeIs('host.helpingstaff.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i> Helping Staff
+                </a>
+            </li>
+            @endif
+
+            <!-- Communication -->
+            <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Communication</div>
+
+            @if(in_array('messaging', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.messaging.index') }}" class="nav-link {{ request()->routeIs('host.messaging.*') ? 'active' : '' }}">
+                    <i class="bi bi-chat-left-text"></i> Messaging
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('chat', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.chat.index') }}" class="nav-link {{ request()->routeIs('host.chat.*') ? 'active' : '' }}">
+                    <i class="bi bi-chat-dots"></i> Chat
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('call-center', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.callcenter.index') }}" class="nav-link {{ request()->routeIs('host.callcenter.*') ? 'active' : '' }}">
+                    <i class="bi bi-telephone-outbound"></i> Call Center
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('contacts', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.contacts.index') }}" class="nav-link {{ request()->routeIs('host.contacts.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-lines-fill"></i> Contacts
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('notifications', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.notifications.index') }}" class="nav-link {{ request()->routeIs('host.notifications.*') ? 'active' : '' }}">
+                    <i class="bi bi-bell"></i> Notifications
+                </a>
+            </li>
+            @endif
+
+            <!-- Setup & Assets -->
+            <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">Setup & Assets</div>
+
+            @if(in_array('documents', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.documents.index') }}" class="nav-link {{ request()->routeIs('host.documents.*') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-text"></i> Documents
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('contracts', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.contracts.index') }}" class="nav-link {{ request()->routeIs('host.contracts.*') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-check"></i> Contracts
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('automation', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.automation.index') }}" class="nav-link {{ request()->routeIs('host.automation.*') ? 'active' : '' }}">
+                    <i class="bi bi-cpu"></i> Automation
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('setup', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.setup.index') }}" class="nav-link {{ request()->routeIs('host.setup.*') ? 'active' : '' }}">
+                    <i class="bi bi-sliders"></i> Setup
+                </a>
+            </li>
+            @endif
+
+            @if(in_array('master', $perms))
+            <li class="nav-item">
+                <a href="{{ route('host.master.index') }}" class="nav-link {{ request()->routeIs('host.master.*') ? 'active' : '' }}">
+                    <i class="bi bi-database-gear"></i> Master Data
+                </a>
+            </li>
+            @endif
+
+            <!-- System -->
             <div class="px-4 mt-4 mb-2 small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 1px;">System</div>
 
             @if(in_array('categories', $perms))
@@ -254,13 +458,14 @@
             </li>
             @endif
 
-             @if(in_array('reports', $perms))
+            @if(in_array('reports', $perms))
             <li class="nav-item">
                 <a href="{{ route('host.reports.index') }}" class="nav-link {{ request()->routeIs('host.reports.*') ? 'active' : '' }}">
-                    <i class="bi bi-report"></i> reports
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reports
                 </a>
             </li>
             @endif
+
             <li class="nav-item">
                 <a href="{{ route('host.profile.edit') }}" class="nav-link {{ request()->routeIs('host.profile.*') ? 'active' : '' }}">
                     <i class="bi bi-person-gear"></i> Profile Settings
@@ -284,7 +489,7 @@
                 <button class="btn btn-light border-0 d-lg-none me-3" id="mobile-toggle">
                     <i class="bi bi-list fs-4"></i>
                 </button>
-                
+
                 <div class="search-box d-none d-md-block">
                     <h5 class="mb-0 fw-bold" style="font-family: 'Playfair Display', serif;">Host Dashboard</h5>
                 </div>
@@ -323,13 +528,13 @@
             overlay.classList.toggle('show');
         }
 
-        if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
-        if(overlay) overlay.addEventListener('click', toggleSidebar);
+        if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+        if (overlay) overlay.addEventListener('click', toggleSidebar);
 
         // Status Check Logic
         function checkStatus() {
             $.ajax({
-                url: "{{ route('admin.check.status') }}", 
+                url: "{{ route('admin.check.status') }}",
                 method: "GET",
                 success: function(response) {
                     if (response.status === 'inactive') {
@@ -342,4 +547,5 @@
     </script>
     @stack('scripts')
 </body>
+
 </html>

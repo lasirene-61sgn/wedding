@@ -28,28 +28,50 @@ use App\Http\Controllers\Host\SaveDateController;
 use App\Http\Controllers\Host\VenueController;
 use App\Http\Controllers\Host\VideoController;
 use App\Http\Controllers\GuestRSVPController;
+use App\Http\Controllers\Host\AccommodationController;
+use App\Http\Controllers\Host\AutomationController;
+use App\Http\Controllers\Host\BudgetController;
+use App\Http\Controllers\Host\CallCenterController;
+use App\Http\Controllers\Host\ChatController;
+use App\Http\Controllers\Host\ChatWizardController;
+use App\Http\Controllers\Host\ChecklistController;
+use App\Http\Controllers\Host\ContactController;
+use App\Http\Controllers\Host\ContractController;
+use App\Http\Controllers\Host\DocumentController;
+use App\Http\Controllers\Host\HelpingStaffController;
+use App\Http\Controllers\Host\LogisticsController;
+use App\Http\Controllers\Host\MasterController;
+use App\Http\Controllers\Host\MemberController;
+use App\Http\Controllers\Host\MenuController;
+use App\Http\Controllers\Host\MessagingController;
+use App\Http\Controllers\Host\MoodBoardController;
+use App\Http\Controllers\Host\NotificationController;
+use App\Http\Controllers\Host\SetupController;
+use App\Http\Controllers\Host\TaskController;
+use App\Http\Controllers\Host\TimelineController;
+use App\Http\Controllers\Host\VendorController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test-whatsapp', function() {
+Route::get('/test-whatsapp', function () {
     // Fetches the absolute latest guest added to your database, ignoring Auth rules
-    $guest = \App\Models\GuestList::latest()->first(); 
-        
+    $guest = \App\Models\GuestList::latest()->first();
+
     if (!$guest) {
         return "The guest_lists table is completely empty. Please insert at least one test guest row into your database first, then refresh this page.";
     }
 
     // Temporarily force a phone number and relation for this explicit test run
     // Replace with your actual phone number to see the message on your device
-    $guest->guest_number = '9361590913'; 
+    $guest->guest_number = '9361590913';
     $guest->whatsapp_number = '9361590913';
     $guest->relation = 'groom'; // Options: bride, groom_parent, groom
 
     $service = new \App\Services\InvitationService();
-    
+
     // Fire the public delivery engine
     $service->sendBulkInvitations($guest, ['whatsapp'], 'Haldi, Mehendi, Reception');
-    
+
     return "API execution triggered using Guest ID [{$guest->id}]: {$guest->guest_name}. Check your storage/logs/laravel.log now!";
 });
 Route::get('/rsvp/{id}', [GuestRSVPController::class, 'showPortal'])->name('guest.rsvp.portal');
@@ -91,25 +113,15 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
     Route::post('/register', [HostLoginController::class, 'register'])->name('register.submit');
     Route::get('/auth/google', [HostLoginController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('/auth/google/callback', [HostLoginController::class, 'handleGoogleCallback']);
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
-        ->name('password.request');
-    Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'requestOtp'])
-        ->name('password.otp.send');
-    Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyForm'])
-        ->name('password.verify.view');
-
-    // 2. This processes the submitted 6-digit code
-    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])
-        ->name('password.verify.submit');
-    // 1. Show the form where they type their new password
-    Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetPasswordForm'])
-        ->name('password.reset.view');
-
-    // 2. Process and save the new password to the host database table
-    Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'updatePassword'])
-        ->name('password.reset.submit');
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'requestOtp'])->name('password.otp.send');
+    Route::get('/verify-otp', [ForgotPasswordController::class, 'showVerifyForm'])->name('password.verify.view');
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verify.submit');
+    Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset.view');
+    Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'updatePassword'])->name('password.reset.submit');
 
 
+    // --- AUTHENTICATED HOSTS ONLY ZONE ---
     Route::middleware(['auth:host'])->group(function () {
         Route::get('/set-password', [HostLoginController::class, 'showSetPasswordForm'])->name('set-password.view');
         Route::post('/set-password', [HostLoginController::class, 'storeSetPassword'])->name('set-password.submit');
@@ -119,6 +131,18 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::get('/logout', [HostLoginController::class, 'logout'])->name('host.login');
         Route::post('/logout', [HostLoginController::class, 'logout'])->name('logout');
 
+        // ==========================================
+        // PLUGGED IN: CHAT SETUP FORM WIZARD ROUTES
+        // ==========================================
+        Route::prefix('wizard')->name('wizard.')->group(function () {
+            Route::get('/', [ChatWizardController::class, 'index'])->name('index'); 
+            Route::post('/store-venue', [ChatWizardController::class, 'storeVenue'])->name('storeVenue');
+            Route::post('/store-invitation', [ChatWizardController::class, 'storeInvitation'])->name('storeInvitation');
+            Route::post('/store-savedate', [ChatWizardController::class, 'storeSaveDate'])->name('storeSaveDate');
+            Route::post('/store-ceremony', [ChatWizardController::class, 'storeCeremony'])->name('storeCeremony');
+        });
+
+        // Your existing Resource Routes
         Route::post('venue/update/{id}', [VenueController::class, 'update'])->name('venue.custom_update');
         Route::resource('venue', VenueController::class);
         Route::post('/host/venue/store', [VenueController::class, 'store'])->name('host.venue.store');
@@ -128,25 +152,44 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::resource('picture', PictureController::class);
         Route::resource('album', AlbumController::class);
         Route::resource('video', VideoController::class);
-
-        // FIX: Removed 'host.' from the name because the Group already adds it
         Route::delete('album/{id}/delete-image', [AlbumController::class, 'deleteImage'])->name('album.delete-image');
 
         Route::resource('invitation', InvitationController::class);
-
         Route::resource('savedate', SaveDateController::class);
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
-
-
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::resource('categories', GuestCategoryController::class);
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+        // Planning Tools & Logistics
+        Route::resource('vendors', VendorController::class);
+        Route::resource('timeline', TimelineController::class);
+        Route::resource('budget', BudgetController::class);
+        Route::resource('checklist', ChecklistController::class);
+        Route::resource('moodboard', MoodBoardController::class);
+        Route::resource('logistics', LogisticsController::class);
+        Route::resource('accommodation', AccommodationController::class);
+        Route::resource('menus', MenuController::class);
+        Route::resource('members', MemberController::class);
+        Route::resource('helpingstaff', HelpingStaffController::class);
+
+        // Communication & Setup
+        Route::resource('messaging', MessagingController::class);
+        Route::resource('chat', ChatController::class);
+        Route::resource('callcenter', CallCenterController::class);
+        Route::resource('contacts', ContactController::class);
+        Route::resource('notifications', NotificationController::class);
+        Route::resource('documents', DocumentController::class);
+        Route::resource('contracts', ContractController::class);
+        Route::resource('automation', AutomationController::class);
+        Route::resource('setup', SetupController::class);
+        Route::resource('master', MasterController::class);
+        Route::resource('tasks', TaskController::class);
     });
 });
-
 Route::prefix('guest')->name('guest.')->group(function () {
     // Login routes
     Route::get('/login', [GuestInvitationController::class, 'showLogin'])->name('login');

@@ -96,7 +96,6 @@
     .alert-success { display: block; background-color: #def7ec; color: #03543f; border: 1px solid #bfecdc; }
     .alert-error { display: block; background-color: #fde8e8; color: #9b1c1c; border: 1px solid #fabdbe; }
 </style>
-
 <div class="auth-page-wrapper">
     <div class="auth-card">
         <div class="auth-header">
@@ -104,7 +103,8 @@
             <p class="auth-subtitle">Please choose a strong password to secure your host portal account.</p>
         </div>
 
-        <div id="alert-container" class="alert-banner"></div>
+        {{-- Added inline block display handling initialization --}}
+        <div id="alert-container" class="alert-banner" role="alert" aria-live="polite" style="display: none;"></div>
 
         <form id="password-reset-form" action="{{ route('host.password.reset.submit') }}" method="POST">
             @csrf
@@ -141,12 +141,13 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            // Simple client side validation check
             const pass = document.getElementById('password').value;
             const conf = document.getElementById('password_confirmation').value;
+            
             if (pass !== conf) {
                 alertContainer.innerText = "Passwords do not match.";
                 alertContainer.className = "alert-banner alert-error";
+                alertContainer.style.display = "block";
                 return;
             }
 
@@ -160,15 +161,32 @@
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json' // Explicitly tell Laravel to return JSON errors
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alertContainer.innerText = data.message;
-                    alertContainer.classList.add('alert-success');
+            .then(async response => {
+                const data = await response.json();
+
+                // Intercept 422 errors and structural framework validation anomalies
+                if (!response.ok) {
+                    let errorMessage = data.message || 'Reset execution failed.';
                     
-                    // Redirect back to login dashboard route group entry
+                    // If Laravel returned specific field validation rules, stitch them together
+                    if (data.errors) {
+                        errorMessage = Object.values(data.errors).flat().join(' ');
+                    }
+                    throw new Error(errorMessage);
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.status === 'success' || data.success === true) {
+                    alertContainer.innerText = data.message || "Password updated successfully!";
+                    alertContainer.className = "alert-banner alert-success";
+                    alertContainer.style.display = "block";
+                    
                     setTimeout(() => {
                         window.location.href = "{{ route('host.login') }}";
                     }, 2000);
@@ -180,7 +198,8 @@
                 submitBtn.disabled = false;
                 btnText.innerText = "Update Password";
                 alertContainer.innerText = error.message;
-                alertContainer.classList.add('alert-error');
+                alertContainer.className = "alert-banner alert-error";
+                alertContainer.style.display = "block";
             });
         });
     });
