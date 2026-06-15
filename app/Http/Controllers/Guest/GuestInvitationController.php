@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Albums;
 use App\Models\Ceramonies;
 use App\Models\GuestList;
+use App\Models\HostFamilyDetails;
 use App\Models\Pictures;
 use App\Models\Videos;
 use Illuminate\Http\Request;
@@ -79,25 +80,26 @@ class GuestInvitationController extends Controller
     }
 
     public function showCeremonies($id)
-    {
-        $phone = session('guest_phone');
-        // We load the 'host' relationship here so the header doesn't break
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+{
+    $phone = session('guest_phone');
+    $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
 
-        // Alias $invite to $guest so your RSVP blade markup can use both safely
-        $guest = $invite;
+    $guest = $invite;
+    $assignedNames = explode(', ', $invite->assigned_ceremonies);
+    
+    $detailedCeremonies = Ceramonies::with('venue', 'background')
+        ->where('host_id', $invite->host_id)
+        ->whereIn('ceramony_name', $assignedNames)
+        ->orderBy('ceramony_date', 'asc')
+        ->orderBy('ceramony_time', 'asc')
+        ->get();
 
-        $assignedNames = explode(', ', $invite->assigned_ceremonies);
-        $detailedCeremonies = Ceramonies::with('venue', 'background')
-            ->where('host_id', $invite->host_id)
-            ->whereIn('ceramony_name', $assignedNames)
-            ->orderBy('ceramony_date', 'asc')
-            ->orderBy('ceramony_time', 'asc')
-            ->get();
+    // 🔥 ADD THIS LINE RIGHT HERE: Fetch the family data for the dashboard view
+    $hfamily = HostFamilyDetails::where('host_id', $invite->host_id)->with('background')->first();
 
-        // Passing both $invite and $guest ensures neither layout breaks
-        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies'));
-    }
+    // Pass $hfamily down to the view via compact()
+    return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily'));
+}
 
     public function showGallery($id)
     {
@@ -108,6 +110,15 @@ class GuestInvitationController extends Controller
         $albums = Albums::where('host_id', $host_id)->get();
         $videos = Videos::where('host_id', $host_id)->get();
         return view('guest.gallery', compact('invite', 'pictures', 'albums', 'videos'));
+    }
+
+    public function showHostFamilyDetails($id)
+    {
+        $phone = session('guest_phone');
+        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+        $host_id = $invite->host_id;
+        $hfamily = HostFamilyDetails::where('host_id', $host_id)->with('background')->first();
+        return view('guest.hfamily', compact('invite', 'hfamily'));
     }
 
     public function editProfile($id)

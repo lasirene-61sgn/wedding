@@ -39,6 +39,7 @@ use App\Http\Controllers\Host\ContactController;
 use App\Http\Controllers\Host\ContractController;
 use App\Http\Controllers\Host\DocumentController;
 use App\Http\Controllers\Host\HelpingStaffController;
+use App\Http\Controllers\Host\HostFamilyController;
 use App\Http\Controllers\Host\LogisticsController;
 use App\Http\Controllers\Host\MasterController;
 use App\Http\Controllers\Host\MemberController;
@@ -101,6 +102,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('/guestlist/{id}/delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.destroy');
         Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
         Route::resource('venue', AdminVenueController::class);
+        
     });
 
     Route::middleware(['auth:host'])->group(function () {
@@ -194,6 +196,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::resource('setup', SetupController::class);
         Route::resource('master', MasterController::class);
         Route::resource('tasks', TaskController::class);
+        Route::resource('hfamily', HostFamilyController::class);
     });
 });
 Route::prefix('guest')->name('guest.')->group(function () {

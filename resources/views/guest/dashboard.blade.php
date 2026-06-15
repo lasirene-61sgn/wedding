@@ -460,6 +460,72 @@
         </div>
     </div>
 
+    <div class="schedule-pane family-pane" style="margin-top: 40px;">
+    <h3 class="pane-title">Host Family Members</h3>
+
+    @if(isset($hfamily) && $hfamily && $hfamily->is_active == 1)
+        @php
+            // Map out your topic configurations to loop through them dynamically
+            $familyTopics = [
+                'one'   => ['title' => 'topic_title_one',   'text' => 'textone'],
+                'two'   => ['title' => 'topic_title_two',   'text' => 'texttwo'],
+                'three' => ['title' => 'topic_title_three', 'text' => 'textthree'],
+                'four'  => ['title' => 'topic_title_four',  'text' => 'textfour'],
+                'five'  => ['title' => 'topic_title_five',  'text' => 'textfive'],
+                'six'   => ['title' => 'topic_title_six',   'text' => 'textsix'],
+            ];
+            
+            // Check if a custom theme background image was selected by the host
+            $familyBg = !empty($hfamily->background) && !empty($hfamily->background->image_path);
+            $hasFamilyContent = false;
+        @endphp
+
+        @foreach($familyTopics as $key => $column)
+            {{-- Check if the host entered data into either field before printing a card --}}
+            @if(!empty($hfamily->{$column['title']}) || !empty($hfamily->{$column['text']}))
+                @php $hasFamilyContent = true; @endphp
+
+                <div class="ceremony-card {{ $familyBg ? 'has-bg' : '' }}"
+                     style="@if($familyBg) --bg-url: url('{{ asset('storage/' . $hfamily->background->image_path) }}'); @endif mb-3;">
+
+                    <div class="card-content">
+                        <h4 class="ceremony-title">
+                            {{ $hfamily->{$column['title']} ?? 'Host Relations' }}
+                        </h4>
+
+                        <div class="details-row text-row" style="font-size: 1.1rem; line-height: 1.6; color: inherit; margin-top: 10px;">
+                            <span>✨</span> {!! nl2br(e($hfamily->{$column['text']})) !!}
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+
+        @if(!empty($hfamily->textseven))
+            @php $hasFamilyContent = true; @endphp
+            <div class="ceremony-card {{ $familyBg ? 'has-bg' : '' }}"
+                 style="@if($familyBg) --bg-url: url('{{ asset('storage/' . $hfamily->background->image_path) }}'); @endif border-left: 4px solid var(--primary, #e67e22); mb-3;">
+                <div class="card-content">
+                    <h4 class="ceremony-title">A Message From The Hosts</h4>
+                    <div class="details-row text-row" style="font-style: italic; font-size: 1.05rem; margin-top: 10px;">
+                        <span>✉️</span> {!! nl2br(e($hfamily->textseven)) !!}
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(!$hasFamilyContent)
+            <p style="text-align:center; color: var(--gray, #7f8c8d); padding: 40px; background: #fff; border-radius: 20px;">
+                No family records have been customized yet.
+            </p>
+        @endif
+
+    @else
+        <p style="text-align:center; color: var(--gray, #7f8c8d); padding: 40px; background: #fff; border-radius: 20px;">
+            No family host details are scheduled for this wedding event.
+        </p>
+    @endif
+</div>
     <!-- Sticky Affirmation Footer Controls -->
     @if($status == 'pending')
     <div class="floating-rsvp">

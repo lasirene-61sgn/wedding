@@ -471,6 +471,12 @@
                     <i class="bi bi-person-gear"></i> Profile Settings
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="{{ route('host.hfamily.index') }}" class="nav-link {{ request()->routeIs('host.hfamily.*') ? 'active' : '' }}">
+                    <i class="bi bi-person-gear"></i> Host Family Details
+                </a>
+            </li>
         </ul>
 
         <div class="sidebar-footer">
