@@ -7,6 +7,8 @@ use App\Models\Host;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -28,12 +30,12 @@ class HostLoginController extends Controller
             $user = Auth::guard('host')->user();
             if ($user->status !== 'active') {
                 Auth::guard('host')->logout();
-                return redirect()->back()->withInput($request->only('email'))->with('error', 'Your Accoutn is Suspended');
+                return redirect()->back()->withInput($request->only('email'))->with('error', 'Your Account is Suspended');
             }
             $request->session()->regenerate();
             return redirect()->route('host.dashboard')->with('Success', 'Login Success');
         }
-        return redirect()->route('host.login')->with('Errror', 'Invalid Crdentials');
+        return redirect()->route('host.login')->with('Errror', 'Invalid Credentials');
     }
 
     public function logout(Request $request)
@@ -53,26 +55,129 @@ class HostLoginController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:host,email', // Added unique check
+            'email' => 'required|email|unique:host,email',
             'password' => 'required|string|min:8',
             'mobile' => 'required|numeric|unique:host,mobile',
         ]);
 
-        $defaultModules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
+        $otp = rand(100000, 999999);
 
-        $defaultPermissionSlugs = array_map(fn($module) => Str::slug($module), $defaultModules);
-
-        $host = Host::create([
+        $request->session()->put('register_data', [
             'name' => $request->name,
             'email' => $request->email,
-            'status' => 'active',
             'password' => Hash::make($request->password),
             'mobile' => $request->mobile,
-            'is_password_set' => true, // Manual users already set their password
+            'otp' => $otp,
         ]);
 
+        // FIX: Match case structure precisely (sendWhatsAppOtp)
+        $smsSent = $this->sendWhatsAppOtp($request->mobile, $otp);
+
+        if (!$smsSent) {
+            return redirect()->back()->withInput()->with('error', 'Failed to send otp to your mobile number');
+        }
+
+        return redirect()->route('host.verify.form')->with('success', 'Code Sent successful!');
+    }
+
+    public function showVerifyForm()
+    {
+        if (!session()->has('register_data')) {
+            return redirect()->route('host.register');
+        }
+        return view('host.verify-otp');
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|numeric',
+        ]);
+        
+        $sessionData = $request->session()->get('register_data');
+
+        if (!$sessionData) {
+            return redirect()->route('host.register')->with('error', 'Session expired, Register Again');
+        }
+
+        if ($request->otp != $sessionData['otp']) {
+            return redirect()->back()->with('error', 'invalid verification code');
+        }
+
+        $defaultModules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
+        $defaultPermissionSlugs = array_map(fn($module) => Str::slug($module), $defaultModules);
+
+        // FIX: Read registration properties from $sessionData instead of raw $request input
+        $host = Host::create([
+            'name' => $sessionData['name'],
+            'email' => $sessionData['email'],
+            'status' => 'active',
+            'password' => $sessionData['password'], // Already Hashed in step 1
+            'mobile' => $sessionData['mobile'],
+            'is_password_set' => true,
+        ]);
+
+        session()->forget('register_data');
         auth()->guard('host')->login($host);
-        return redirect()->route('host.packages.index')->with('success', 'Registration successful!');
+        return redirect()->route('host.packages.index')->with('success', 'Registered Successfully');
+    }
+
+    protected function sendWhatsAppOtp($mobileNumber, $otp)
+    {
+        try {
+            $cleanNumber = preg_replace('/[^0-9]/', '', $mobileNumber);
+            if (strlen($cleanNumber) === 10) {
+                $cleanNumber = '91' . $cleanNumber;
+            }
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'authkey' => config('services.msg91.auth_key'),
+            ])->post('https://control.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', [
+                'integrated_number' => config('services.msg91.integrated_number'),
+                'content_type' => 'template',
+                'payload' => [
+                    'messaging_product' => 'whatsapp',
+                    'type' => 'template',
+                    'template' => [
+                        'name' => 'logintest',
+                        'language' => [
+                            'code' => 'en',
+                            'policy' => 'deterministic'
+                        ],
+                        'namespace' => 'bc3735fb_a2e9_4e83_8b62_377bca25c09f',
+                        'to_and_components' => [
+                            [
+                                'to' => [
+                                    $cleanNumber
+                                ],
+                                'components' => [
+                                    'body_1' => [
+                                        'type' => 'text',
+                                        'value' => (string)$otp
+                                    ],
+                                    'button_1' => [
+                                        'subtype' => 'url',
+                                        'type' => 'text',
+                                        'value' => (string)$otp
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+
+            if (!$response->successful()) {
+                Log::error('MSG91 API Error Response: ' . $response->body());
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('MSG91 Exception Error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public function redirectToGoogle()
@@ -98,18 +203,15 @@ class HostLoginController extends Controller
                     'permissions' => $defaultPermissions,
                 ]);
             } else {
-                // Update Google ID if they already existed
                 $host->update(['google_id' => $googleUser->getId()]);
             }
 
             Auth::guard('host')->login($host);
 
-            // Redirect logic
             if (!$host->is_password_set) {
                 return redirect()->route('host.set-password.view');
             }
 
-            // If they already have a package, go to dashboard, else go to packages
             return $host->package_id
                 ? redirect()->route('host.dashboard')
                 : redirect()->route('host.packages.index');
@@ -117,6 +219,7 @@ class HostLoginController extends Controller
             return redirect()->route('host.login')->with('error', 'Google authentication failed' . $e->getMessage());
         }
     }
+
     public function showSetPasswordForm()
     {
         return view('host.set-password');

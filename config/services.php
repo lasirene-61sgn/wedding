@@ -40,7 +40,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URL'),
     ],
     'msg91' => [
-        'authkey' => env('MSG91_AUTH_KEY'),
+        'auth_key' => env('MSG91_AUTH_KEY'),
+        'integrated_number' => env('MSG91_INTEGRATED_NUMBER'),
     ],
 
 ];

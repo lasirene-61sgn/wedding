@@ -111,6 +111,8 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
     Route::post('/login', [HostLoginController::class, 'login'])->name('login.submit');
     Route::get('/register', [HostLoginController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [HostLoginController::class, 'register'])->name('register.submit');
+    Route::get('/register/verify-otp', [HostLoginController::class, 'showVerifyForm'])->name('verify.form');
+    Route::post('/register/verify-otp', [HostLoginController::class, 'verifyOtp'])->name('verify.submit');
     Route::get('/auth/google', [HostLoginController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('/auth/google/callback', [HostLoginController::class, 'handleGoogleCallback']);
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');

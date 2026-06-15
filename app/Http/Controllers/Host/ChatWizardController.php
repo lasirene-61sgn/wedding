@@ -100,7 +100,7 @@ class ChatWizardController extends Controller
     {
         $request->validate([
             'invitation_id' => 'required|exists:invitations,id',
-            'image' => 'required|image|mimes:jpg,jpeg,webp,gif,avif,svg|max:4048',
+            'image' => 'required|image|max:4048',
             'message' => 'nullable|string|max:100',
         ]);
 

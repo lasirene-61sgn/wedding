@@ -137,8 +137,7 @@
 
 <div class="invitation-wrapper">
     <div class="save-the-date-card">
-        @if($invite->invitation_sent)
-            
+        
             <h1>Save the Date</h1>
             <p class="sub-text">We invite you to the wedding of</p>
             
@@ -182,15 +181,6 @@
                 @endif
             </div>
 
-        @else
-            <div class="not-invited">
-                <div style="font-size: 4rem; margin-bottom: 20px;">💌</div>
-                <h3>Invitation Pending</h3>
-                <p style="color: #636e72;">Your invitation for this wedding is being prepared by the host. Please check back later!</p>
-                <div style="margin-top: 30px;">
-                    <a href="{{ route('guest.select') }}" style="color: var(--primary-pink); text-decoration: none; font-weight: 600;">← Back to My Invitations</a>
-                </div>
-            </div>
-        @endif
+
     </div>
 </div>

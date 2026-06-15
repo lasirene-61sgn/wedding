@@ -12,10 +12,13 @@ class GuestRSVPController extends Controller
      */
     public function showPortal($id)
     {
-        $guest = GuestList::with('ceramony')->findOrFail($id);
+        $guest = GuestList::findOrFail($id);
 
-        // Fix: Point directly to guest/selection.blade.php
-        return view('guest.selection', compact('guest'));
+        // Auto-login the guest by saving their phone number in the session
+        session(['guest_phone' => $guest->guest_number]);
+
+        // Redirect to their invitation selection page where they can see their RSVP options
+        return redirect()->route('guest.select');
     }
 
     /**
@@ -28,7 +31,7 @@ class GuestRSVPController extends Controller
         ]);
 
         $guest = GuestList::findOrFail($id);
-        
+
         $guest->update([
             'rsvp_status' => $request->rsvp_status
         ]);

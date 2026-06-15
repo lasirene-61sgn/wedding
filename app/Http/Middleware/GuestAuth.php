@@ -13,11 +13,12 @@ class GuestAuth
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
-        if(!session()->has('guest_phone')){
-            return redirect()->route('guest.login')->with('error', 'Login First');
-        }
-        return $next($request);
+    public function handle($request, Closure $next)
+{
+    if (!session()->has('guest_phone')) {
+        return redirect()->route('guest.login')->with('error', 'Please login first.');
     }
+
+    return $next($request); // 100% vital to let the request reach selectWedding()
+}
 }

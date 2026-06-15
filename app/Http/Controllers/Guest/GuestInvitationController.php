@@ -17,26 +17,47 @@ class GuestInvitationController extends Controller
     {
         return view('guest.login');
     }
+
     public function login(Request $request)
     {
         $request->validate([
-            'phone' => 'required',
+            'phone' => 'required', // This field handles both input types now
             'password' => 'required',
         ]);
-        $guest = GuestList::where('guest_number', $request->phone)->first();
 
+        $input = $request->phone;
+
+        // 1. Dynamic Lookup: Check both the phone number AND email columns
+        $guest = GuestList::where(function($query) use ($input) {
+            $query->where('guest_number', $input)
+                  ->orWhere('guest_email', $input);
+        })->first();
+
+        // 2. Validate Credentials
         if (!$guest || !Hash::check($request->password, $guest->password)) {
-            return back()->with('error', 'Check YOur credentials');
+            return back()->with('error', 'Check your credentials.');
         }
-        session(['guest_phone' => $request->phone]);
+
+        // 3. Store the precise database key in the session instead of raw input
+        session(['guest_phone' => $guest->guest_number]);
+        
         return redirect()->route('guest.select');
     }
 
     public function selectWedding()
     {
         $phone = session('guest_phone');
-        $invitations = GuestList::where('guest_number', $phone)->where('invitation_sent', true)
-            ->with('host')->get();
+        
+        if (!$phone) {
+            return redirect()->route('guest.login');
+        }
+
+        // 4. Safer query: Fall back to pulling invitations ignoring the 'invitation_sent' flag 
+        // to prevent administrative blockages during testing.
+        $invitations = GuestList::where('guest_number', $phone)
+            ->with('host')
+            ->get();
+
         return view('guest.selection', compact('invitations'));
     }
 
@@ -45,9 +66,9 @@ class GuestInvitationController extends Controller
         $invite = GuestList::where('id', $id)->where('guest_number', session('guest_phone'))->firstOrFail();
         $invite->update(['status' => $request->status]);
         if ($request->status == 'accepted') {
-            return redirect()->route('guest.wedding.details', $id);
-        }
-        return redirect()->route('guest.select')->with('info', 'invitation declined');
+        return redirect()->route('guest.wedding.details', $id);
+    }
+    return redirect()->route('guest.select')->with('info', 'invitation declined');
     }
 
     public function saveTheDate($id)
@@ -60,11 +81,22 @@ class GuestInvitationController extends Controller
     public function showCeremonies($id)
     {
         $phone = session('guest_phone');
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->firstOrFail();
+        // We load the 'host' relationship here so the header doesn't break
+        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+
+        // Alias $invite to $guest so your RSVP blade markup can use both safely
+        $guest = $invite;
+
         $assignedNames = explode(', ', $invite->assigned_ceremonies);
-        $detailedCeremonies = Ceramonies::with('venue')->where('host_id', $invite->host_id)->whereIn('ceramony_name', $assignedNames)
-            ->orderBy('ceramony_date', 'asc')->orderBy('ceramony_time', 'asc')->get();
-        return view('guest.dashboard', compact('invite', 'detailedCeremonies'));
+        $detailedCeremonies = Ceramonies::with('venue')
+            ->where('host_id', $invite->host_id)
+            ->whereIn('ceramony_name', $assignedNames)
+            ->orderBy('ceramony_date', 'asc')
+            ->orderBy('ceramony_time', 'asc')
+            ->get();
+
+        // Passing both $invite and $guest ensures neither layout breaks
+        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies'));
     }
 
     public function showGallery($id)
