@@ -90,12 +90,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::resource('package', PackageSelectController::class);
         Route::resource('categoryvenue', CategoryVenueController::class);
         Route::resource('ceramony', CeramonyController::class);
+        Route::get('/backgrounds', [CeramonyController::class, 'manageBackgrounds'])->name('ceramony.backgrounds.index');
+        Route::post('/backgrounds', [CeramonyController::class, 'storeBackgrounds'])->name('ceramony.backgrounds.store');
+        Route::delete('/backgrounds/{id}', [CeramonyController::class, 'destroyBackground'])->name('ceramony.backgrounds.destroy');
         Route::resource('invitation', HostInvitationController::class);
         Route::get('/guestlist', [AdminGuestListController::class, 'index'])->name('guestlist.index');
         Route::get('/guestlist/{id}', [AdminGuestListController::class, 'show'])->name('guestlist.show');
         Route::get('/guestlist/{id}/edit', [AdminGuestListController::class, 'edit'])->name('guestlist.edit');
         Route::put('/guestlist/{id}/update', [AdminGuestListController::class, 'update'])->name('guestlist.update');
-        Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.forceDelete');
+        Route::delete('/guestlist/{id}/delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.destroy');
+        Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
         Route::resource('venue', AdminVenueController::class);
     });
 
@@ -208,11 +212,9 @@ Route::prefix('guest')->name('guest.')->group(function () {
         Route::get('/wedding/{id}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
         Route::post('/wedding/{id}/status', [GuestInvitationController::class, 'updateStatus'])->name('update_status');
 
-        // PROTECTED ROUTES: Only visible if status == 'accepted'
-        Route::middleware(['guest.accepted'])->group(function () {
-            Route::get('/wedding/{id}/ceremonies', [GuestInvitationController::class, 'showCeremonies'])->name('wedding.details');
-            Route::get('/wedding/{id}/gallery', [GuestInvitationController::class, 'showGallery'])->name('gallery');
-        });
+        // Dashboard and Gallery routes (always accessible now)
+        Route::get('/wedding/{id}/ceremonies', [GuestInvitationController::class, 'showCeremonies'])->name('wedding.details');
+        Route::get('/wedding/{id}/gallery', [GuestInvitationController::class, 'showGallery'])->name('gallery');
     });
 });
 

@@ -10,6 +10,7 @@
         <a href="{{ route('host.ceramony.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
             <i class="bi bi-plus-lg me-2"></i>Add New Ceremony
         </a>
+        
     </div>
 
     @if(session('success'))

@@ -156,15 +156,9 @@
                 Celebrating the wedding of <strong>{{ $invite->host->bride_name }}</strong> & <strong>{{ $invite->host->groom_name }}</strong>
             </p>
 
-            @if($status === 'accepted')
             <a href="{{ route('guest.wedding.details', $invite->id) }}" class="btn-view">
                 Open Invitation Dashboard
             </a>
-            @else
-            <a href="{{ route('guest.save_the_date', $invite->id) }}" class="btn-view">
-                View & Respond to Invitation
-            </a>
-            @endif
         </div>
         @endforeach
         @else
@@ -175,13 +169,13 @@
         @endif
     </div>
     <!-- TEMPORARY DEBUGGING BLOCK: Remove this after finding the issue -->
-<div style="background: #333; color: #fff; padding: 15px; margin-bottom: 20px; text-align: left; font-family: monospace; border-radius: 10px; font-size: 0.85rem;">
+    <!-- <div style="background: #333; color: #fff; padding: 15px; margin-bottom: 20px; text-align: left; font-family: monospace; border-radius: 10px; font-size: 0.85rem;">
     <strong>Debug Session Data:</strong><br>
     • Session 'guest_phone' value: <span style="color: #ff9f43;">"{{ session('guest_phone') }}"</span><br>
     • Invitations Count from Controller: <span style="color: #ff9f43;">{{ isset($invitations) ? $invitations->count() : 'Not Set' }}</span><br>
     <br>
     <strong>Troubleshooting Step:</strong> Check your database table. Does a row exist where the column <code>guest_number</code> matches the orange value above exactly?
-</div>
+</div> -->
 
 </body>
 

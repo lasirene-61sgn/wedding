@@ -17,8 +17,8 @@ class GuestRSVPController extends Controller
         // Auto-login the guest by saving their phone number in the session
         session(['guest_phone' => $guest->guest_number]);
 
-        // Redirect to their invitation selection page where they can see their RSVP options
-        return redirect()->route('guest.select');
+        // Redirect to their invitation dashboard
+        return redirect()->route('guest.wedding.details', $guest->id);
     }
 
     /**

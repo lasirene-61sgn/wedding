@@ -1,6 +1,20 @@
 @extends('layouts.host')
 
 @section('content')
+<style>
+    /* Hides the ugly default radio button dot */
+    .cursor-pointer input[type="radio"] {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    /* Changes the card border smoothly when selected */
+    .cursor-pointer:has(input[type="radio"]:checked) {
+        border: 2px solid var(--pink-primary, #d63384) !important;
+        background-color: #fff5f8;
+        box-shadow: 0 4px 12px rgba(214, 51, 132, 0.15);
+    }
+</style>
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -13,18 +27,19 @@
                     <form action="{{ route('host.ceramony.update', $ceramony->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Category</label>
                                 <select name="category_id" class="form-select" required>
                                     @foreach($categories as $cat)
-                                        <option value="{{ $cat->id }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
-                                            {{ $cat->category_name }}
-                                        </option>
+                                    <option value="{{ $cat->id }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->category_name }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
+                            
 
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Venue Location</label>
@@ -32,20 +47,20 @@
                                     <select name="venue_id" id="venue_select" class="form-select">
                                         <option value="">-- Select Venue --</option>
                                         @foreach($venues as $v)
-                                            <option value="{{ $v->id }}" 
-                                                data-name="{{ $v->venue_name }}"
-                                                data-address="{{ $v->venue_address }}"
-                                                data-pin="{{ $v->pincode }}"
-                                                data-area="{{ $v->area_name }}"
-                                                data-district="{{ $v->district }}"
-                                                data-state="{{ $v->state }}"
-                                                data-country="{{ $v->country }}"
-                                                data-circle="{{ $v->circle }}"
-                                                data-landmark="{{ $v->wedding_location }}"
-                                                data-map="{{ $v->location_map }}"
-                                                {{ $ceramony->venue_id == $v->id ? 'selected' : '' }}>
-                                                {{ $v->venue_name }}
-                                            </option>
+                                        <option value="{{ $v->id }}"
+                                            data-name="{{ $v->venue_name }}"
+                                            data-address="{{ $v->venue_address }}"
+                                            data-pin="{{ $v->pincode }}"
+                                            data-area="{{ $v->area_name }}"
+                                            data-district="{{ $v->district }}"
+                                            data-state="{{ $v->state }}"
+                                            data-country="{{ $v->country }}"
+                                            data-circle="{{ $v->circle }}"
+                                            data-landmark="{{ $v->wedding_location }}"
+                                            data-map="{{ $v->location_map }}"
+                                            {{ $ceramony->venue_id == $v->id ? 'selected' : '' }}>
+                                            {{ $v->venue_name }}
+                                        </option>
                                         @endforeach
                                     </select>
                                     <button type="button" class="btn btn-warning text-white" id="edit_venue_btn">Edit</button>
@@ -68,12 +83,30 @@
                                 <label class="form-label fw-bold">Time</label>
                                 <input type="time" name="ceramony_time" class="form-control" value="{{ $ceramony->ceramony_time }}">
                             </div>
+                            <div class="mb-3">
+    <label class="form-label d-block"><strong>Select Guest Panel Background Theme</strong></label>
+    <div class="row g-3">
+        @foreach($backgrounds as $bg)
+        <div class="col-6 col-md-3">
+            <label class="card h-100 text-center border p-2 position-relative cursor-pointer">
+                <input type="radio" name="selected_background_id" value="{{ $bg->id }}" class="position-absolute top-0 start-0 m-2"
+                    {{ (isset($ceramony) && $ceramony->selected_background_id == $bg->id) || (isset($invitation) && $invitation->selected_background_id == $bg->id) ? 'checked' : '' }}>
+
+                <img src="{{ asset('storage/' . $bg->image_path) }}" class="card-img-top img-fluid rounded" style="height: 120px; object-fit: cover;">
+            </label>
+        </div>
+        @endforeach
+    </div>
+    @error('selected_background_id')
+    <small class="text-danger d-block mt-2">{{ $message }}</small>
+    @enderror
+</div>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Banner Image</label>
                             @if($ceramony->ceramony_image)
-                                <div class="mb-2"><img src="{{ asset('storage/'.$ceramony->ceramony_image) }}" width="100" class="rounded border"></div>
+                            <div class="mb-2"><img src="{{ asset('storage/'.$ceramony->ceramony_image) }}" width="100" class="rounded border"></div>
                             @endif
                             <input type="file" name="ceramony_image" class="form-control">
                         </div>
@@ -122,107 +155,109 @@
     </div>
 </div>
 
-{{-- 
+{{--
     IMPORTANT: We use defer on scripts or place them at the end. 
     If your layout.host doesn't include Bootstrap JS, we add it here.
 --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Initialize the modal after the DOM and Bootstrap are loaded
-    const modalElement = document.getElementById('venueModal');
-    const venueModal = new bootstrap.Modal(modalElement);
+    document.addEventListener("DOMContentLoaded", function() {
+        // Initialize the modal after the DOM and Bootstrap are loaded
+        const modalElement = document.getElementById('venueModal');
+        const venueModal = new bootstrap.Modal(modalElement);
 
-    // 1. OPEN FOR NEW
-    document.getElementById('new_venue_btn').addEventListener('click', () => {
-        document.getElementById('venueForm').reset();
-        document.getElementById('v_id').value = '';
-        document.getElementById('v_area').innerHTML = '';
-        document.getElementById('modalTitle').innerText = "Add New Venue";
-        venueModal.show();
-    });
+        // 1. OPEN FOR NEW
+        document.getElementById('new_venue_btn').addEventListener('click', () => {
+            document.getElementById('venueForm').reset();
+            document.getElementById('v_id').value = '';
+            document.getElementById('v_area').innerHTML = '';
+            document.getElementById('modalTitle').innerText = "Add New Venue";
+            venueModal.show();
+        });
 
-    // 2. OPEN FOR EDIT
-    document.getElementById('edit_venue_btn').addEventListener('click', () => {
-        const select = document.getElementById('venue_select');
-        const opt = select.options[select.selectedIndex];
-        
-        if(!select.value) return alert("Please select a venue from the list first!");
+        // 2. OPEN FOR EDIT
+        document.getElementById('edit_venue_btn').addEventListener('click', () => {
+            const select = document.getElementById('venue_select');
+            const opt = select.options[select.selectedIndex];
 
-        document.getElementById('v_id').value = select.value;
-        document.getElementById('v_name').value = opt.dataset.name || '';
-        document.getElementById('v_address').value = opt.dataset.address || '';
-        document.getElementById('v_pincode').value = opt.dataset.pin || '';
-        document.getElementById('v_district').value = opt.dataset.district || '';
-        document.getElementById('v_state').value = opt.dataset.state || '';
-        document.getElementById('v_country').value = opt.dataset.country || 'India';
-        document.getElementById('v_circle').value = opt.dataset.circle || '';
-        document.getElementById('v_wedding_location').value = opt.dataset.landmark || '';
-        document.getElementById('v_location_map').value = opt.dataset.map || '';
+            if (!select.value) return alert("Please select a venue from the list first!");
 
-        const areaVal = opt.dataset.area;
-        const areaSelect = document.getElementById('v_area');
-        areaSelect.innerHTML = areaVal ? `<option value="${areaVal}" selected>${areaVal}</option>` : '';
-        
-        document.getElementById('modalTitle').innerText = "Update Venue Details";
-        venueModal.show();
-    });
+            document.getElementById('v_id').value = select.value;
+            document.getElementById('v_name').value = opt.dataset.name || '';
+            document.getElementById('v_address').value = opt.dataset.address || '';
+            document.getElementById('v_pincode').value = opt.dataset.pin || '';
+            document.getElementById('v_district').value = opt.dataset.district || '';
+            document.getElementById('v_state').value = opt.dataset.state || '';
+            document.getElementById('v_country').value = opt.dataset.country || 'India';
+            document.getElementById('v_circle').value = opt.dataset.circle || '';
+            document.getElementById('v_wedding_location').value = opt.dataset.landmark || '';
+            document.getElementById('v_location_map').value = opt.dataset.map || '';
 
-    // 3. PINCODE FETCH
-    document.getElementById('v_pincode').addEventListener('keyup', function() {
-        if(this.value.length === 6) {
-            fetch(`https://api.postalpincode.in/pincode/${this.value}`)
+            const areaVal = opt.dataset.area;
+            const areaSelect = document.getElementById('v_area');
+            areaSelect.innerHTML = areaVal ? `<option value="${areaVal}" selected>${areaVal}</option>` : '';
+
+            document.getElementById('modalTitle').innerText = "Update Venue Details";
+            venueModal.show();
+        });
+
+        // 3. PINCODE FETCH
+        document.getElementById('v_pincode').addEventListener('keyup', function() {
+            if (this.value.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${this.value}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data[0].Status === "Success") {
+                            let offices = data[0].PostOffice;
+                            let area = document.getElementById('v_area');
+                            area.innerHTML = '';
+                            offices.forEach(o => {
+                                area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`;
+                            });
+                            document.getElementById('v_district').value = offices[0].District;
+                            document.getElementById('v_state').value = offices[0].State;
+                            document.getElementById('v_country').value = offices[0].Country;
+                            document.getElementById('v_circle').value = offices[0].Circle;
+                        }
+                    });
+            }
+        });
+
+        // 4. SAVE/UPDATE VIA AJAX
+        document.getElementById('saveVenueBtn').addEventListener('click', function() {
+            const form = document.getElementById('venueForm');
+            const formData = new FormData(form);
+            const id = document.getElementById('v_id').value;
+
+            let url = id ? `/host/venue/update/${id}` : "{{ route('host.venue.store') }}";
+
+            if (id) {
+                formData.append('_method', 'PUT');
+            }
+
+            fetch(url, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    }
+                })
                 .then(res => res.json())
                 .then(data => {
-                    if(data[0].Status === "Success") {
-                        let offices = data[0].PostOffice;
-                        let area = document.getElementById('v_area');
-                        area.innerHTML = '';
-                        offices.forEach(o => { area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`; });
-                        document.getElementById('v_district').value = offices[0].District;
-                        document.getElementById('v_state').value = offices[0].State;
-                        document.getElementById('v_country').value = offices[0].Country;
-                        document.getElementById('v_circle').value = offices[0].Circle;
+                    if (data.id) {
+                        location.reload();
+                    } else {
+                        alert("Error saving venue. Check console.");
+                        console.log(data);
                     }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Something went wrong!");
                 });
-        }
-    });
-
-    // 4. SAVE/UPDATE VIA AJAX
-    document.getElementById('saveVenueBtn').addEventListener('click', function() {
-        const form = document.getElementById('venueForm');
-        const formData = new FormData(form);
-        const id = document.getElementById('v_id').value;
-        
-        let url = id ? `/host/venue/update/${id}` : "{{ route('host.venue.store') }}";
-        
-        if(id) {
-            formData.append('_method', 'PUT'); 
-        }
-
-        fetch(url, {
-            method: "POST", 
-            body: formData,
-            headers: { 
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.id) {
-                location.reload(); 
-            } else {
-                alert("Error saving venue. Check console.");
-                console.log(data);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Something went wrong!");
         });
     });
-});
 </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Host;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryVenue;
 use App\Models\Ceramonies;
+use App\Models\CeramonyBackground;
 use App\Models\VenueName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,8 @@ class CeramonyController extends Controller
     {
         $categories = CategoryVenue::all();
         $venues = VenueName::where('host_id', Auth::id())->get();
-        return view('host.ceramony.create', compact('categories', 'venues'));
+        $backgrounds = CeramonyBackground::all();
+        return view('host.ceramony.create', compact('categories', 'venues', 'backgrounds'));
     }
 
     public function store(Request $request)
@@ -34,6 +36,7 @@ class CeramonyController extends Controller
             'ceramony_date'  => 'nullable|date',
             'ceramony_time'  => 'nullable',
             'ceramony_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
         ]);
         if ($request->venue_id) {
             $checkVenue = VenueName::where('id', $request->venue_id)->where('host_id', Auth::id())->first();
@@ -59,7 +62,8 @@ class CeramonyController extends Controller
         }
         $categories = CategoryVenue::all();
         $venues = VenueName::where('host_id', Auth::id())->get();
-        return view('host.ceramony.edit', compact('categories', 'ceramony', 'venues'));
+        $backgrounds = CeramonyBackground::all();
+        return view('host.ceramony.edit', compact('categories', 'ceramony', 'venues', 'backgrounds'));
     }
 
     public function update(Request $request, Ceramonies $ceramony)
@@ -74,6 +78,7 @@ class CeramonyController extends Controller
             'ceramony_date'  => 'nullable|date',
             'ceramony_time'  => 'nullable',
             'ceramony_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
         ]);
 
         if ($request->hasFile('ceramony_image')) {

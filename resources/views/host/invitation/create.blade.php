@@ -76,6 +76,24 @@
                                 <div class="mb-2"><label>Email</label><input type="email" name="bride_email" class="form-control" required></div>
                                 <div class="mb-2"><label>Father's Name</label><input type="text" name="bride_father_name" class="form-control" required></div>
                                 <div class="mb-2"><label>Mother's Name</label><input type="text" name="bride_mother_name" class="form-control" required></div>
+                                <div class="mb-3">
+                                <label class="form-label d-block"><strong>Select Guest Panel Background Theme</strong></label>
+                                <div class="row g-3">
+                                    @foreach($backgrounds as $bg)
+                                    <div class="col-6 col-md-3">
+                                        <label class="card h-100 text-center border p-2 position-relative cursor-pointer">
+                                            <input type="radio" name="selected_background_id" value="{{ $bg->id }}" class="position-absolute top-0 start-0 m-2"
+                                                {{ (isset($ceramony) && $ceramony->selected_background_id == $bg->id) ? 'checked' : '' }}>
+
+                                            <img src="{{ asset('storage/' . $bg->image_path) }}" class="card-img-top img-fluid rounded" style="height: 120px; object-fit: cover;">
+                                        </label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @error('selected_background_id')
+                                <small class="text-danger d-block mt-2">{{ $message }}</small>
+                                @enderror
+                            </div>
                             </div>
                         </div>
                     </div>

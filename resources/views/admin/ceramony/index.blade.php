@@ -12,6 +12,9 @@
             </svg>
             Create Ceremony
         </a>
+        <a href="{{ route('admin.ceramony.backgrounds.index') }}" class="btn btn-info text-black">
+            <i class="fa fa-images"></i> Manage Background Images
+        </a>
     </div>
 
     <!-- Data Table Container -->

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('host_id')->constrained('host')->onDelete('cascade');
             $table->foreignId('venue_id')->constrained('venue_names')->onDelete('cascade');
+            $table->foreignId('selected_background_id')->nullable()->constrained('ceramony_backgrounds')->nullOnDelete();
             $table->enum('invite',['brideparents', 'groomparents', 'bride', 'groom', 'weddingcouple']);
             $table->string('bride_name');
             $table->string('bride_number');

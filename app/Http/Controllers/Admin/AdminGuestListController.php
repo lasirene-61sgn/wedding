@@ -94,6 +94,13 @@ class AdminGuestListController extends Controller
         return redirect()->route('admin.guestlist.index')->with('Success', 'Guest List Updated');
     }
 
+    public function destroy($id)
+    {
+        $guest = GuestList::findOrFail($id);
+        $guest->delete();
+        return redirect()->route('admin.guestlist.index')->with('success', 'Guest Trashed Successfully');
+    }
+
     public function forceDelete($id)
     {
         $guest = GuestList::withTrashed()->findOrFail($id);

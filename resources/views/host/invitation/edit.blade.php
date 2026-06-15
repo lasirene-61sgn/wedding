@@ -8,13 +8,13 @@
     </div>
 
     @if ($errors->any())
-        <div class="alert alert-danger shadow-sm">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="alert alert-danger shadow-sm">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     <div class="row">
@@ -23,7 +23,7 @@
             <form action="{{ route('host.invitation.update', $invitation->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="card mb-4 shadow-sm border-0 bg-light">
                     <div class="card-body">
                         <div class="row">
@@ -31,7 +31,7 @@
                                 <label class="form-label fw-bold">Invitation Sent By</label>
                                 <select name="invite" id="invite_dropdown" class="form-select watch-input" required>
                                     @foreach(['brideparents' => "Bride's Parents", 'groomparents' => "Groom's Parents", 'bride' => 'Bride', 'groom' => 'Groom', 'weddingcouple' => 'Wedding Couple'] as $key => $label)
-                                        <option value="{{ $key }}" {{ $invitation->invite == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                    <option value="{{ $key }}" {{ $invitation->invite == $key ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -41,18 +41,18 @@
                                     <select name="venue_id" id="venue_dropdown" class="form-select watch-input" required>
                                         <option value="">-- Select Venue --</option>
                                         @foreach($venues as $venue)
-                                            <option value="{{ $venue->id }}" 
-                                                data-name="{{ $venue->venue_name }}"
-                                                data-pin="{{ $venue->pincode }}"
-                                                data-area="{{ $venue->area_name }}"
-                                                data-district="{{ $venue->district }}"
-                                                data-state="{{ $venue->state }}"
-                                                data-addr="{{ $venue->venue_address }}"
-                                                data-landmark="{{ $venue->wedding_location }}"
-                                                data-map="{{ $venue->location_map }}"
-                                                {{ $invitation->venue_id == $venue->id ? 'selected' : '' }}>
-                                                {{ $venue->venue_name }}
-                                            </option>
+                                        <option value="{{ $venue->id }}"
+                                            data-name="{{ $venue->venue_name }}"
+                                            data-pin="{{ $venue->pincode }}"
+                                            data-area="{{ $venue->area_name }}"
+                                            data-district="{{ $venue->district }}"
+                                            data-state="{{ $venue->state }}"
+                                            data-addr="{{ $venue->venue_address }}"
+                                            data-landmark="{{ $venue->wedding_location }}"
+                                            data-map="{{ $venue->location_map }}"
+                                            {{ $invitation->venue_id == $venue->id ? 'selected' : '' }}>
+                                            {{ $venue->venue_name }}
+                                        </option>
                                         @endforeach
                                     </select>
                                     <button type="button" class="btn btn-primary" id="btn_add_venue">+ Add</button>
@@ -81,6 +81,7 @@
                                 <div class="mb-2"><label>Email Address</label><input type="email" name="bride_email" value="{{ $invitation->bride_email }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Father's Name</label><input type="text" name="bride_father_name" value="{{ $invitation->bride_father_name }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Mother's Name</label><input type="text" name="bride_mother_name" value="{{ $invitation->bride_mother_name }}" class="form-control watch-input" required></div>
+
                             </div>
                         </div>
                     </div>
@@ -105,6 +106,24 @@
                         <div class="row">
                             <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" name="wedding_date" value="{{ $invitation->wedding_date }}" class="form-control watch-input" required></div>
                             <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" name="wedding_time" value="{{ $invitation->wedding_time }}" class="form-control watch-input" required></div>
+                            <div class="mb-3">
+                                <label class="form-label d-block"><strong>Select Guest Panel Background Theme</strong></label>
+                                <div class="row g-3">
+                                    @foreach($backgrounds as $bg)
+                                    <div class="col-6 col-md-3">
+                                        <label class="card h-100 text-center border p-2 position-relative cursor-pointer">
+                                            <input type="radio" name="selected_background_id" value="{{ $bg->id }}" class="position-absolute top-0 start-0 m-2"
+                                                {{ (isset($ceramony) && $ceramony->selected_background_id == $bg->id) || (isset($invitation) && $invitation->selected_background_id == $bg->id) ? 'checked' : '' }}>
+
+                                            <img src="{{ asset('storage/' . $bg->image_path) }}" class="card-img-top img-fluid rounded" style="height: 120px; object-fit: cover;">
+                                        </label>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @error('selected_background_id')
+                                <small class="text-danger d-block mt-2">{{ $message }}</small>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -133,15 +152,15 @@
                         <div id="invitation_card" class="invitation-card-preview theme-{{ $invitation->theme }}">
                             <div class="preview-content">
                                 <span class="text-uppercase small mb-2" style="letter-spacing: 3px; font-weight: 600;">You're Invited</span>
-                                
+
                                 <div class="decorative-divider"></div>
-                                
+
                                 <h1 id="p_bride" class="h2 fw-bold mb-0">{{ $invitation->bride_name ?: 'Bride' }}</h1>
                                 <p class="h4 my-1" style="font-family: 'Dancing Script', cursive;">&</p>
                                 <h1 id="p_groom" class="h2 fw-bold mb-3">{{ $invitation->groom_name ?: 'Groom' }}</h1>
-                                
+
                                 <div class="decorative-divider"></div>
-                                
+
                                 <div class="mb-3">
                                     <p id="p_date" class="fw-bold mb-0" style="font-size: 1.05rem;">📅 Date: {{ $invitation->wedding_date ? date('d/m/Y', strtotime($invitation->wedding_date)) : '--/--/----' }}</p>
                                     <p id="p_time" class="small" style="opacity: 0.9;">🕐 Time: {{ $invitation->wedding_time ?: '--:--' }}</p>
@@ -157,7 +176,7 @@
                                     @endif
                                 </div>
                                 <p id="p_venue_placeholder" class="small text-muted mt-3" style="{{ $invitation->venue_id ? 'display:none;' : '' }}">✨ Select a venue to preview details</p>
-                                
+
                                 <div style="margin-top: 15px; font-size: 0.75rem; opacity: 0.7; font-style: italic;">
                                     Designed with ❤️ for your special day
                                 </div>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->boolean('is_main')->default(false);
             $table->foreignId('host_id')->constrained('host')->onDelete('cascade');
             $table->foreignId('category_id')->constrained('category_venues')->onDelete('cascade');
+            $table->foreignId('selected_background_id')->nullable()->constrained('ceramony_backgrounds')->nullOnDelete();
             $table->unsignedBigInteger('venue_id')->nullable();
             $table->foreign('venue_id')
                 ->references('id')

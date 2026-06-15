@@ -9,16 +9,34 @@
         <div class="card-body">
             <form action="{{ route('host.ceramony.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Category</label>
                         <select name="category_id" class="form-select" required>
                             <option value="">-- Select Type --</option>
                             @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                            <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label d-block"><strong>Select Guest Panel Background Theme</strong></label>
+                        <div class="row g-3">
+                            @foreach($backgrounds as $bg)
+                            <div class="col-6 col-md-3">
+                                <label class="card h-100 text-center border p-2 position-relative cursor-pointer">
+                                    <input type="radio" name="selected_background_id" value="{{ $bg->id }}" class="position-absolute top-0 start-0 m-2"
+                                        {{ (isset($ceramony) && $ceramony->selected_background_id == $bg->id) ? 'checked' : '' }}>
+
+                                    <img src="{{ asset('storage/' . $bg->image_path) }}" class="card-img-top img-fluid rounded" style="height: 120px; object-fit: cover;">
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                        @error('selected_background_id')
+                        <small class="text-danger d-block mt-2">{{ $message }}</small>
+                        @enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Select Venue</label>
@@ -26,7 +44,7 @@
                             <select name="venue_id" id="venue_select" class="form-select">
                                 <option value="">-- Choose My Venue --</option>
                                 @foreach($venues as $v)
-                                    <option value="{{ $v->id }}">{{ $v->venue_name }}</option>
+                                <option value="{{ $v->id }}">{{ $v->venue_name }}</option>
                                 @endforeach
                             </select>
                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addVenueModal">
@@ -126,53 +144,55 @@
 </div>
 
 <script>
-// PINCODE API FETCHING
-document.getElementById('v_pincode').addEventListener('keyup', function() {
-    let pin = this.value;
-    if (pin.length === 6) {
-        document.getElementById('pin_load').style.display = 'block';
-        fetch(`https://api.postalpincode.in/pincode/${pin}`)
+    // PINCODE API FETCHING
+    document.getElementById('v_pincode').addEventListener('keyup', function() {
+        let pin = this.value;
+        if (pin.length === 6) {
+            document.getElementById('pin_load').style.display = 'block';
+            fetch(`https://api.postalpincode.in/pincode/${pin}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('pin_load').style.display = 'none';
+                    if (data[0].Status === "Success") {
+                        let offices = data[0].PostOffice;
+                        let area = document.getElementById('v_area');
+                        area.innerHTML = '';
+                        offices.forEach(o => {
+                            area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`;
+                        });
+                        document.getElementById('v_district').value = offices[0].District;
+                        document.getElementById('v_state').value = offices[0].State;
+                        document.getElementById('v_circle').value = offices[0].Circle;
+                        document.getElementById('v_country').value = offices[0].Country;
+                    }
+                });
+        }
+    });
+
+    // AJAX TO SAVE VENUE AND AUTO-SELECT IT
+    document.getElementById('saveVenueBtn').addEventListener('click', function() {
+        let formData = new FormData(document.getElementById('quickVenueForm'));
+
+        fetch("{{ route('host.venue.store') }}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
             .then(res => res.json())
             .then(data => {
-                document.getElementById('pin_load').style.display = 'none';
-                if (data[0].Status === "Success") {
-                    let offices = data[0].PostOffice;
-                    let area = document.getElementById('v_area');
-                    area.innerHTML = '';
-                    offices.forEach(o => {
-                        area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`;
-                    });
-                    document.getElementById('v_district').value = offices[0].District;
-                    document.getElementById('v_state').value = offices[0].State;
-                    document.getElementById('v_circle').value = offices[0].Circle;
-                    document.getElementById('v_country').value = offices[0].Country;
-                }
-            });
-    }
-});
+                // Add the new venue to the dropdown and select it
+                let select = document.getElementById('venue_select');
+                let option = new Option(data.venue_name, data.id, true, true);
+                select.add(option);
 
-// AJAX TO SAVE VENUE AND AUTO-SELECT IT
-document.getElementById('saveVenueBtn').addEventListener('click', function() {
-    let formData = new FormData(document.getElementById('quickVenueForm'));
-    
-    fetch("{{ route('host.venue.store') }}", {
-        method: "POST",
-        body: formData,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-    })
-    .then(res => res.json())
-    .then(data => {
-        // Add the new venue to the dropdown and select it
-        let select = document.getElementById('venue_select');
-        let option = new Option(data.venue_name, data.id, true, true);
-        select.add(option);
-        
-        // Close modal
-        var myModalEl = document.getElementById('addVenueModal');
-        var modal = bootstrap.Modal.getInstance(myModalEl);
-        modal.hide();
-    })
-    .catch(err => alert("Error saving venue. Make sure all fields are filled."));
-});
+                // Close modal
+                var myModalEl = document.getElementById('addVenueModal');
+                var modal = bootstrap.Modal.getInstance(myModalEl);
+                modal.hide();
+            })
+            .catch(err => alert("Error saving venue. Make sure all fields are filled."));
+    });
 </script>
 @endsection

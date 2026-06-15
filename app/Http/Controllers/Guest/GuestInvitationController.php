@@ -88,7 +88,7 @@ class GuestInvitationController extends Controller
         $guest = $invite;
 
         $assignedNames = explode(', ', $invite->assigned_ceremonies);
-        $detailedCeremonies = Ceramonies::with('venue')
+        $detailedCeremonies = Ceramonies::with('venue', 'background')
             ->where('host_id', $invite->host_id)
             ->whereIn('ceramony_name', $assignedNames)
             ->orderBy('ceramony_date', 'asc')

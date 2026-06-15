@@ -32,6 +32,7 @@ class Invitation extends Model
         'circle',
         'country',
         'wedding_image',
+        'selected_background_id',
         'theme',
         'is_main'
     ];

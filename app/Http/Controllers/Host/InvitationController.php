@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Host;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryVenue;
 use App\Models\Ceramonies;
+use App\Models\CeramonyBackground;
 use App\Models\Invitation;
 use App\Models\VenueName;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class InvitationController extends Controller
 
     public function create(){
         $venues = VenueName::where('host_id', Auth::id())->get();
-        return view('host.invitation.create', compact('venues'));
+        $backgrounds = CeramonyBackground::all();
+        return view('host.invitation.create', compact('venues', 'backgrounds'));
     }
     public function store(Request $request){
         $validated = $request->validate([
@@ -47,6 +49,7 @@ class InvitationController extends Controller
             // 'circle' => 'nullable',
             // 'country' => 'nullable',
             'wedding_image' => 'required|mimes:jpeg,png,svg,gif,webp,avif|max:3048',
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
         ]);
         $validated['host_id'] = Auth::id();
         $validated['is_main'] = false;
@@ -67,6 +70,7 @@ class InvitationController extends Controller
             'ceramony_time' =>  $invitation->wedding_time,
             'ceramony_image' => $invitation->wedding_image,
             'is_main' => true, 
+            'selected_background_id' => $invitation->selected_background_id,
         ]);
         return redirect()->route('host.invitation.index')->with('Message', 'Invitations Created');
     }
@@ -74,7 +78,8 @@ class InvitationController extends Controller
     public function edit($id){
         $invitation = Invitation::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
         $venues = VenueName::where('host_id', Auth::id())->get();
-        return view('host.invitation.edit', compact('invitation', 'venues'));
+        $backgrounds = CeramonyBackground::all();
+        return view('host.invitation.edit', compact('invitation', 'venues', 'backgrounds'));
     }
 
     public function update(Request $request, $id){
@@ -103,6 +108,7 @@ class InvitationController extends Controller
             // 'circle' => 'nullable',
             // 'country' => 'nullable',
             'wedding_image' => 'nullable|mimes:jpeg,png,svg,gif,webp,avif|max:3048',
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id',
         ]);
         $validated['host_id'] = Auth::id();
         if($request->hasFile('wedding_image')){
@@ -112,6 +118,18 @@ class InvitationController extends Controller
             $validated['wedding_image'] = $request->file('wedding_image')->store('wedding_images', 'public');
         }
         $invitation->update($validated);
+        $mainCeremonyName = 'Wedding: ' . $invitation->bride_name . '&' . $invitation->groom_name;
+    
+    \App\Models\Ceramonies::where('host_id', Auth::id())
+        ->where('is_main', true)
+        ->update([
+            'ceramony_name' => $mainCeremonyName,
+            'ceramony_date' => $invitation->wedding_date,
+            'ceramony_time' => $invitation->wedding_time,
+            'venue_id' => $invitation->venue_id,
+            'ceramony_image' => $invitation->wedding_image,
+            'selected_background_id' => $invitation->selected_background_id, // <-- Pushes the updated background theme out to the guest dashboard
+        ]);
         return redirect()->route('host.invitation.index')->with('Success', 'Invitation Updated Successfully');
     }
 }

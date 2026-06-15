@@ -12,8 +12,13 @@ class Ceramonies extends Model
 
     protected $fillable = [
         'host_id', 'category_id', 'ceramony_name', 'ceramony_date', 'ceramony_time', 
-        'venue_id', 'ceramony_image', 'is_main'
+        'selected_background_id', 'venue_id', 'ceramony_image', 'is_main'
     ];
+
+    public function background()
+    {
+        return $this->belongsTo(CeramonyBackground::class, 'selected_background_id');
+    }
     public function host(){
         return $this->belongsTo(Host::class, 'host_id');
     }
