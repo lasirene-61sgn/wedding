@@ -37,14 +37,26 @@ class HostFamilyController extends Controller
             'topic_title_three' => 'nullable',
             'topic_title_four' => 'nullable',
             'topic_title_five' => 'nullable',
-            'topic_tilte_six' => 'nullable',
+            'topic_title_six' => 'nullable',
             'selected_background_id' => 'nullable',
             'is_active' => 'nullable|boolean',
+            'text_color' => 'nullable',
+            'details_color' => 'nullable',
+            'text_positions' => 'nullable',
+            'custom_canvas_texts' => 'nullable',
         ]);
 
         $validated['host_id'] = Auth::id();
 
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+        
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true) ?? [];
+        }
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true) ?? [];
+        }
+
         HostFamilyDetails::create($validated);
         return redirect()->route('host.hfamily.index')->with('success', 'Host Family Created Successfully');
     }
@@ -76,11 +88,24 @@ class HostFamilyController extends Controller
             'topic_title_three' => 'nullable',
             'topic_title_four' => 'nullable',
             'topic_title_five' => 'nullable',
-            'topic_tilte_six' => 'nullable',
+            'topic_title_six' => 'nullable',
             'selected_background_id' => 'nullable',
             'is_active' => 'nullable|boolean',
+            'text_color' => 'nullable',
+            'details_color' => 'nullable',
+            'text_positions' => 'nullable',
+            'custom_canvas_texts' => 'nullable',
         ]);
+        
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true) ?? [];
+        }
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true) ?? [];
+        }
+
         $hfamily->update($validated);
 
         return redirect()->route('host.hfamily.index')->with('Success', 'Family Details Updated Successfully');

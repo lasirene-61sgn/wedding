@@ -34,7 +34,16 @@ class Invitation extends Model
         'wedding_image',
         'selected_background_id',
         'theme',
-        'is_main'
+        'is_main',
+        'text_color',
+        'details_color',
+        'text_positions',
+        'custom_canvas_texts'
+    ];
+
+    protected $casts = [
+        'text_positions' => 'array',
+        'custom_canvas_texts' => 'array',
     ];
 
     public function host()

@@ -1,5 +1,135 @@
 @extends('layouts.host')
-<link rel="stylesheet" href="{{ asset('css/hostinvitationcreate.css') }}">
+<style>
+    .ceremony-card-preview {
+        background-color: #fff9e6; 
+        border-radius: 24px;
+        overflow: hidden;
+        margin-bottom: 35px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+        aspect-ratio: 3 / 4; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: cover !important;
+    }
+    .ceremony-card-preview .card-content {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: auto !important;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        z-index: 2;
+    }
+    .ceremony-card-preview .ceremony-title {
+        font-family: 'Georgia', cursive, serif !important;
+        font-size: 2.2rem !important;
+        line-height: 1.2;
+        word-wrap: break-word;
+        font-weight: 600;
+        margin: 0 !important;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 1), -2px -2px 4px rgba(255, 255, 255, 1);
+        cursor: grab;
+        position: absolute;
+    }
+    .ceremony-card-preview .ceremony-title:active {
+        cursor: grabbing;
+    }
+    .ceremony-card-preview .details-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1.1rem !important;
+        margin: 0 !important;
+        font-weight: 600;
+        text-shadow: 1.5px 1.5px 3px rgba(255, 255, 255, 1), -1.5px -1.5px 3px rgba(255, 255, 255, 1);
+        cursor: grab;
+        position: absolute;
+    }
+    .ceremony-card-preview .details-row:active {
+        cursor: grabbing;
+    }
+    #preview_card_inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .draggable-text {
+        width: max-content;
+        min-width: 50px;
+        padding: 5px;
+        margin: 0;
+        line-height: 1.2;
+        cursor: grab;
+        position: absolute;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        transition: border 0.2s;
+    }
+    .draggable-text.selected {
+        border: 2px solid rgba(0, 123, 255, 0.5); /* Blue border for selected */
+    }
+    .draggable-text.editing-mode {
+        outline: none;
+        border: 2px dashed rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        cursor: text;
+    }
+    .draggable-text:active {
+        cursor: grabbing;
+    }
+    .canvas-toolbar {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #343a40;
+        border-radius: 8px;
+        padding: 6px 12px;
+        display: none;
+        gap: 8px;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 1000;
+        width: max-content;
+    }
+    .canvas-toolbar button, .canvas-toolbar select, .canvas-toolbar input {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+    .canvas-toolbar select {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+    }
+    .canvas-toolbar input[type="number"] {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+        width: 60px;
+    }
+    .canvas-toolbar button:hover {
+        background: rgba(255,255,255,0.2);
+    }
+</style>
 @section('content')
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -116,13 +246,26 @@
                     <div class="card-header bg-dark text-white fw-bold">Event Schedule</div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" name="wedding_date" class="form-control watch-input" required></div>
-                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" name="wedding_time" class="form-control watch-input" required></div>
+                            <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" id="wedding_date" name="wedding_date" class="form-control watch-input" required></div>
+                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" id="wedding_time" name="wedding_time" class="form-control watch-input" required></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Title Text Color</label>
+                                <input type="color" name="text_color" id="text_color" class="form-control form-control-color w-100" value="#b02663">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Details Text Color</label>
+                                <input type="color" name="details_color" id="details_color" class="form-control form-control-color w-100" value="#2b4c5e">
+                            </div>
                         </div>
                         <div class="mt-3">
                             <label class="fw-bold">Upload Invitation Image</label>
                             <input type="file" name="wedding_image" class="form-control" required>
                         </div>
+                        
+                        <input type="hidden" name="text_positions" id="text_positions" value="{}">
+                        <input type="hidden" name="custom_canvas_texts" id="custom_canvas_texts" value="{}">
                     </div>
                 </div>
 
@@ -130,41 +273,61 @@
             </form>
         </div>
 
-        <!-- PREVIEW SECTION - ENHANCED DESIGNS -->
+        <!-- Live Preview Side -->
         <div class="col-lg-5">
-            <div class="preview-sticky">
-                <div class="card border-0 shadow-lg">
-                    <div class="card-header bg-primary text-white text-center fw-bold">✨ Live Invitation Preview</div>
-                    <div class="card-body bg-secondary-subtle d-flex justify-content-center py-4">
-                        <div id="invitation_card" class="invitation-card-preview theme-classic">
-                            <div class="preview-content">
-                                <span class="text-uppercase small mb-2" style="letter-spacing: 3px; font-weight: 600;">You're Invited</span>
-                                
-                                <div class="decorative-divider"></div>
-                                
-                                <h1 id="p_bride" class="h2 fw-bold mb-0">Bride</h1>
-                                <p class="h4 my-1" style="font-family: 'Dancing Script', cursive;">&</p>
-                                <h1 id="p_groom" class="h2 fw-bold mb-3">Groom</h1>
-                                
-                                <div class="decorative-divider"></div>
-                                
-                                <div class="mb-3">
-                                    <p id="p_date" class="fw-bold mb-0" style="font-size: 1.05rem;">📅 Date: --/--/----</p>
-                                    <p id="p_time" class="small" style="opacity: 0.9;">🕐 Time: --:--</p>
-                                </div>
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-dark text-center">Live Preview</h5>
+                </div>
+                <div class="card-body bg-light position-relative">
+                    
+                    <!-- Floating Toolbar -->
+                    <div class="canvas-toolbar" id="canvas_toolbar">
+                        <select id="tool_font_family" title="Font Family">
+                            <option value="Georgia, cursive, serif">Georgia</option>
+                            <option value="'Playfair Display', serif">Playfair Display</option>
+                            <option value="'Great Vibes', cursive">Great Vibes</option>
+                            <option value="'Montserrat', sans-serif">Montserrat</option>
+                            <option value="'Lora', serif">Lora</option>
+                            <option value="'Poppins', sans-serif">Poppins</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                        </select>
+                        <div class="vr mx-1"></div>
+                        <button type="button" id="tool_bold" title="Bold">B</button>
+                        <button type="button" id="tool_italic" title="Italic"><i>I</i></button>
+                        <div class="vr mx-1"></div>
+                        <button type="button" id="tool_size_down" title="Decrease Font Size">A-</button>
+                        <button type="button" id="tool_size_up" title="Increase Font Size">A+</button>
+                        <div class="vr mx-1"></div>
+                        <button type="button" id="tool_align_left" title="Align Left">⬅</button>
+                        <button type="button" id="tool_align_center" title="Center">↔</button>
+                        <button type="button" id="tool_align_right" title="Align Right">➡</button>
+                        <div class="vr mx-1"></div>
+                        <input type="color" id="tool_color" title="Text Color" value="#000000">
+                        <div class="vr mx-1"></div>
+                        <select id="tool_animation_type" title="Animation Type">
+                            <option value="none">No Anim</option>
+                            <option value="fade-in">Fade In</option>
+                            <option value="slide-up">Slide Up</option>
+                            <option value="slide-down">Slide Down</option>
+                            <option value="zoom-in">Zoom In</option>
+                            <option value="bounce">Bounce</option>
+                        </select>
+                        <input type="number" id="tool_animation_duration" title="Anim Duration (s)" step="0.1" min="0.1" max="5" value="0.8">
+                    </div>
 
-                                <div id="p_venue_box" class="venue-detail-box" style="display:none;">
-                                    <p id="p_v_name" class="fw-bold mb-1" style="text-decoration: underline; font-size: 0.95rem;"></p>
-                                    <p class="mb-0"><span id="p_v_area"></span><span id="p_v_landmark" class="fst-italic ms-1"></span></p>
-                                    <p id="p_v_address" class="mb-1 small"></p>
-                                    <p class="mb-2 small"><span id="p_v_district"></span>, <span id="p_v_state"></span> • <span id="p_v_pin"></span></p>
-                                    <a id="p_v_map" href="#" target="_blank" class="btn btn-xs btn-outline-dark py-0 px-2" style="font-size: 0.7rem;">📍 View on Map</a>
-                                </div>
-                                <p id="p_venue_placeholder" class="small text-muted mt-3">✨ Select a venue to preview details</p>
-                                
-                                <div style="margin-top: 15px; font-size: 0.75rem; opacity: 0.7; font-style: italic;">
-                                    Designed with ❤️ for your special day
-                                </div>
+                    <p class="text-muted text-center small mb-3">You can click to edit the text directly on the canvas, and drag it anywhere!</p>
+                    <div class="ceremony-card-preview" id="preview_card">
+                        <div class="card-content" id="preview_card_inner">
+                            <h4 class="ceremony-title draggable-text" id="preview_title" data-anim-type="none" data-anim-duration="0.8" style="color: #b02663; top: 10%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 2.2rem; font-family: 'Georgia', cursive, serif;">Wedding: Bride & Groom</h4>
+                            <div class="details-row date-row draggable-text" id="preview_date_row" data-anim-type="none" data-anim-duration="0.8" style="color: #2b4c5e; top: 30%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1.1rem; font-family: 'Arial', sans-serif;">
+                                <span>📅</span> <span id="preview_date">Select a Date</span>
+                            </div>
+                            <div class="details-row time-row draggable-text" id="preview_time_row" data-anim-type="none" data-anim-duration="0.8" style="color: #2b4c5e; top: 45%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1.1rem; font-family: 'Arial', sans-serif;">
+                                <span>⏰</span> <span id="preview_time">Select a Time</span>
+                            </div>
+                            <div class="details-row venue-row draggable-text" id="preview_venue_row" data-anim-type="none" data-anim-duration="0.8" style="color: #2b4c5e; top: 60%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1.1rem; font-family: 'Arial', sans-serif;">
+                                <span>📍</span> <span id="preview_venue">Venue to be announced</span>
                             </div>
                         </div>
                     </div>
@@ -202,17 +365,347 @@
     </div>
 </div>
 
-<!-- Google Fonts for Premium Typography -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Dancing+Script:wght@400;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Global JavaScript Configurations -->
+@push('scripts')
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 <script>
-    window.LaravelRoutes = {
-        hostVenueStore: "{{ route('host.venue.store', [], true) }}",
-        csrfToken: "{{ csrf_token() }}"
-    };
+    document.addEventListener("DOMContentLoaded", function() {
+        const brideInput = document.querySelector('input[name="bride_name"]');
+        const groomInput = document.querySelector('input[name="groom_name"]');
+        const dateInput = document.getElementById('wedding_date');
+        const timeInput = document.getElementById('wedding_time');
+        const venueSelect = document.getElementById('venue_dropdown');
+        const textColorInput = document.getElementById('text_color');
+        const detailsColorInput = document.getElementById('details_color');
+        const bgRadios = document.querySelectorAll('input[name="selected_background_id"]');
+
+        const prevTitle = document.getElementById('preview_title');
+        const prevDate = document.getElementById('preview_date');
+        const prevTime = document.getElementById('preview_time');
+        const prevVenue = document.getElementById('preview_venue');
+        const prevDateRow = document.getElementById('preview_date_row');
+        const prevTimeRow = document.getElementById('preview_time_row');
+        const prevVenueRow = document.getElementById('preview_venue_row');
+        const prevCard = document.getElementById('preview_card');
+
+        function updatePreview() {
+            let bride = brideInput.value || 'Bride';
+            let groom = groomInput.value || 'Groom';
+            prevTitle.textContent = `Wedding: ${bride} & ${groom}`;
+            
+            if(dateInput && dateInput.value) {
+                const dateObj = new Date(dateInput.value);
+                prevDate.textContent = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+            } else {
+                prevDate.textContent = 'Select a Date';
+            }
+
+            if(timeInput && timeInput.value) {
+                let [h, m] = timeInput.value.split(':');
+                let ampm = h >= 12 ? 'PM' : 'AM';
+                h = h % 12 || 12;
+                prevTime.textContent = `${h}:${m} ${ampm}`;
+            } else {
+                prevTime.textContent = 'Select a Time';
+            }
+
+            if(venueSelect && venueSelect.selectedIndex > 0) {
+                const opt = venueSelect.options[venueSelect.selectedIndex];
+                prevVenue.textContent = opt.getAttribute('data-name') || 'Venue to be announced';
+            }
+
+            // Colors
+            prevTitle.style.color = textColorInput.value;
+            prevDateRow.style.color = detailsColorInput.value;
+            prevTimeRow.style.color = detailsColorInput.value;
+            prevVenueRow.style.color = detailsColorInput.value;
+
+            customTexts['preview_title'] = prevTitle.innerHTML;
+            customTexts['preview_date_row'] = prevDateRow.innerHTML;
+            customTexts['preview_time_row'] = prevTimeRow.innerHTML;
+            customTexts['preview_venue_row'] = prevVenueRow.innerHTML;
+            customTextsInput.value = JSON.stringify(customTexts);
+        }
+
+        if(brideInput) brideInput.addEventListener('input', updatePreview);
+        if(groomInput) groomInput.addEventListener('input', updatePreview);
+        if(dateInput) dateInput.addEventListener('change', updatePreview);
+        if(timeInput) timeInput.addEventListener('input', updatePreview);
+        if(venueSelect) venueSelect.addEventListener('change', updatePreview);
+        if(textColorInput) textColorInput.addEventListener('input', updatePreview);
+        if(detailsColorInput) detailsColorInput.addEventListener('input', updatePreview);
+
+        bgRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if(this.checked) {
+                    const img = this.closest('label').querySelector('img');
+                    if(img) {
+                        prevCard.style.backgroundImage = `url('${img.src}')`;
+                    }
+                }
+            });
+        });
+
+        // --- Draggable Logic via jQuery UI ---
+        const textPositionsInput = document.getElementById('text_positions');
+        let parsedPositions = textPositionsInput.value ? JSON.parse(textPositionsInput.value) : {};
+        let currentPositions = Array.isArray(parsedPositions) ? {} : parsedPositions;
+
+        function savePositions(element) {
+            const innerContainer = $('#preview_card_inner');
+            const posLeft = element[0].style.left || '50%';
+            const posTop = element[0].style.top || '0%';
+            const transform = element[0].style.transform || 'none';
+            const textAlign = element.css('text-align') || 'center';
+            const fontSize = element.css('font-size') || '1rem';
+            const color = element.css('color') || '#000';
+            const fontFamily = element.css('font-family') || "'Arial', sans-serif";
+            const animationType = element.attr('data-anim-type') || 'none';
+            const animationDuration = element.attr('data-anim-duration') || '0.8';
+
+            const id = element.attr('id');
+            currentPositions[id] = {
+                left: posLeft,
+                top: posTop,
+                transform: transform,
+                textAlign: textAlign,
+                fontSize: fontSize,
+                color: color,
+                fontFamily: fontFamily,
+                animationType: animationType,
+                animationDuration: animationDuration
+            };
+            
+            textPositionsInput.value = JSON.stringify(currentPositions);
+        }
+
+        $('.draggable-text').draggable({
+            containment: '#preview_card_inner',
+            cancel: '.editing-mode',
+            start: function(event, ui) {},
+            stop: function(event, ui) {
+                const innerContainer = $('#preview_card_inner');
+                const element = $(this);
+                const parentWidth = innerContainer.width();
+                const parentHeight = innerContainer.height();
+                
+                const leftPercent = ((ui.position.left / parentWidth) * 100).toFixed(2) + '%';
+                const topPercent = ((ui.position.top / parentHeight) * 100).toFixed(2) + '%';
+                
+                element.css({ 'left': leftPercent, 'top': topPercent, 'transform': 'none' });
+                savePositions(element);
+            }
+        });
+
+        // --- Canva Content Editable & Toolbar Logic ---
+        const customTextsInput = document.getElementById('custom_canvas_texts');
+        let parsedTexts = customTextsInput.value ? JSON.parse(customTextsInput.value) : {};
+        let customTexts = Array.isArray(parsedTexts) ? {} : parsedTexts;
+        const toolbar = document.getElementById('canvas_toolbar');
+        let activeElement = null;
+
+        document.querySelectorAll('.draggable-text').forEach(el => {
+            el.addEventListener('mouseenter', function() {
+                if (this.style.transform && this.style.transform.includes('translateX')) {
+                    const jqEl = $(this);
+                    const offset = jqEl.position();
+                    const parentWidth = $('#preview_card_inner').width();
+                    const parentHeight = $('#preview_card_inner').height();
+                    const leftPercent = ((offset.left / parentWidth) * 100).toFixed(2) + '%';
+                    const topPercent = ((offset.top / parentHeight) * 100).toFixed(2) + '%';
+                    jqEl.css({ 'transform': 'none', 'left': leftPercent, 'top': topPercent });
+                }
+            });
+
+            el.addEventListener('click', function(e) {
+                document.querySelectorAll('.draggable-text').forEach(t => t.classList.remove('selected'));
+                $(this).addClass('selected');
+                activeElement = $(this);
+                toolbar.style.display = 'flex';
+                
+                function rgbToHex(rgb) {
+                    if(!rgb) return '#000000';
+                    let a = rgb.split("(")[1].split(")")[0].split(",");
+                    return "#" + a.map(x => {
+                        x = parseInt(x).toString(16);
+                        return (x.length==1) ? "0"+x : x;
+                    }).join("");
+                }
+                const color = activeElement.css('color');
+                if (color && color.startsWith('rgb')) {
+                    document.getElementById('tool_color').value = rgbToHex(color);
+                }
+                
+                const fontVal = activeElement.css('font-family');
+                if(fontVal) document.getElementById('tool_font_family').value = fontVal.replace(/"/g, "'");
+                
+                const animType = activeElement.attr('data-anim-type') || 'none';
+                document.getElementById('tool_animation_type').value = animType;
+                
+                const animDur = activeElement.attr('data-anim-duration') || '0.8';
+                document.getElementById('tool_animation_duration').value = animDur;
+            });
+
+            el.addEventListener('dblclick', function(e) {
+                $(this).addClass('editing-mode');
+                $(this).attr('contenteditable', 'true');
+                $(this).focus();
+            });
+
+            el.addEventListener('input', function() {
+                const id = this.getAttribute('id');
+                customTexts[id] = this.innerHTML;
+                customTextsInput.value = JSON.stringify(customTexts);
+                savePositions($(this));
+            });
+        });
+
+        document.addEventListener('mousedown', function(e) {
+            if (!$(e.target).closest('#preview_card').length && !$(e.target).closest('.canvas-toolbar').length) {
+                toolbar.style.display = 'none';
+                if (activeElement) {
+                    activeElement.removeClass('editing-mode');
+                    activeElement.removeClass('selected');
+                    activeElement.removeAttr('contenteditable');
+                }
+                activeElement = null;
+            }
+        });
+
+        // Toolbar Buttons
+        document.getElementById('tool_bold').addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            document.execCommand('bold', false, null);
+            if(activeElement) {
+                customTexts[activeElement.attr('id')] = activeElement.html();
+                customTextsInput.value = JSON.stringify(customTexts);
+            }
+        });
+        
+        document.getElementById('tool_italic').addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            document.execCommand('italic', false, null);
+            if(activeElement) {
+                customTexts[activeElement.attr('id')] = activeElement.html();
+                customTextsInput.value = JSON.stringify(customTexts);
+            }
+        });
+
+        document.getElementById('tool_align_left').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(activeElement) { 
+                activeElement.css({ 'left': '0%', 'transform': 'none', 'text-align': 'left' }); 
+                savePositions(activeElement); 
+            }
+        });
+        document.getElementById('tool_align_center').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(activeElement) { 
+                activeElement.css({ 'left': '50%', 'transform': 'translateX(-50%)', 'text-align': 'center' }); 
+                savePositions(activeElement); 
+            }
+        });
+        document.getElementById('tool_align_right').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(activeElement) { 
+                activeElement.css({ 'left': '100%', 'transform': 'translateX(-100%)', 'text-align': 'right' }); 
+                savePositions(activeElement); 
+            }
+        });
+
+        document.getElementById('tool_size_up').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(activeElement) {
+                let size = parseFloat(activeElement.css('font-size'));
+                activeElement.css('font-size', (size + 2) + 'px');
+                savePositions(activeElement);
+            }
+        });
+        document.getElementById('tool_size_down').addEventListener('click', function(e) {
+            e.preventDefault();
+            if(activeElement) {
+                let size = parseFloat(activeElement.css('font-size'));
+                activeElement.css('font-size', (size - 2) + 'px');
+                savePositions(activeElement);
+            }
+        });
+
+        document.getElementById('tool_color').addEventListener('input', function() {
+            if(activeElement) {
+                activeElement.css('color', this.value);
+                savePositions(activeElement);
+            }
+        });
+
+        document.getElementById('tool_font_family').addEventListener('change', function() {
+            if(activeElement) {
+                activeElement.css('font-family', this.value);
+                savePositions(activeElement);
+            }
+        });
+
+        document.getElementById('tool_animation_type').addEventListener('change', function() {
+            if(activeElement) {
+                activeElement.attr('data-anim-type', this.value);
+                savePositions(activeElement);
+            }
+        });
+
+        document.getElementById('tool_animation_duration').addEventListener('input', function() {
+            if(activeElement) {
+                activeElement.attr('data-anim-duration', this.value);
+                savePositions(activeElement);
+            }
+        });
+
+        // --- Venue Modal Logic ---
+        const pinLoad = document.getElementById('pin_load') || document.createElement('small');
+        document.getElementById('q_v_pin').addEventListener('keyup', function() {
+            let pin = this.value;
+            if (pin.length === 6) {
+                pinLoad.style.display = 'block';
+                fetch(`https://api.postalpincode.in/pincode/${pin}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        pinLoad.style.display = 'none';
+                        if (data[0].Status === "Success") {
+                            let offices = data[0].PostOffice;
+                            let area = document.getElementById('q_v_area');
+                            area.innerHTML = '';
+                            offices.forEach(o => {
+                                area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`;
+                            });
+                            document.getElementById('q_v_district').value = offices[0].District;
+                            document.getElementById('q_v_state').value = offices[0].State;
+                            document.getElementById('q_v_circle').value = offices[0].Circle;
+                            document.getElementById('q_v_country').value = offices[0].Country;
+                        }
+                    });
+            }
+        });
+
+        document.getElementById('quickVenueForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            // map form names appropriately if backend expects different ones
+            fetch("{{ route('host.venue.store') }}", {
+                    method: "POST",
+                    body: formData,
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    let select = document.getElementById('venue_dropdown');
+                    let option = new Option(data.venue_name, data.id, true, true);
+                    option.setAttribute('data-name', data.venue_name);
+                    select.add(option);
+                    select.dispatchEvent(new Event('change'));
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('addVenueModal'));
+                    modal.hide();
+                })
+                .catch(err => alert("Error saving venue."));
+        });
+    });
 </script>
-<script src="{{ asset('js/hostinvitationcreate.js') }}?v={{ time() }}"></script>
+@endpush
 @endsection

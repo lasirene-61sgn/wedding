@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation | udaya kiran2002</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-primary: #d63384;
+            --pink-dark: #b02663;
+            --pink-light: #fff5f8;
+            --gold: #bfa15f;
+            --gold-dark: #8c6f31;
+            --dark: #1a1a1a;
+            --gray: #5a5a5a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fcf8f4;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header Layout */
+        header {
+            background: #ffffff;
+            padding: 50px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(214, 51, 132, 0.06);
+        }
+
+        header .decorative-ornament {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+
+        header h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--pink-primary);
+            margin: 0;
+            animation: elegantFadeIn 1.2s ease-out;
+        }
+
+        header p {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* FLOATING PILL NAV BAR */
+        .nav-bar-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 12px 20px;
+            background: rgba(253, 248, 244, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 8px 30px rgba(140, 111, 49, 0.08);
+            border: 1px solid rgba(191, 161, 95, 0.2);
+        }
+
+        .nav-bar a {
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-bar a:hover {
+            color: var(--pink-primary);
+            background: var(--pink-light);
+        }
+
+        .nav-bar a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark));
+            box-shadow: 0 4px 15px rgba(214, 51, 132, 0.25);
+        }
+
+        /* Main Structural Dashboard Split */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px 120px;
+            box-sizing: border-box;
+        }
+
+        .welcome-pane {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .welcome-badge-card {
+            background: #ffffff;
+            border: 1px solid rgba(191, 161, 95, 0.15);
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        }
+
+        .invitation-card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 25px;
+            border: 1px solid #f0e6eb;
+        }
+
+        .details-box {
+            background: var(--pink-light);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            text-align: left;
+            border-left: 3px solid var(--pink-primary);
+        }
+
+        .status-wrapper {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-accepted { background: #d4edda; color: #155724; }
+        .status-declined { background: #f8d7da; color: #721c24; }
+
+        .schedule-pane {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pane-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0 0 25px 0;
+        }
+
+        /* -------------------------------------------------------------
+           NEW GLOBAL FIXED INVITATION STYLE (PC, DESKTOP, TAB, MOBILE SAME)
+        ------------------------------------------------------------- */
+        .ceremony-card {
+            background-color: #fff9e6; 
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            position: relative;
+            box-sizing: border-box;
+            
+            /* CRITICAL FIX: Forces card to keep standard portrait proportions like image_bb3d66.jpg */
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            aspect-ratio: 3 / 4; 
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            
+            /* Initial state for scroll animation */
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Triggered when element enters viewport */
+        .ceremony-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* background image mapping configuration */
+        .ceremony-card.has-bg {
+            background-image: var(--bg-url) !important;
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
+            background-size: cover !important; /* Cover to fill the whole card */
+            background-color: #fff9e6;
+        }
+
+        /* Completely floating, flat background configuration on all devices (No Hovers) */
+        .ceremony-card .card-content {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: auto !important;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            z-index: 2;
+        }
+
+        /* Typography & Modern delayed sequential animations across all viewports */
+        .ceremony-card .ceremony-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            margin: 0 !important;
+            line-height: 1.2;
+            width: max-content;
+            min-width: 50px;
+            padding: 5px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 1), -2px -2px 4px rgba(255, 255, 255, 1);
+            
+            position: absolute;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .ceremony-card.in-view .ceremony-title {
+            opacity: 1;
+            transition-delay: 0.2s;
+        }
+
+        .ceremony-card .details-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 !important;
+            line-height: 1.2;
+            width: max-content;
+            min-width: 50px;
+            padding: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-shadow: 1.5px 1.5px 3px rgba(255, 255, 255, 1), -1.5px -1.5px 3px rgba(255, 255, 255, 1);
+            
+            position: absolute;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .ceremony-card.in-view .details-row.date-row { opacity: 1; transition-delay: 0.4s; }
+        .ceremony-card.in-view .details-row.time-row { opacity: 1; transition-delay: 0.6s; }
+        .ceremony-card.in-view .details-row.venue-row { opacity: 1; transition-delay: 0.8s; }
+        .ceremony-card.in-view .details-row.text-row { opacity: 1; transition-delay: 0.6s; }
+        
+        .ceremony-card .venue-address {
+            font-size: 1rem !important;
+            color: #4a5568 !important;
+            font-weight: 500;
+            margin-top: 5px !important;
+            padding: 0 10px !important;
+            text-shadow: 1.5px 1.5px 3px rgba(255, 255, 255, 1), -1.5px -1.5px 3px rgba(255, 255, 255, 1);
+            
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .ceremony-card.in-view .venue-address {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 1.0s;
+        }
+
+        /* Bottom Floating RSVP Bar Interaction */
+        .floating-rsvp {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 1000;
+            box-sizing: border-box;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .floating-rsvp form {
+            flex: 1;
+            max-width: 250px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            background: var(--pink-primary);
+            color: white;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-decline { background: #6c757d; }
+        .btn-reset { background: transparent; color: var(--pink-primary); border: 2px solid var(--pink-primary); }
+
+        /* Media Viewport Adaptations */
+        @media (max-width: 991px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                margin: 20px auto;
+            }
+            .welcome-pane { position: static; }
+        }
+
+        @media (max-width: 767px) {
+            header h1 { font-size: 2.8rem; }
+            .nav-bar-container { padding: 10px 10px; }
+            .nav-bar { width: 100%; gap: 5px; }
+            .nav-bar a { font-size: 0.75rem; padding: 8px 12px; gap: 4px; }
+            .ceremony-card { aspect-ratio: 3 / 4 !important; max-width: 100%; }
+            .ceremony-card .ceremony-title { font-size: 2rem !important; }
+        }
+
+        /* Animations removed - now handled via CSS transitions tied to IntersectionObserver */
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+        <header>
+            <div class="decorative-ornament">❖ • ⚜ • ❖</div>
+            <h1>udaya kiran2002</h1>
+            <p>Celebrating the Union of <br><strong> & </strong></p>
+        </header>
+
+        <div class="nav-bar-container">
+            <div class="nav-bar">
+                <a href="http://localhost/guest/select-wedding">↩ Links</a>
+                <a href="#" class="active">🏠 Home</a>
+                <a href="http://localhost/guest/guest/profile/12">👤 Profile</a>
+                <a href="http://localhost/guest/wedding/12/gallery">📸 Gallery</a>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            
+            <!-- Left Panel Summary Card -->
+            <div class="welcome-pane">
+                <div class="welcome-badge-card">
+                    <h2>Hello, uday!</h2>
+                    <p style="color: var(--gray); margin-bottom: 25px; font-style: italic;">You are cordially invited to celebrate with us</p>
+                    
+                    
+                    <div class="invitation-card">
+                        <h3>Wedding RSVP Status</h3>
+                        <div class="details-box">
+                            <strong>Your Assigned Ceremonies:</strong><br>
+                            Wedding: Kaveri&amp;Gangadhar, Haldhi, Reception, Alaippu
+                        </div>
+
+                        <div class="status-wrapper">
+                            <span class="status-label">Your RSVP Choice:</span>
+                            
+                                                            <span class="status-badge status-accepted">Attending ✓</span>
+                                                    </div>
+
+                                                    <form action="http://localhost/guest/wedding/12/status" method="POST">
+                                <input type="hidden" name="_token" value="" autocomplete="off">                                <input type="hidden" name="status" value="pending">
+                                <button type="submit" class="btn btn-reset">Change RSVP Choice</button>
+                            </form>
+                                            </div>
+                </div>
+            </div>
+
+            <!-- Right Timeline Event Stream -->
+            <div class="schedule-pane">
+                <h3 class="pane-title">Ceremony Schedule</h3>
+
+                                    <div class="ceremony-card has-bg"
+                         style="
+                             
+                                --bg-url: url('http://localhost/storage/global_backgrounds/lIBuGfM8Whyl7GMd7k4GNi1GPlgDBD18LW8c2yVe.jpg');
+                                                     ">
+
+                        <!-- Inner Text Content Box -->
+                        <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                            
+                            <h4 class="ceremony-title" style="color: rgb(176, 38, 99); top: 6.71%; left: 26.22%; transform: none; text-align: center; font-size: 35.2px;">
+                                Kaveri&nbsp;<div>&amp;&nbsp;</div><div>Gangadhar
+                            </div>
+                            </h4>
+
+                            <div class="details-row date-row" style="color: rgb(43, 76, 94); top: 34.81%; left: 28.02%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>📅</span> Friday, 10 July 2026
+                            </div>
+
+                            <div class="details-row time-row" style="color: rgb(43, 76, 94); top: 41.71%; left: 38.53%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>⏰</span> 06:30 AM
+                            </div>
+
+                            <div class="details-row venue-row" style="color: rgb(43, 76, 94); top: 48.84%; left: 18.65%; transform: none; text-align: center; font-size: 17.6px;">
+                                                                    <span>📍</span>
+                                                                            <strong>SJR KALAYANA MANDAPAM</strong>
+                                                                                                                                        </div>
+                        </div>
+                    </div>
+                                    <div class="ceremony-card has-bg"
+                         style="
+                             
+                                --bg-url: url('http://localhost/storage/global_backgrounds/W5zSGBMFyiuK64gKPzb7pX2B5DJDYqLwIfq23LZX.jpg');
+                                                     ">
+
+                        <!-- Inner Text Content Box -->
+                        <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                            
+                            <h4 class="ceremony-title" style="color: rgb(42, 198, 81); top: 13.27%; left: 34.81%; transform: none; text-align: center; font-size: 35.2px;">
+                                Haldhi
+                            </h4>
+
+                            <div class="details-row date-row" style="color: rgb(33, 176, 114); top: 30%; left: 21.38%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>📅</span> Thursday, 25 June 2026
+                            </div>
+
+                            <div class="details-row time-row" style="color: rgb(217, 132, 13); top: 37.69%; left: 33.2%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>⏰</span> 05:03 AM
+                            </div>
+
+                            <div class="details-row venue-row" style="color: rgb(25, 26, 26); top: 46.35%; left: 16.72%; transform: none; text-align: center; font-size: 17.6px;">
+                                                                    <span>📍</span>
+                                                                            <strong>SJR KALAYANA MANDAPAM</strong>
+                                                                                                                                        </div>
+                        </div>
+                    </div>
+                                    <div class="ceremony-card has-bg"
+                         style="
+                             
+                                --bg-url: url('http://localhost/storage/global_backgrounds/1xWFwsDTDDo5BDSU9gW87oKQEAzBAVKPG4FXOaIN.jpg');
+                                                     ">
+
+                        <!-- Inner Text Content Box -->
+                        <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                            
+                            <h4 class="ceremony-title" style="color: rgb(176, 38, 99); top: 8.65%; left: 27.21%; transform: none; text-align: center; font-size: 35.2px;">
+                                Reception
+                            </h4>
+
+                            <div class="details-row date-row" style="color: rgb(43, 76, 94); top: 31.15%; left: 21.85%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>📅</span> Saturday, 20 June 2026
+                            </div>
+
+                            <div class="details-row time-row" style="color: rgb(43, 76, 94); top: 39.23%; left: 34.97%; transform: none; text-align: center; font-size: 17.6px;">
+                                <span>⏰</span> 05:26 PM
+                            </div>
+
+                            <div class="details-row venue-row" style="color: rgb(43, 76, 94); top: 43.65%; left: 15.5%; transform: none; text-align: center; font-size: 17.6px;">
+                                                                    <span>📍</span>
+                                                                            <strong>SJR KALAYANA MANDAPAM</strong>
+                                                                                                                                        </div>
+                        </div>
+                    </div>
+                                    <div class="ceremony-card has-bg"
+                         style="
+                             
+                                --bg-url: url('http://localhost/storage/global_backgrounds/1xWFwsDTDDo5BDSU9gW87oKQEAzBAVKPG4FXOaIN.jpg');
+                                                     ">
+
+                        <!-- Inner Text Content Box -->
+                        <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                            
+                            <h4 class="ceremony-title" style="color: rgb(176, 38, 99); top: 8.85%; left: 31.48%; transform: none; text-align: center; font-size: 35.2px;">
+                                Alaippu
+                            </h4>
+
+                            <div class="details-row date-row" style="color: #2b4c5e; top: 30%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1.1rem;">
+                                
+                                <span>📅</span> <span id="preview_date">Saturday, 12 December 2026</span>
+                            
+                            </div>
+
+                            <div class="details-row time-row" style="color: rgb(43, 76, 94); top: 37.31%; left: 33.75%; transform: none; text-align: center; font-size: 17.6px;">
+                                
+                                <span>⏰</span> <span id="preview_time">12:30 PM</span>
+                            
+                            </div>
+
+                            <div class="details-row venue-row" style="color: rgb(43, 76, 94); top: 43.27%; left: 14.52%; transform: none; text-align: center; font-size: 17.6px;">
+                                                                    
+                                <span>📍</span> <span id="preview_venue">SJR KALAYANA MANDAPAM</span>
+                            
+                                                            </div>
+                        </div>
+                    </div>
+                            </div>
+
+        </div>
+    </div>
+
+    <div class="schedule-pane family-pane" style="margin-top: 40px;">
+    <h3 class="pane-title">Host Family Members</h3>
+
+            
+        <div class="ceremony-card has-bg"
+             style="
+                 
+                    --bg-url: url('http://localhost/storage/global_backgrounds/QUuqGitQPKY46oDChKzwezmWwTdvk5g5CjdxS7q3.jpg');
+                                position: relative;
+             ">
+
+            <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                                                
+                                <h4 class="ceremony-title" style="position: absolute; font-family: 'Georgia', cursive, serif; font-weight: 600; width: max-content; color: rgb(176, 38, 99); top: 16.54%; left: 23.8%; transform: none; text-align: center; font-size: 28.8px;">
+                    Family Details
+                </h4>
+                                
+                                <div class="details-row text-row" style="position: absolute; font-weight: 600; width: max-content; color: rgb(43, 76, 94); top: 25.19%; left: 13.38%; transform: none; text-align: center; font-size: 16px;">
+                    Mr. Ramesh Kumar Businessman<div>Mrs. Lakshmi Ramesh&nbsp; Homemaker&nbsp;<div>&nbsp; 1 Younger Brother – Software Engineer</div><div>&nbsp;1 Elder Sister – Married&nbsp;</div><div>&nbsp;Family Nuclear Family  Family&nbsp;</div>
+                            </div>
+                </div>
+                                                                
+                                
+                                                                
+                                
+                                                                
+                                
+                                                                
+                                
+                                                                
+                                
+                                                
+                                
+                                <div class="details-row text-row" style="position: absolute; font-weight: 600; width: max-content; max-width: 90%; color: #2b4c5e; top: 85%; left: 50%; transform: translateX(-50%); text-align: center; font-size: 1rem;">
+                    happywed.in
+                </div>
+                            </div>
+        </div>
+
+    </div>
+    <!-- Sticky Affirmation Footer Controls -->
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Setup IntersectionObserver for scroll animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 // Triggers when 15% of the card is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Optional: uncomment below to animate only once
+                        // observer.unobserve(entry.target);
+                    } else {
+                        // Remove class if you want the animation to happen every time you scroll up/down
+                        entry.target.classList.remove('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            // Select all ceremony cards and observe them
+            const cards = document.querySelectorAll('.ceremony-card');
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

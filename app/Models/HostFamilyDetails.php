@@ -24,7 +24,16 @@ class HostFamilyDetails extends Model
         'topic_title_four',
         'topic_title_five',
         'topic_title_six',
-        'is_active'
+        'is_active',
+        'text_color',
+        'details_color',
+        'text_positions',
+        'custom_canvas_texts'
+    ];
+
+    protected $casts = [
+        'text_positions' => 'array',
+        'custom_canvas_texts' => 'array',
     ];
 
     public function background()

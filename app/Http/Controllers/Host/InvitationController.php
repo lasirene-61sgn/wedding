@@ -49,10 +49,22 @@ class InvitationController extends Controller
             // 'circle' => 'nullable',
             // 'country' => 'nullable',
             'wedding_image' => 'required|mimes:jpeg,png,svg,gif,webp,avif|max:3048',
-            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id',
+            'text_color' => 'nullable|string|max:7',
+            'details_color' => 'nullable|string|max:7',
+            'text_positions' => 'nullable|string',
+            'custom_canvas_texts' => 'nullable|string'
         ]);
         $validated['host_id'] = Auth::id();
         $validated['is_main'] = false;
+
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true);
+        }
+
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true);
+        }
 
         if($request->hasFile('wedding_image')){
             $validated['wedding_image'] = $request->file('wedding_image')->store('wedding_images', 'public');
@@ -71,6 +83,10 @@ class InvitationController extends Controller
             'ceramony_image' => $invitation->wedding_image,
             'is_main' => true, 
             'selected_background_id' => $invitation->selected_background_id,
+            'text_color' => $invitation->text_color,
+            'details_color' => $invitation->details_color,
+            'text_positions' => $invitation->text_positions,
+            'custom_canvas_texts' => $invitation->custom_canvas_texts,
         ]);
         return redirect()->route('host.invitation.index')->with('Message', 'Invitations Created');
     }
@@ -109,8 +125,20 @@ class InvitationController extends Controller
             // 'country' => 'nullable',
             'wedding_image' => 'nullable|mimes:jpeg,png,svg,gif,webp,avif|max:3048',
             'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id',
+            'text_color' => 'nullable|string|max:7',
+            'details_color' => 'nullable|string|max:7',
+            'text_positions' => 'nullable|string',
+            'custom_canvas_texts' => 'nullable|string'
         ]);
         $validated['host_id'] = Auth::id();
+
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true);
+        }
+
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true);
+        }
         if($request->hasFile('wedding_image')){
             if($invitation->wedding_image){
                 Storage::disk('public')->delete($invitation->wedding_image);
@@ -129,6 +157,10 @@ class InvitationController extends Controller
             'venue_id' => $invitation->venue_id,
             'ceramony_image' => $invitation->wedding_image,
             'selected_background_id' => $invitation->selected_background_id, // <-- Pushes the updated background theme out to the guest dashboard
+            'text_color' => $invitation->text_color,
+            'details_color' => $invitation->details_color,
+            'text_positions' => $invitation->text_positions,
+            'custom_canvas_texts' => $invitation->custom_canvas_texts,
         ]);
         return redirect()->route('host.invitation.index')->with('Success', 'Invitation Updated Successfully');
     }

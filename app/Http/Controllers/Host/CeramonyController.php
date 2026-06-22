@@ -35,8 +35,13 @@ class CeramonyController extends Controller
             'ceramony_name'  => 'required|string|max:255',
             'ceramony_date'  => 'nullable|date',
             'ceramony_time'  => 'nullable',
+            'ceramony_time'  => 'nullable',
             'ceramony_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',
-            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id',
+            'text_color' => 'nullable|string|max:7',
+            'details_color' => 'nullable|string|max:7',
+            'text_positions' => 'nullable|string',
+            'custom_canvas_texts' => 'nullable|string'
         ]);
         if ($request->venue_id) {
             $checkVenue = VenueName::where('id', $request->venue_id)->where('host_id', Auth::id())->first();
@@ -45,6 +50,15 @@ class CeramonyController extends Controller
             }
         }
         $validated['host_id'] = Auth::id();
+        
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true);
+        }
+
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true);
+        }
+
         if ($request->ceramony_image) {
             $validated['ceramony_image'] = $request->file('ceramony_image')->store('ceramonies', 'public');
         }
@@ -77,9 +91,22 @@ class CeramonyController extends Controller
             'ceramony_name'  => 'required|string|max:255',
             'ceramony_date'  => 'nullable|date',
             'ceramony_time'  => 'nullable',
+            'ceramony_time'  => 'nullable',
             'ceramony_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',
-            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id'
+            'selected_background_id' => 'nullable|exists:ceramony_backgrounds,id',
+            'text_color' => 'nullable|string|max:7',
+            'details_color' => 'nullable|string|max:7',
+            'text_positions' => 'nullable|string',
+            'custom_canvas_texts' => 'nullable|string'
         ]);
+
+        if (isset($validated['text_positions'])) {
+            $validated['text_positions'] = json_decode($validated['text_positions'], true);
+        }
+
+        if (isset($validated['custom_canvas_texts'])) {
+            $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true);
+        }
 
         if ($request->hasFile('ceramony_image')) {
             if ($ceramony->ceramony_image) {

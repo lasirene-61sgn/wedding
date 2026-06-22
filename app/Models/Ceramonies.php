@@ -11,8 +11,24 @@ class Ceramonies extends Model
     protected $table = 'ceramonies';
 
     protected $fillable = [
-        'host_id', 'category_id', 'ceramony_name', 'ceramony_date', 'ceramony_time', 
-        'selected_background_id', 'venue_id', 'ceramony_image', 'is_main'
+        'host_id',
+        'category_id',
+        'venue_id',
+        'ceramony_name',
+        'ceramony_date',
+        'ceramony_time',
+        'ceramony_image',
+        'selected_background_id',
+        'is_main',
+        'text_color',
+        'details_color',
+        'text_positions',
+        'custom_canvas_texts',
+    ];
+
+    protected $casts = [
+        'text_positions' => 'array',
+        'custom_canvas_texts' => 'array',
     ];
 
     public function background()
