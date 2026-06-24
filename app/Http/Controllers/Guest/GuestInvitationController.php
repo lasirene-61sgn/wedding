@@ -29,9 +29,9 @@ class GuestInvitationController extends Controller
         $input = $request->phone;
 
         // 1. Dynamic Lookup: Check both the phone number AND email columns
-        $guest = GuestList::where(function($query) use ($input) {
+        $guest = GuestList::where(function ($query) use ($input) {
             $query->where('guest_number', $input)
-                  ->orWhere('guest_email', $input);
+                ->orWhere('guest_email', $input);
         })->first();
 
         // 2. Validate Credentials
@@ -41,14 +41,14 @@ class GuestInvitationController extends Controller
 
         // 3. Store the precise database key in the session instead of raw input
         session(['guest_phone' => $guest->guest_number]);
-        
+
         return redirect()->route('guest.select');
     }
 
     public function selectWedding()
     {
         $phone = session('guest_phone');
-        
+
         if (!$phone) {
             return redirect()->route('guest.login');
         }
@@ -59,17 +59,82 @@ class GuestInvitationController extends Controller
             ->with('host')
             ->get();
 
-        return view('guest.selection', compact('invitations'));
+        $calendarEvents = [];
+        foreach ($invitations as $invite) {
+            $assignedNames = explode(', ', $invite->assigned_ceremonies);
+            $ceremonies = \App\Models\Ceramonies::where('host_id', $invite->host_id)
+                ->whereIn('ceramony_name', $assignedNames)
+                ->get();
+            
+            foreach($ceremonies as $ceremony) {
+                // Determine color based on invitation status
+                $color = '#d63384'; // Default Pink (New/Pending)
+                if ($invite->status === 'accepted') $color = '#4CAF50'; // Green
+                if ($invite->status === 'declined' || $invite->status === 'rejected') $color = '#F44336'; // Red
+
+                $calendarEvents[] = [
+                    'title' => $ceremony->ceramony_name . ' (' . ($invite->host->bride_name ?? '') . ' & ' . ($invite->host->groom_name ?? '') . ')',
+                    'start' => $ceremony->ceramony_date . 'T' . $ceremony->ceramony_time,
+                    'url' => route('guest.wedding.details', $invite->id),
+                    'color' => $color
+                ];
+            }
+        }
+
+        return view('guest.selection', compact('invitations', 'calendarEvents'));
     }
 
     public function updateStatus(Request $request, $id)
     {
         $invite = GuestList::where('id', $id)->where('guest_number', session('guest_phone'))->firstOrFail();
-        $invite->update(['status' => $request->status]);
+        
+        $assignedNames = explode(', ', $invite->assigned_ceremonies);
+        $statuses = [];
+        foreach ($assignedNames as $name) {
+            $statuses[$name] = $request->status; // 'accepted' or 'declined'
+        }
+
+        $invite->update([
+            'status' => $request->status,
+            'ceremony_status' => $statuses
+        ]);
+
         if ($request->status == 'accepted') {
-        return redirect()->route('guest.wedding.details', $id);
+            return redirect()->route('guest.wedding.details', $id);
+        }
+        return redirect()->route('guest.select')->with('info', 'invitation declined');
     }
-    return redirect()->route('guest.select')->with('info', 'invitation declined');
+
+    public function updateCeremonyStatus(Request $request, $id)
+    {
+        $invite = GuestList::where('id', $id)->where('guest_number', session('guest_phone'))->firstOrFail();
+        
+        $statuses = $invite->ceremony_status ?? [];
+        $statuses[$request->ceremony_name] = $request->status;
+        
+        $invite->ceremony_status = $statuses;
+        
+        // Determine global status
+        $allAccepted = true;
+        $allDeclined = true;
+        $assignedNames = explode(', ', $invite->assigned_ceremonies);
+        foreach ($assignedNames as $name) {
+            $status = $statuses[$name] ?? 'pending';
+            if ($status !== 'accepted') $allAccepted = false;
+            if ($status !== 'rejected' && $status !== 'declined') $allDeclined = false;
+        }
+
+        if ($allAccepted) {
+            $invite->status = 'accepted';
+        } elseif ($allDeclined) {
+            $invite->status = 'declined';
+        } else {
+            $invite->status = 'partially_accepted'; // At least one ceremony accepted/pending
+        }
+
+        $invite->save();
+
+        return redirect()->back()->with('success', 'RSVP updated for ' . $request->ceremony_name);
     }
 
     public function saveTheDate($id)
@@ -80,26 +145,26 @@ class GuestInvitationController extends Controller
     }
 
     public function showCeremonies($id)
-{
-    $phone = session('guest_phone');
-    $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+    {
+        $phone = session('guest_phone');
+        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
 
-    $guest = $invite;
-    $assignedNames = explode(', ', $invite->assigned_ceremonies);
-    
-    $detailedCeremonies = Ceramonies::with('venue', 'background')
-        ->where('host_id', $invite->host_id)
-        ->whereIn('ceramony_name', $assignedNames)
-        ->orderBy('ceramony_date', 'asc')
-        ->orderBy('ceramony_time', 'asc')
-        ->get();
+        $guest = $invite;
+        $assignedNames = explode(', ', $invite->assigned_ceremonies);
 
-    // 🔥 ADD THIS LINE RIGHT HERE: Fetch the family data for the dashboard view
-    $hfamily = HostFamilyDetails::where('host_id', $invite->host_id)->with('background')->first();
+        $detailedCeremonies = Ceramonies::with('venue', 'background')
+            ->where('host_id', $invite->host_id)
+            ->whereIn('ceramony_name', $assignedNames)
+            ->orderBy('ceramony_date', 'asc')
+            ->orderBy('ceramony_time', 'asc')
+            ->get();
 
-    // Pass $hfamily down to the view via compact()
-    return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily'));
-}
+        // 🔥 ADD THIS LINE RIGHT HERE: Fetch the family data for the dashboard view
+        $hfamily = HostFamilyDetails::where('host_id', $invite->host_id)->with('background')->first();
+
+        // Pass $hfamily down to the view via compact()
+        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily'));
+    }
 
     public function showGallery($id)
     {

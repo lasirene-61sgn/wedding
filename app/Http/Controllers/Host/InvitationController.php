@@ -21,7 +21,9 @@ class InvitationController extends Controller
     }
 
     public function create(){
-        $venues = VenueName::where('host_id', Auth::id())->get();
+        $venues = VenueName::where(function($query){
+            $query->where('host_id', Auth::id())->orWhereNull('host_id');
+        })->get();
         $backgrounds = CeramonyBackground::all();
         return view('host.invitation.create', compact('venues', 'backgrounds'));
     }
@@ -93,7 +95,9 @@ class InvitationController extends Controller
 
     public function edit($id){
         $invitation = Invitation::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
-        $venues = VenueName::where('host_id', Auth::id())->get();
+        $venues = VenueName::where(function($query){
+            $query->where('host_id', Auth::id())->orWhereNull('host_id');
+        })->get();
         $backgrounds = CeramonyBackground::all();
         return view('host.invitation.edit', compact('invitation', 'venues', 'backgrounds'));
     }

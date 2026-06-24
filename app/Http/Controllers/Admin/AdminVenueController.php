@@ -72,6 +72,6 @@ class AdminVenueController extends Controller
     public function destroy(VenueName $venue)
     {
         $venue->delete();
-        return redirect()->route('admin.venue.index')->with('success', 'venue Deleted success');
+        return redirect()->route('admin.venues.index')->with('success', 'venue Deleted success');
     }
 }

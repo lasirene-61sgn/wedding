@@ -105,16 +105,19 @@ class HostLoginController extends Controller
         }
 
         $defaultModules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
-        $defaultPermissionSlugs = array_map(fn($module) => Str::slug($module), $defaultModules);
+        // $defaultPermissionSlugs = array_map(fn($module) => Str::slug($module), $defaultModules);
+        $defaultPermissions = ['ceremonies', 'gallery', 'invitation', 'save-the-date', 'guest-list', 'reports', 'categories'];
 
         // FIX: Read registration properties from $sessionData instead of raw $request input
         $host = Host::create([
+            
             'name' => $sessionData['name'],
             'email' => $sessionData['email'],
             'status' => 'active',
             'password' => $sessionData['password'], // Already Hashed in step 1
             'mobile' => $sessionData['mobile'],
             'is_password_set' => true,
+            'permissions' => $defaultPermissions,
         ]);
 
         session()->forget('register_data');

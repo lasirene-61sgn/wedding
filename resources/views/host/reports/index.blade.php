@@ -84,10 +84,17 @@
                 <h5 class="fw-bold mb-3" style="color: #1e293b;">Ceremony-wise Guest Distribution</h5>
                 <div class="row">
                     @forelse($ceremony_stats as $c_stat)
-                    <div class="col-md-3 mb-3">
-                        <div class="p-3 border rounded bg-light">
-                            <div class="small fw-bold text-muted text-uppercase mb-1">{{ $c_stat->ceramony_name }}</div>
-                            <div class="h4 mb-0 fw-bold">{{ $c_stat->guest_count }} <small class="text-muted" style="font-size: 14px;">Guests</small></div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 border rounded bg-light" style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small fw-bold text-muted text-uppercase">{{ $c_stat->ceramony_name }}</div>
+                                <div class="h5 mb-0 fw-bold">{{ $c_stat->guest_count }} <small class="text-muted" style="font-size: 12px;">Guests</small></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2" style="font-size: 0.85rem;">
+                                <span style="color: #166534;"><i class="fas fa-check-circle"></i> {{ $c_stat->accepted_count ?? 0 }} Accepted</span>
+                                <span style="color: #854d0e;"><i class="fas fa-hourglass-half"></i> {{ $c_stat->pending_count ?? 0 }} Pending</span>
+                                <span style="color: #991b1b;"><i class="fas fa-times-circle"></i> {{ $c_stat->rejected_count ?? 0 }} Declined</span>
+                            </div>
                         </div>
                     </div>
                     @empty
@@ -169,7 +176,7 @@
                         </td>
                         <td>
                             <span class="text-uppercase small fw-bold text-muted border px-2 py-1 rounded bg-light" style="font-size: 10px;">
-                                {{ $guest->via ?? 'Manual' }}
+                                {{ $guest->send_via ?? 'Manual' }}
                             </span>
                         </td>
                         <td>

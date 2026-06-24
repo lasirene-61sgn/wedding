@@ -4,7 +4,7 @@
 <div class="max-w-3xl mx-auto space-y-6">
     <!-- Breadcrumb Header -->
     <div class="flex items-center space-x-2 text-sm text-gray-500">
-        <a href="{{ route('admin.venue.index') }}" class="hover:text-blue-600 font-medium transition-colors">Venues</a>
+        <a href="{{ route('admin.venues.index') }}" class="hover:text-blue-600 font-medium transition-colors">Venues</a>
         <i class="bi bi-chevron-right text-xs"></i>
         <span class="text-gray-800 font-medium">Create Global Venue</span>
     </div>
@@ -27,7 +27,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.venue.store') }}" method="POST" class="space-y-5">
+            <form action="{{ route('admin.venues.store') }}" method="POST" class="space-y-5">
                 @csrf
 
                 <!-- Venue Name -->
@@ -90,7 +90,7 @@
 
                 <!-- Form Controls Actions -->
                 <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <a href="{{ route('admin.venue.index') }}" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                    <a href="{{ route('admin.venues.index') }}" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
                         Cancel
                     </a>
                     <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer shadow-blue-100">

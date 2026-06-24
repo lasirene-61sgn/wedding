@@ -1,69 +1,55 @@
+@extends('layouts.guest_ui')
 
+@section('title', 'Your Profile | ' . ($invite->host->name ?? 'Wedding'))
+
+@push('styles')
 <style>
-    /* Premium Invitation Theme Colors */
-    :root {
-        --primary-pink: #d63384;
-        --royal-gold: #c5a059;
-        --bg-warm: #fffafa;
-        --soft-border: #ffdceb;
-    }
-
-    body { background-color: var(--bg-warm); font-family: 'Poppins', sans-serif; }
-
     .profile-container { max-width: 600px; margin: 30px auto; padding: 0 15px; }
     
     .profile-card { 
-        background: white; 
-        border-radius: 30px; 
         padding: 35px; 
-        box-shadow: 0 15px 40px rgba(214, 51, 132, 0.08); 
-        border: 1px solid #fff5f8; 
+        margin-bottom: 30px;
     }
     
-    .section-head h2 { font-family: 'Great Vibes', cursive; color: var(--royal-gold); font-size: 3rem; text-align: center; margin-bottom: 5px; }
-    .section-head p { text-align: center; color: #777; margin-bottom: 25px; font-size: 0.9rem; }
+    .section-head h2 { font-family: 'Great Vibes', cursive; color: var(--gold); font-size: 3rem; text-align: center; margin-bottom: 5px; }
+    .section-head p { text-align: center; color: var(--gray); margin-bottom: 25px; font-size: 0.9rem; }
 
     /* Form Styling */
     .group-title { 
-        font-size: 0.8rem; font-weight: 800; color: var(--royal-gold); 
+        font-size: 0.8rem; font-weight: 800; color: var(--gold-dark); 
         margin-bottom: 20px; text-transform: uppercase; 
-        border-left: 3px solid var(--royal-gold); padding-left: 10px; 
+        border-left: 3px solid var(--gold); padding-left: 10px; 
         letter-spacing: 1px;
     }
 
-    .form-label { font-weight: 700; color: var(--primary-pink); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+    .form-label { font-weight: 700; color: var(--pink-dark); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
     
     .form-control { 
-        border-radius: 12px; border: 1px solid #f1f1f1; padding: 12px 15px; 
-        margin-bottom: 18px; width: 100%; transition: 0.3s; 
-        background: #fafafa; font-size: 0.95rem; 
+        margin-bottom: 18px; 
     }
     
-    .form-control:focus { border-color: var(--primary-pink); background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(214, 51, 132, 0.1); }
-    
-    .auto-fetch-bg { background: #fffafa !important; border: 1px solid var(--soft-border) !important; font-weight: bold; color: var(--primary-pink); }
+    .auto-fetch-bg { background: var(--pink-light) !important; border: 1px solid var(--pink-primary) !important; font-weight: bold; color: var(--pink-dark); }
     
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
     /* Smart Fill Button */
     .btn-smart-fill {
-        background: #fff5f8; color: var(--primary-pink); 
-        border: 1px dashed var(--primary-pink); width: 100%; 
+        background: var(--pink-light); color: var(--pink-primary); 
+        border: 1px dashed var(--pink-primary); width: 100%; 
         padding: 12px; border-radius: 12px; font-size: 0.85rem; 
         font-weight: 700; cursor: pointer; transition: 0.3s;
     }
-    .btn-smart-fill:hover { background: var(--primary-pink); color: white; }
+    .btn-smart-fill:hover { background: var(--pink-primary); color: white; }
 
     /* Action Button */
     .btn-update { 
-        background: var(--primary-pink); color: white; border: none; 
-        width: 100%; padding: 16px; border-radius: 50px; 
-        font-weight: 700; cursor: pointer; font-size: 1.1rem; 
-        margin-top: 15px; transition: 0.3s; 
+        width: 100%; 
+        margin-top: 15px; 
+        padding: 16px;
+        font-size: 1.1rem;
     }
-    .btn-update:hover { background: #b0246b; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(214, 51, 132, 0.3); }
 
-    hr { border: 0; border-top: 1px dashed var(--soft-border); margin: 30px 0; }
+    hr.form-divider { border: 0; border-top: 1px dashed var(--gold); margin: 30px 0; opacity: 0.5; }
 
     /* Mobile responsiveness */
     @media (max-width: 480px) {
@@ -71,9 +57,20 @@
         .profile-card { padding: 25px 20px; }
     }
 </style>
+@endpush
 
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+@section('header')
+    <div class="nav-bar-container">
+        <div class="nav-bar">
+            <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Selection</a>
+            <a href="{{ route('guest.wedding.details', $invite->id) }}"><i class="fas fa-home"></i> Home</a>
+            <a href="#" class="active"><i class="fas fa-user"></i> Profile</a>
+            <a href="{{ route('guest.gallery', $invite->id) }}"><i class="fas fa-images"></i> Gallery</a>
+        </div>
+    </div>
+@endsection
 
+@section('content')
 <div class="profile-container">
     <div class="section-head">
         <h2>Your Profile</h2>
@@ -86,7 +83,7 @@
         </button>
     </div>
 
-    <div class="profile-card">
+    <div class="glass-panel profile-card">
         <form action="{{ route('guest.profile.update', $invite->id) }}" method="POST">
             @csrf
             @method('PUT')
@@ -129,7 +126,7 @@
             <label class="form-label">Email Address</label>
             <input type="email" name="guest_email" class="form-control" value="{{ $invite->guest_email }}">
 
-            <hr>
+            <hr class="form-divider">
             <div class="group-title">2. Address & Communication</div>
 
             <div class="grid-2">
@@ -182,7 +179,7 @@
             <label class="form-label">Google Maps (Home Location)</label>
             <input type="text" name="location_map" class="form-control" value="{{ $invite->location_map }}" placeholder="Paste Google Maps URL">
 
-            <button type="submit" class="btn-update shadow">Save & Update Profile</button>
+            <button type="submit" class="btn-primary-wedding btn-update shadow">Save & Update Profile</button>
         </form>
 
         <div class="text-center mt-4">
@@ -191,6 +188,9 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     /** * 1. Smart Fill Logic 
      * Checks if the guest has other entries on the platform
@@ -247,3 +247,4 @@
         }
     }
 </script>
+@endpush

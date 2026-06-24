@@ -346,18 +346,18 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-8 mb-3"><label>Venue Name</label><input type="text" id="q_v_name" class="form-control" required></div>
-                        <div class="col-md-4 mb-3"><label>Pincode</label><input type="text" id="q_v_pin" class="form-control" maxlength="6" required></div>
+                        <div class="col-md-8 mb-3"><label>Venue Name</label><input type="text" id="q_v_name" name="venue_name" class="form-control" required></div>
+                        <div class="col-md-4 mb-3"><label>Pincode</label><input type="text" id="q_v_pin" name="pincode" class="form-control" maxlength="6" required></div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 mb-3"><label>Area</label><select id="q_v_area" class="form-select"></select></div>
-                        <div class="col-md-4 mb-3"><label>District</label><input type="text" id="q_v_district" class="form-control" readonly></div>
-                        <div class="col-md-4 mb-3"><label>State</label><input type="text" id="q_v_state" class="form-control" readonly></div>
-                        <div class="col-md-4 mb-3"><label>Landmark</label><input type="text" id="q_v_wedding_location" class="form-control"></div>
-                        <div class="col-md-4 mb-3"><label>Map Link (URL)</label><input type="text" id="q_v_location_map" class="form-control" placeholder="https://maps.google.com/..."></div>
+                        <div class="col-md-4 mb-3"><label>Area</label><select id="q_v_area" name="area_name" class="form-select"></select></div>
+                        <div class="col-md-4 mb-3"><label>District</label><input type="text" id="q_v_district" name="district" class="form-control" readonly></div>
+                        <div class="col-md-4 mb-3"><label>State</label><input type="text" id="q_v_state" name="state" class="form-control" readonly></div>
+                        <div class="col-md-4 mb-3"><label>Landmark</label><input type="text" id="q_v_wedding_location" name="wedding_location" class="form-control"></div>
+                        <div class="col-md-4 mb-3"><label>Map Link (URL)</label><input type="text" id="q_v_location_map" name="location_map" class="form-control" placeholder="https://maps.google.com/..."></div>
                     </div>
-                    <div class="mb-3"><label>Detailed Address</label><textarea id="q_v_addr" class="form-control" rows="2" required></textarea></div>
-                    <input type="hidden" id="q_v_country" value="India"><input type="hidden" id="q_v_circle">
+                    <div class="mb-3"><label>Detailed Address</label><textarea id="q_v_addr" name="venue_address" class="form-control" rows="2" required></textarea></div>
+                    <input type="hidden" id="q_v_country" name="country" value="India"><input type="hidden" id="q_v_circle" name="circle">
                 </div>
                 <div class="modal-footer"><button type="submit" class="btn btn-primary w-100 shadow">Save Venue</button></div>
             </form>

@@ -101,7 +101,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::put('/guestlist/{id}/update', [AdminGuestListController::class, 'update'])->name('guestlist.update');
         Route::delete('/guestlist/{id}/delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.destroy');
         Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
-        Route::resource('venue', AdminVenueController::class);
+        Route::resource('venues', AdminVenueController::class);
         
     });
 
@@ -214,6 +214,7 @@ Route::prefix('guest')->name('guest.')->group(function () {
         // Save the Date Page (Shows Accept/Reject buttons)
         Route::get('/wedding/{id}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
         Route::post('/wedding/{id}/status', [GuestInvitationController::class, 'updateStatus'])->name('update_status');
+        Route::post('/wedding/{id}/ceremony-status', [GuestInvitationController::class, 'updateCeremonyStatus'])->name('update_ceremony_status');
 
         // Dashboard and Gallery routes (always accessible now)
         Route::get('/wedding/{id}/ceremonies', [GuestInvitationController::class, 'showCeremonies'])->name('wedding.details');

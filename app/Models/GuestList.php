@@ -14,7 +14,11 @@ class GuestList extends Model
         'host_id', 'ceramony_id', 'guest_name',  'guest_number', 'guest_email', 'relation','gender',
         'alternate_number', 'whatsapp_number', 'age', 'complex', 'floor', 'door_no', 'street_name' ,'pincode',
         'area_name', 'district', 'state', 'circle',  'country', 'location_map', 'invitation_sent', 'sent_at',
-        'send_via', 'assigned_ceremonies', 'status', 'category_id', 'rsvp_status'
+        'send_via', 'assigned_ceremonies', 'status', 'ceremony_status', 'category_id', 'rsvp_status'
+    ];
+
+    protected $casts = [
+        'ceremony_status' => 'array',
     ];
 
     public function host(){

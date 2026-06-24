@@ -8,7 +8,7 @@
             <h1 class="text-xl font-bold text-gray-900">Manage Venues</h1>
             <p class="text-sm text-gray-500 mt-1">Manage global venues accessible by all hosts, or view host-specific entries.</p>
         </div>
-        <a href="{{ route('admin.venue.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm shadow-blue-100">
+        <a href="{{ route('admin.venues.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm shadow-blue-100">
             <i class="bi bi-plus-lg mr-2"></i> Add New Global Venue
         </a>
     </div>
@@ -56,11 +56,11 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right space-x-1">
-                                <a href="{{ route('admin.venue.edit', $venue->id) }}" class="inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-gray-100 text-gray-700 font-semibold text-xs rounded-xl transition-colors">
+                                <a href="{{ route('admin.venues.edit', $venue->id) }}" class="inline-flex items-center px-3 py-1.5 bg-gray-50 border border-gray-200 hover:bg-gray-100 text-gray-700 font-semibold text-xs rounded-xl transition-colors">
                                     <i class="bi bi-pencil-square mr-1"></i> Edit
                                 </a>
                                 
-                                <form action="{{ route('admin.venue.destroy', $venue->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you completely sure you want to delete this venue?')">
+                                <form action="{{ route('admin.venues.destroy', $venue->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you completely sure you want to delete this venue?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 border border-red-100 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-xl transition-colors cursor-pointer">

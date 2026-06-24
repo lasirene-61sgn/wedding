@@ -29,9 +29,31 @@ class ReportController extends Controller
 
         // Ceremony-wise guest count
         $ceremony_stats = Ceramonies::where('host_id', $hostId)->get()->map(function($ceremony) use ($hostId) {
-            $ceremony->guest_count = GuestList::where('host_id', $hostId)
+            $guests = GuestList::where('host_id', $hostId)
                 ->where('assigned_ceremonies', 'LIKE', '%' . $ceremony->ceramony_name . '%')
-                ->count();
+                ->get();
+            
+            $ceremony->guest_count = $guests->count();
+            
+            $accepted = 0;
+            $rejected = 0;
+            $pending = 0;
+            
+            foreach ($guests as $guest) {
+                $status = $guest->ceremony_status[$ceremony->ceramony_name] ?? 'pending';
+                if ($status === 'accepted') {
+                    $accepted++;
+                } elseif ($status === 'rejected' || $status === 'declined') {
+                    $rejected++;
+                } else {
+                    $pending++;
+                }
+            }
+            
+            $ceremony->accepted_count = $accepted;
+            $ceremony->rejected_count = $rejected;
+            $ceremony->pending_count = $pending;
+            
             return $ceremony;
         });
 
@@ -48,7 +70,7 @@ class ReportController extends Controller
 
         // Status & Via Filters
         if ($request->filled('via')) {
-            $query->where('via', $request->via);
+            $query->where('send_via', $request->via);
         }
 
         if ($request->filled('status')) {
