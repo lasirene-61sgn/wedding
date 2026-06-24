@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('cleanup:completed-ceremonies')->daily();
+Schedule::command('cleanup:deleted-hosts-data')->daily();

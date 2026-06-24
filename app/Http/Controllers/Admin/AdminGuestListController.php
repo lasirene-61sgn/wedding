@@ -14,7 +14,7 @@ class AdminGuestListController extends Controller
 {
     public function index(Request $request)
     {
-        $hosts = Host::all();
+        $hosts = Host::withTrashed()->get();
 
         $query = GuestList::withTrashed()->with(['ceramony' => function ($q) {
             $q->withTrashed();
