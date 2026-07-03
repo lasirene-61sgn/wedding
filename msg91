@@ -1,0 +1,12 @@
+sms -> template name is bride_groom_invit 
+##alphanumeric## & ##alphanumeric##, We cordially invite you for our wedding ceremony on ##alphanumeric##. From La Sirene Exim.
+
+template name -> Invite_Groom
+##var1## and ##var2## seeking your present and bless our Son's Wedding Ceremony. Your event access details available in ##var3##. La Sirene Exim.
+
+
+template name -> Invite_Bride
+##var1## and ##var2## seeking your present and Bless our Daughter's Wedding Ceremony. Your event access details available in ##var3##.
+La Sirene Exim.
+
+

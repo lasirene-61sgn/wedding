@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Ceramonies;
 use App\Models\GuestList;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -50,9 +51,10 @@ class InvitationService
                 return;
             }
 
-            $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
+            // Note: Change 'Ceremonies' back to 'Ceramonies' if your model filename uses an 'a'
+            $ceremony = Ceramonies::where('host_id', $guest->host_id)->latest()->first();
             $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
-            
+
             $rawNumber = $guest->guest_number;
             $cleanNumber = preg_replace('/[^0-9]/', '', $rawNumber);
             if (strlen($cleanNumber) === 10) {
@@ -62,59 +64,46 @@ class InvitationService
             $relation = strtolower(trim($guest->relation ?? ''));
             $shortLink = route('guest.rsvp.portal', ['id' => $guest->id]);
 
-            $msg91TemplateId = '';
-            $smsVariables = [];
-
-            // Mirror sendEmail logic exactly
+            // 1. Determine who is creating the invitation and put their name first
             if ($relation === 'bride' || $relation === 'groom') {
+                // For bride_groom_invit template
                 $msg91TemplateId = env('MSG91_FLOW_COUPLE_ID', '6a17d05b5e19870c280f5242');
-                $val1 = $invitation->bride_name ?? 'Bride';
-                $val2 = $invitation->groom_name ?? 'Groom';
                 $smsVariables = [
-                    'var1' => $val1,
-                    'var2' => $val2,
+                    'var1' => $invitation->bride_name ?? 'Bride',
+                    'var2' => $invitation->groom_name ?? 'Groom',
                     'var3' => $shortLink,
-                    'brideName' => $val1,
-                    'groomName' => $val2,
-                    'date' => $weddingDate,
-                    'shortLink' => $shortLink,
-                ];
-            } elseif ($relation === 'groom_parent') {
-                $msg91TemplateId = env('MSG91_FLOW_GROOM_ID', '68a598a35af05446a26303f9');
-                $val1 = $invitation->groom_mother_name ?? 'Mother Name';
-                $val2 = $invitation->groom_father_name ?? 'Father Name';
-                $smsVariables = [
-                    'var1' => $val1,
-                    'var2' => $val2,
-                    'var3' => $shortLink,
-                    'groomMotherName' => $val1,
-                    'groomFatherName' => $val2,
-                    'date' => $weddingDate,
-                    'shortLink' => $shortLink,
                 ];
             } elseif ($relation === 'bride_parent') {
-                $msg91TemplateId = env('MSG91_FLOW_BRIDE_ID', '68a577370fc63d1e78442d26');
-                $val1 = $invitation->bride_mother_name ?? 'Mother Name';
-                $val2 = $invitation->bride_father_name ?? 'Father Name';
+                // For Invite_Bride template
+                $msg91TemplateId = env('MSG91_FLOW_BRIDE_PARENT_ID', '68a577370fc63d1e78442d26');
                 $smsVariables = [
-                    'var1' => $val1,
-                    'var2' => $val2,
+                    'var1' => $invitation->bride_mother_name ?? '',
+                    'var2' => $invitation->bride_father_name ?? '',
                     'var3' => $shortLink,
-                    'brideMotherName' => $val1,
-                    'brideFatherName' => $val2,
-                    'date' => $weddingDate,
-                    'shortLink' => $shortLink,
+                ];
+            } elseif ($relation === 'groom_parent') {
+                // For Invite_Groom template
+                $msg91TemplateId = env('MSG91_FLOW_GROOM_PARENT_ID', '68a598a35af05446a26303f9');
+                $smsVariables = [
+                    'var1' => $invitation->groom_mother_name ?? '',
+                    'var2' => $invitation->groom_father_name ?? '',
+                    'var3' => $shortLink,
                 ];
             } else {
-                return; // Unknown relation, abort just like Email
+                return; // Unknown relation, abort
             }
+
+            // Also keep legacy variables just in case the template still uses them
+            $smsVariables['inviterName'] = $smsVariables['var1'] . ' & ' . $smsVariables['var2'];
+            $smsVariables['weddingDate'] = $weddingDate;
+            $smsVariables['shortLink'] = $shortLink;
 
             $recipient = array_merge(['mobiles' => $cleanNumber], $smsVariables);
 
             $payload = [
                 'template_id' => $msg91TemplateId,
                 'short_url'   => 0,
-                'recipients'  => [ $recipient ]
+                'recipients'  => [$recipient]
             ];
 
             $response = \Illuminate\Support\Facades\Http::withHeaders([
@@ -139,7 +128,7 @@ class InvitationService
 
         $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
         $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
-        
+
         $shortLink = route('guest.rsvp.portal', ['id' => $guest->id]);
         $relation = trim(strtolower($guest->relation ?? ''));
 
@@ -155,15 +144,15 @@ class InvitationService
         $templateName = '';
 
         if ($relation === 'bride' || $relation === 'groom') {
-            $templateName = 'invite_bridemsg';
+            $templateName = 'invit_org2';
             $val1 = $invitation->bride_name ?? '';
             $val2 = $invitation->groom_name ?? '';
         } elseif ($relation === 'groom_parent') {
-            $templateName = 'invit_org2';
+            $templateName = 'invit_org1';
             $val1 = $invitation->groom_mother_name ?? '';
             $val2 = $invitation->groom_father_name ?? '';
         } elseif ($relation === 'bride_parent') {
-            $templateName = 'invit_org1'; 
+            $templateName = 'invite_bridemsg';
             $val1 = $invitation->bride_mother_name ?? '';
             $val2 = $invitation->bride_father_name ?? '';
         } else {
@@ -192,7 +181,7 @@ class InvitationService
                     'namespace' => 'bc3735fb_a2e9_4e83_8b62_377bca25c09f',
                     'to_and_components' => [
                         [
-                            'to' => [ $cleanNumber ],
+                            'to' => [$cleanNumber],
                             'components' => $bodyVariables
                         ]
                     ]
