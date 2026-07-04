@@ -238,4 +238,27 @@ class GuestListController extends Controller
 
         return back()->with('success', 'Category assigned and guests updated!');
     }
+
+    public function sendReminders(Request $request, InvitationService $invitationService)
+    {
+        $request->validate([
+            'channels' => 'required|array',
+        ]);
+
+        $selectedChannels = $request->channels;
+
+        // Fetch all guests for this host who have already been sent an invitation
+        $guests = GuestList::where('host_id', Auth::id())
+            ->where('invitation_sent', 1)
+            ->get();
+
+        $count = 0;
+        foreach ($guests as $guest) {
+            $ceremonyNames = $guest->assigned_ceremonies ?? ($guest->ceramony ? $guest->ceramony->ceramony_name : 'the ceremonies');
+            $invitationService->sendBulkReminders($guest, $selectedChannels, $ceremonyNames);
+            $count++;
+        }
+
+        return back()->with('success', "Reminders sent to $count guests successfully!");
+    }
 }

@@ -167,6 +167,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');
+        Route::post('guestlist/bulk-reminders', [GuestListController::class, 'sendReminders'])->name('guestlist.sendReminders');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::resource('categories', GuestCategoryController::class);
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

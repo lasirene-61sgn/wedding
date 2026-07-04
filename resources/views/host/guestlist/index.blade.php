@@ -20,6 +20,10 @@
                 <button type="button" onclick="openImportModal()"
                     style="background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;">Import
                     Excel</button>
+                <button type="button" onclick="openReminderModal()"
+                    style="background: #f59e0b; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                    Send Reminders
+                </button>
             </div>
         </div>
 
@@ -235,6 +239,40 @@
         </div>
     </div>
 
+    <!-- Send Reminders Modal -->
+    <div id="reminderModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 16px; width: 100%; max-width: 450px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 700;">Send Reminders</h3>
+                <button onclick="closeReminderModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8;">&times;</button>
+            </div>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+                Reminders will only be sent to guests who have already received their invitations.
+            </p>
+            <form action="{{ route('host.guestlist.sendReminders') }}" method="POST">
+                @csrf
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 10px;">Select Channels:</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <label style="font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="channels[]" value="whatsapp" style="width: 16px; height: 16px;"> WhatsApp
+                        </label>
+                        <label style="font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="channels[]" value="sms" style="width: 16px; height: 16px;"> SMS
+                        </label>
+                        <label style="font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" name="channels[]" value="email" style="width: 16px; height: 16px;"> Email
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" onclick="closeReminderModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; background: #fff; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #4f46e5; color: white; font-weight: 600; cursor: pointer;">Send Reminders</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const master = document.getElementById('master-checkbox');
         const items = document.querySelectorAll('.guest-item');
@@ -243,6 +281,9 @@
 
         function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
         function closeImportModal() { document.getElementById('importModal').style.display = 'none'; }
+
+        function openReminderModal() { document.getElementById('reminderModal').style.display = 'flex'; }
+        function closeReminderModal() { document.getElementById('reminderModal').style.display = 'none'; }
 
         function toggleBar() {
             const checked = document.querySelectorAll('.guest-item:checked').length;

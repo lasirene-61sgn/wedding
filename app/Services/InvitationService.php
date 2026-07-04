@@ -494,4 +494,46 @@ class InvitationService
             ]);
         }
     }
+
+    public function sendBulkReminders(GuestList $guest, array $channels, string $ceremonyNames)
+    {
+        foreach ($channels as $channel) {
+            try {
+                if ($channel === 'sms' && $guest->guest_number) {
+                    $this->sendReminderSMS($guest, $ceremonyNames);
+                }
+
+                if ($channel === 'whatsapp') {
+                    $this->sendReminderWhatsApp($guest, $ceremonyNames);
+                }
+
+                if ($channel === 'email' && $guest->guest_email) {
+                    $this->sendReminderEmail($guest, $ceremonyNames);
+                }
+            } catch (\Exception $e) {
+                Log::error("Failed to send reminder via {$channel} to guest {$guest->id}: " . $e->getMessage());
+            }
+        }
+    }
+
+    protected function sendReminderSMS(GuestList $guest, string $ceremonyNames)
+    {
+        // TODO: Apply reminder SMS template here when provided.
+        // For now, just logging the action.
+        \Illuminate\Support\Facades\Log::info("sendReminderSMS triggered for Guest ID {$guest->id}");
+    }
+
+    protected function sendReminderWhatsApp(GuestList $guest, string $ceremonyNames)
+    {
+        // TODO: Apply reminder WhatsApp template here when provided.
+        // For now, just logging the action.
+        \Illuminate\Support\Facades\Log::info("sendReminderWhatsApp triggered for Guest ID {$guest->id}");
+    }
+
+    protected function sendReminderEmail(GuestList $guest, string $ceremonyNames)
+    {
+        // TODO: Apply reminder Email template here when provided.
+        // For now, just logging the action.
+        \Illuminate\Support\Facades\Log::info("sendReminderEmail triggered for Guest ID {$guest->id}");
+    }
 }
