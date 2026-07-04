@@ -65,6 +65,8 @@
                         <select name="relation" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
                             <option value="bride" {{ $guestlist->relation == 'bride' ? 'selected' : '' }}>Bride Side</option>
                             <option value="groom" {{ $guestlist->relation == 'groom' ? 'selected' : '' }}>Groom Side</option>
+                            <option value="bride_parent" {{ $guestlist->relation == 'bride_parent' ? 'selected' : '' }}>Bride Parent</option>
+                            <option value="groom_parent" {{ $guestlist->relation == 'groom_parent' ? 'selected' : '' }}>Groom Parent</option>
                         </select>
                     </div>
                     <div>

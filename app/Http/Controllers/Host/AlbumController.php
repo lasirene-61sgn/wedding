@@ -66,7 +66,7 @@ class AlbumController extends Controller
         $album = Albums::where('id', $id)->where('host_id',Auth::id())->firstOrFail();
         $images = $album->album_images;
         $index = $request->image_index;
-        if(asset($images[$index])){
+        if(isset($images[$index])){
             Storage::disk('public')->delete($images[$index]);
             unset($images[$index]);
             $album->album_images = array_values($images);

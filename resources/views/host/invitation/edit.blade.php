@@ -282,8 +282,8 @@
                     </div>
                 </div>
                 
-                <input type="hidden" name="text_positions" id="text_positions" value="{{ json_encode($invitation->text_positions ?? []) }}">
-                <input type="hidden" name="custom_canvas_texts" id="custom_canvas_texts" value="{{ json_encode($invitation->custom_canvas_texts ?? []) }}">
+                <input type="hidden" name="text_positions" id="text_positions" value="{{ is_string($invitation->text_positions) ? $invitation->text_positions : json_encode($invitation->text_positions ?? []) }}">
+                <input type="hidden" name="custom_canvas_texts" id="custom_canvas_texts" value="{{ is_string($invitation->custom_canvas_texts) ? $invitation->custom_canvas_texts : json_encode($invitation->custom_canvas_texts ?? []) }}">
 
                 <button type="submit" class="btn btn-primary btn-lg w-100 mb-5 shadow">✨ Update Wedding Invitation</button>
             </form>
@@ -309,15 +309,15 @@
                             <option value="Arial, sans-serif">Arial</option>
                         </select>
                         <div class="vr mx-1"></div>
-                        <button type="button" id="tool_bold" title="Bold">B</button>
-                        <button type="button" id="tool_italic" title="Italic"><i>I</i></button>
+                        <button type="button" id="tool_bold" title="Bold" class="btn btn-sm btn-outline-secondary px-2 fw-bold">B</button>
+                        <button type="button" id="tool_italic" title="Italic" class="btn btn-sm btn-outline-secondary px-2 fst-italic">I</button>
                         <div class="vr mx-1"></div>
-                        <button type="button" id="tool_size_down" title="Decrease Font Size">A-</button>
-                        <button type="button" id="tool_size_up" title="Increase Font Size">A+</button>
+                        <button type="button" id="tool_size_down" title="Decrease Font Size" class="btn btn-sm btn-outline-secondary px-2">A-</button>
+                        <button type="button" id="tool_size_up" title="Increase Font Size" class="btn btn-sm btn-outline-secondary px-2">A+</button>
                         <div class="vr mx-1"></div>
-                        <button type="button" id="tool_align_left" title="Align Left">⬅</button>
-                        <button type="button" id="tool_align_center" title="Center">↔</button>
-                        <button type="button" id="tool_align_right" title="Align Right">➡</button>
+                        <button type="button" id="tool_align_left" title="Align Left" class="btn btn-sm btn-outline-secondary px-2">⬅</button>
+                        <button type="button" id="tool_align_center" title="Center" class="btn btn-sm btn-outline-secondary px-2">↔</button>
+                        <button type="button" id="tool_align_right" title="Align Right" class="btn btn-sm btn-outline-secondary px-2">➡</button>
                         <div class="vr mx-1"></div>
                         <input type="color" id="tool_color" title="Text Color" value="#000000">
                         <div class="vr mx-1"></div>
@@ -347,40 +347,7 @@
                     @endphp
                     
                     <div class="ceremony-card-preview" id="preview_card" style="{{ $bgImage ? 'background-image: url(' . $bgImage . ');' : '' }}">
-                        <div class="card-content" id="preview_card_inner">
-                            @php
-                                $pos = $invitation->text_positions ?? [];
-                                $customTexts = $invitation->custom_canvas_texts ?? [];
-
-                                $defaults = [
-                                    'preview_title' => ['top' => '10%', 'left' => '50%', 'transform' => 'translateX(-50%)', 'textAlign' => 'center', 'fontSize' => '2.2rem'],
-                                    'preview_date_row' => ['top' => '30%', 'left' => '50%', 'transform' => 'translateX(-50%)', 'textAlign' => 'center', 'fontSize' => '1.1rem'],
-                                    'preview_time_row' => ['top' => '45%', 'left' => '50%', 'transform' => 'translateX(-50%)', 'textAlign' => 'center', 'fontSize' => '1.1rem'],
-                                    'preview_venue_row' => ['top' => '60%', 'left' => '50%', 'transform' => 'translateX(-50%)', 'textAlign' => 'center', 'fontSize' => '1.1rem']
-                                ];
-
-                                $title_pos = array_merge($defaults['preview_title'], $pos['preview_title'] ?? []);
-                                $date_pos = array_merge($defaults['preview_date_row'], $pos['preview_date_row'] ?? []);
-                                $time_pos = array_merge($defaults['preview_time_row'], $pos['preview_time_row'] ?? []);
-                                $venue_pos = array_merge($defaults['preview_venue_row'], $pos['preview_venue_row'] ?? []);
-                            @endphp
-
-                            <h4 class="ceremony-title draggable-text" id="preview_title" data-anim-type="{{ $title_pos['animationType'] ?? 'none' }}" data-anim-duration="{{ $title_pos['animationDuration'] ?? '0.8' }}" style="color: {{ $title_pos['color'] ?? ($invitation->text_color ?? '#b02663') }}; top: {{ $title_pos['top'] }}; left: {{ $title_pos['left'] }}; transform: {{ $title_pos['transform'] ?? 'none' }}; text-align: {{ $title_pos['textAlign'] ?? 'center' }}; font-size: {{ $title_pos['fontSize'] ?? '2.2rem' }}; font-family: {{ $title_pos['fontFamily'] ?? "'Georgia', cursive, serif" }};">
-                                {!! $customTexts['preview_title'] ?? 'Wedding: ' . ($invitation->bride_name ?: 'Bride') . ' & ' . ($invitation->groom_name ?: 'Groom') !!}
-                            </h4>
-                            
-                            <div class="details-row date-row draggable-text" id="preview_date_row" data-anim-type="{{ $date_pos['animationType'] ?? 'none' }}" data-anim-duration="{{ $date_pos['animationDuration'] ?? '0.8' }}" style="color: {{ $date_pos['color'] ?? ($invitation->details_color ?? '#2b4c5e') }}; top: {{ $date_pos['top'] }}; left: {{ $date_pos['left'] }}; transform: {{ $date_pos['transform'] ?? 'none' }}; text-align: {{ $date_pos['textAlign'] ?? 'center' }}; font-size: {{ $date_pos['fontSize'] ?? '1.1rem' }}; font-family: {{ $date_pos['fontFamily'] ?? "'Arial', sans-serif" }};">
-                                {!! $customTexts['preview_date_row'] ?? '<span>📅</span> <span id="preview_date">' . ($invitation->wedding_date ? \Carbon\Carbon::parse($invitation->wedding_date)->format('l, d F Y') : 'Select a Date') . '</span>' !!}
-                            </div>
-                            
-                            <div class="details-row time-row draggable-text" id="preview_time_row" data-anim-type="{{ $time_pos['animationType'] ?? 'none' }}" data-anim-duration="{{ $time_pos['animationDuration'] ?? '0.8' }}" style="color: {{ $time_pos['color'] ?? ($invitation->details_color ?? '#2b4c5e') }}; top: {{ $time_pos['top'] }}; left: {{ $time_pos['left'] }}; transform: {{ $time_pos['transform'] ?? 'none' }}; text-align: {{ $time_pos['textAlign'] ?? 'center' }}; font-size: {{ $time_pos['fontSize'] ?? '1.1rem' }}; font-family: {{ $time_pos['fontFamily'] ?? "'Arial', sans-serif" }};">
-                                {!! $customTexts['preview_time_row'] ?? '<span>⏰</span> <span id="preview_time">' . ($invitation->wedding_time ? \Carbon\Carbon::parse($invitation->wedding_time)->format('h:i A') : 'Select a Time') . '</span>' !!}
-                            </div>
-                            
-                            <div class="details-row venue-row draggable-text" id="preview_venue_row" data-anim-type="{{ $venue_pos['animationType'] ?? 'none' }}" data-anim-duration="{{ $venue_pos['animationDuration'] ?? '0.8' }}" style="color: {{ $venue_pos['color'] ?? ($invitation->details_color ?? '#2b4c5e') }}; top: {{ $venue_pos['top'] }}; left: {{ $venue_pos['left'] }}; transform: {{ $venue_pos['transform'] ?? 'none' }}; text-align: {{ $venue_pos['textAlign'] ?? 'center' }}; font-size: {{ $venue_pos['fontSize'] ?? '1.1rem' }}; font-family: {{ $venue_pos['fontFamily'] ?? "'Arial', sans-serif" }};">
-                                {!! $customTexts['preview_venue_row'] ?? '<span>📍</span> <span id="preview_venue">' . ($invitation->venue ? $invitation->venue->venue_name : 'Venue to be announced') . '</span>' !!}
-                            </div>
-                        </div>
+                        <canvas id="designCanvas" width="450" height="600"></canvas>
                     </div>
                 </div>
             </div>
@@ -423,8 +390,7 @@
 </div>
 
 @push('scripts')
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const brideInput = document.querySelector('input[name="bride_name"]');
@@ -435,330 +401,320 @@
         const textColorInput = document.getElementById('text_color');
         const detailsColorInput = document.getElementById('details_color');
         const bgRadios = document.querySelectorAll('input[name="selected_background_id"]');
+        const textPositionsInput = document.getElementById('text_positions');
+        const toolbar = document.getElementById('canvas_toolbar');
 
-        const prevTitle = document.getElementById('preview_title');
-        const prevDate = document.getElementById('preview_date');
-        const prevTime = document.getElementById('preview_time');
-        const prevVenue = document.getElementById('preview_venue');
-        const prevDateRow = document.getElementById('preview_date_row');
-        const prevTimeRow = document.getElementById('preview_time_row');
-        const prevVenueRow = document.getElementById('preview_venue_row');
-        const prevCard = document.getElementById('preview_card');
+        // Init Fabric Canvas
+        const canvas = new fabric.Canvas('designCanvas', {
+            preserveObjectStacking: true
+        });
+
+        // Set up custom properties to be exported in JSON
+        fabric.Object.prototype.toObject = (function(toObject) {
+            return function(propertiesToInclude) {
+                return toObject.call(this, ['id', 'animType', 'animDuration'].concat(propertiesToInclude || []));
+            };
+        })(fabric.Object.prototype.toObject);
+
+        function addOrUpdateText(id, text, top, fontSize, color, fontFamily) {
+            let existingObj = canvas.getObjects().find(o => o.id === id);
+            if (existingObj) {
+                existingObj.set({ text: text }); // Only update text, preserve layout and colors in edit
+            } else {
+                let obj = new fabric.Textbox(text, {
+                    id: id,
+                    left: 225, // center of 450
+                    top: top,
+                    originX: 'center',
+                    originY: 'center',
+                    fontSize: fontSize,
+                    fill: color,
+                    fontFamily: fontFamily,
+                    textAlign: 'center',
+                    width: 400,
+                    animType: 'none',
+                    animDuration: '0.8',
+                    transparentCorners: false,
+                    cornerColor: '#007bff',
+                    cornerSize: 10,
+                    borderColor: '#007bff'
+                });
+                canvas.add(obj);
+                return obj;
+            }
+            return existingObj;
+        }
 
         function updatePreview() {
-            let bride = brideInput.value || 'Bride';
-            let groom = groomInput.value || 'Groom';
+            let bride = brideInput && brideInput.value ? brideInput.value : 'Bride';
+            let groom = groomInput && groomInput.value ? groomInput.value : 'Groom';
+            let titleText = `Wedding: ${bride} & ${groom}`;
             
-            if(!customTexts['preview_title']) prevTitle.textContent = `Wedding: ${bride} & ${groom}`;
-            
-            if(!customTexts['preview_date_row'] && dateInput && dateInput.value) {
+            let dateText = 'Select a Date';
+            if(dateInput && dateInput.value) {
                 const dateObj = new Date(dateInput.value);
-                prevDate.textContent = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+                dateText = '📅 ' + dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
             }
 
-            if(!customTexts['preview_time_row'] && timeInput && timeInput.value) {
+            let timeText = 'Select a Time';
+            if(timeInput && timeInput.value) {
                 let [h, m] = timeInput.value.split(':');
                 let ampm = h >= 12 ? 'PM' : 'AM';
                 h = h % 12 || 12;
-                prevTime.textContent = `${h}:${m} ${ampm}`;
+                timeText = `⏰ ${h}:${m} ${ampm}`;
             }
 
-            if(!customTexts['preview_venue_row'] && venueSelect && venueSelect.selectedIndex > 0) {
+            let venueText = 'Venue to be announced';
+            if(venueSelect && venueSelect.selectedIndex > 0) {
                 const opt = venueSelect.options[venueSelect.selectedIndex];
-                prevVenue.textContent = opt.getAttribute('data-name') || 'Venue to be announced';
+                venueText = '📍 ' + (opt.getAttribute('data-name') || 'Venue to be announced');
             }
 
-            prevTitle.style.color = textColorInput.value;
-            prevDateRow.style.color = detailsColorInput.value;
-            prevTimeRow.style.color = detailsColorInput.value;
-            prevVenueRow.style.color = detailsColorInput.value;
-            
-            customTexts['preview_title'] = prevTitle.innerHTML;
-            customTexts['preview_date_row'] = prevDateRow.innerHTML;
-            customTexts['preview_time_row'] = prevTimeRow.innerHTML;
-            customTexts['preview_venue_row'] = prevVenueRow.innerHTML;
-            customTextsInput.value = JSON.stringify(customTexts);
+            let tColor = textColorInput ? textColorInput.value : '#b02663';
+            let dColor = detailsColorInput ? detailsColorInput.value : '#2b4c5e';
+
+            // Create or update existing
+            addOrUpdateText('preview_title', titleText, 100, 32, tColor, 'Georgia');
+            addOrUpdateText('preview_date_row', dateText, 250, 18, dColor, 'Arial');
+            addOrUpdateText('preview_time_row', timeText, 320, 18, dColor, 'Arial');
+            addOrUpdateText('preview_venue_row', venueText, 390, 18, dColor, 'Arial');
+
+            canvas.renderAll();
+            saveCanvasState();
         }
 
-        if(brideInput) brideInput.addEventListener('input', updatePreview);
-        if(groomInput) groomInput.addEventListener('input', updatePreview);
-        if(dateInput) dateInput.addEventListener('change', updatePreview);
-        if(timeInput) timeInput.addEventListener('input', updatePreview);
-        if(venueSelect) venueSelect.addEventListener('change', updatePreview);
-        if(textColorInput) textColorInput.addEventListener('input', updatePreview);
-        if(detailsColorInput) detailsColorInput.addEventListener('input', updatePreview);
+        function saveCanvasState() {
+            textPositionsInput.value = JSON.stringify(canvas.toJSON());
+        }
 
+        canvas.on('object:modified', saveCanvasState);
+        canvas.on('text:changed', saveCanvasState);
+
+        // Bind form inputs
+        function bindEvents() {
+            if(brideInput) brideInput.addEventListener('input', updatePreview);
+            if(groomInput) groomInput.addEventListener('input', updatePreview);
+            if(dateInput) dateInput.addEventListener('change', updatePreview);
+            if(timeInput) timeInput.addEventListener('input', updatePreview);
+            if(venueSelect) venueSelect.addEventListener('change', updatePreview);
+            
+            // Only bind color inputs if they actually want to overwrite the whole canvas colors
+            if(textColorInput) textColorInput.addEventListener('input', function() {
+                let obj = canvas.getObjects().find(o => o.id === 'preview_title');
+                if(obj) { obj.set('fill', this.value); canvas.renderAll(); saveCanvasState(); }
+            });
+            if(detailsColorInput) detailsColorInput.addEventListener('input', function() {
+                let ids = ['preview_date_row', 'preview_time_row', 'preview_venue_row'];
+                canvas.getObjects().forEach(obj => {
+                    if(ids.includes(obj.id)) { obj.set('fill', this.value); }
+                });
+                canvas.renderAll();
+                saveCanvasState();
+            });
+        }
+
+        // Background Image Logic
         bgRadios.forEach(radio => {
             radio.addEventListener('change', function() {
                 if(this.checked) {
-                    const img = this.closest('label').querySelector('img');
-                    if(img) {
-                        prevCard.style.backgroundImage = `url('${img.src}')`;
+                    const imgEl = this.closest('label').querySelector('img');
+                    if(imgEl) {
+                        fabric.Image.fromURL(imgEl.src, function(img) {
+                            // Scale image to fit canvas
+                            let scaleX = canvas.width / img.width;
+                            let scaleY = canvas.height / img.height;
+                            let scale = Math.max(scaleX, scaleY);
+                            img.set({
+                                scaleX: scale,
+                                scaleY: scale,
+                                originX: 'center',
+                                originY: 'center',
+                                top: canvas.height / 2,
+                                left: canvas.width / 2
+                            });
+                            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                            saveCanvasState();
+                        }, { crossOrigin: 'anonymous' });
                     }
                 }
             });
         });
 
-        const textPositionsInput = document.getElementById('text_positions');
-        let parsedPositions = {};
+        // Initial setup from database
+        let initialJson = textPositionsInput.value;
+        let isFabricJson = false;
         try {
-            parsedPositions = textPositionsInput.value ? JSON.parse(textPositionsInput.value) : {};
-        } catch(e) {}
-        let currentPositions = Array.isArray(parsedPositions) ? {} : parsedPositions;
-
-        function savePositions(element) {
-            const innerContainer = $('#preview_card_inner');
-            const posLeft = element[0].style.left || '50%';
-            const posTop = element[0].style.top || '0%';
-            const transform = element[0].style.transform || 'none';
-            const textAlign = element.css('text-align') || 'center';
-            const fontSize = element.css('font-size') || '1rem';
-            const color = element.css('color') || '#000';
-            const fontFamily = element.css('font-family') || "'Arial', sans-serif";
-            const animationType = element.attr('data-anim-type') || 'none';
-            const animationDuration = element.attr('data-anim-duration') || '0.8';
-
-            const id = element.attr('id');
-            currentPositions[id] = {
-                left: posLeft,
-                top: posTop,
-                transform: transform,
-                textAlign: textAlign,
-                fontSize: fontSize,
-                color: color,
-                fontFamily: fontFamily,
-                animationType: animationType,
-                animationDuration: animationDuration
-            };
-            
-            textPositionsInput.value = JSON.stringify(currentPositions);
+            let parsed = JSON.parse(initialJson);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.objects) {
+                isFabricJson = true;
+            }
+        } catch (e) {
+            isFabricJson = false;
         }
 
-        $('.draggable-text').draggable({
-            containment: '#preview_card_inner',
-            cancel: '.editing-mode',
-            stop: function(event, ui) {
-                const innerContainer = $('#preview_card_inner');
-                const element = $(this);
-                const parentWidth = innerContainer.width();
-                const parentHeight = innerContainer.height();
+        if (initialJson && initialJson !== '{}' && initialJson !== '[]' && isFabricJson) {
+            canvas.loadFromJSON(initialJson, function() {
+                const checkedBg = document.querySelector('input[name="selected_background_id"]:checked');
+                if (checkedBg) checkedBg.dispatchEvent(new Event('change'));
                 
-                const leftPercent = ((ui.position.left / parentWidth) * 100).toFixed(2) + '%';
-                const topPercent = ((ui.position.top / parentHeight) * 100).toFixed(2) + '%';
-                
-                element.css({ 'left': leftPercent, 'top': topPercent, 'transform': 'none' });
-                savePositions(element);
-            }
-        });
-
-        const customTextsInput = document.getElementById('custom_canvas_texts');
-        let parsedTexts = {};
-        try {
-            parsedTexts = customTextsInput.value ? JSON.parse(customTextsInput.value) : {};
-        } catch(e) {}
-        let customTexts = Array.isArray(parsedTexts) ? {} : parsedTexts;
-        const toolbar = document.getElementById('canvas_toolbar');
-        let activeElement = null;
-
-        document.querySelectorAll('.draggable-text').forEach(el => {
-            el.addEventListener('mouseenter', function() {
-                if (this.style.transform && this.style.transform.includes('translateX')) {
-                    const jqEl = $(this);
-                    const offset = jqEl.position();
-                    const parentWidth = $('#preview_card_inner').width();
-                    const parentHeight = $('#preview_card_inner').height();
-                    const leftPercent = ((offset.left / parentWidth) * 100).toFixed(2) + '%';
-                    const topPercent = ((offset.top / parentHeight) * 100).toFixed(2) + '%';
-                    jqEl.css({ 'transform': 'none', 'left': leftPercent, 'top': topPercent });
-                }
+                canvas.renderAll();
+                bindEvents();
             });
+        } else {
+            updatePreview();
+            const checkedBg = document.querySelector('input[name="selected_background_id"]:checked');
+            if (checkedBg) checkedBg.dispatchEvent(new Event('change'));
+            bindEvents();
+        }
 
-            el.addEventListener('click', function(e) {
-                document.querySelectorAll('.draggable-text').forEach(t => t.classList.remove('selected'));
-                $(this).addClass('selected');
-                activeElement = $(this);
+        // --- Toolbar Logic ---
+        canvas.on('selection:created', showToolbar);
+        canvas.on('selection:updated', showToolbar);
+        canvas.on('selection:cleared', hideToolbar);
+
+        function showToolbar(e) {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj && activeObj.type === 'textbox') {
                 toolbar.style.display = 'flex';
+                document.getElementById('tool_color').value = activeObj.fill || '#000000';
+                document.getElementById('tool_font_family').value = activeObj.fontFamily || 'Arial';
+                document.getElementById('tool_animation_type').value = activeObj.animType || 'none';
+                document.getElementById('tool_animation_duration').value = activeObj.animDuration || '0.8';
                 
-                function rgbToHex(rgb) {
-                    if(!rgb) return '#000000';
-                    let a = rgb.split("(")[1].split(")")[0].split(",");
-                    return "#" + a.map(x => {
-                        x = parseInt(x).toString(16);
-                        return (x.length==1) ? "0"+x : x;
-                    }).join("");
-                }
-                const color = activeElement.css('color');
-                if (color && color.startsWith('rgb')) {
-                    document.getElementById('tool_color').value = rgbToHex(color);
-                }
-                
-                const fontVal = activeElement.css('font-family');
-                if(fontVal) document.getElementById('tool_font_family').value = fontVal.replace(/"/g, "'");
-                
-                const animType = activeElement.attr('data-anim-type') || 'none';
-                document.getElementById('tool_animation_type').value = animType;
-                
-                const animDur = activeElement.attr('data-anim-duration') || '0.8';
-                document.getElementById('tool_animation_duration').value = animDur;
-            });
-
-            el.addEventListener('dblclick', function(e) {
-                $(this).addClass('editing-mode');
-                $(this).attr('contenteditable', 'true');
-                $(this).focus();
-            });
-
-            el.addEventListener('input', function() {
-                const id = this.getAttribute('id');
-                customTexts[id] = this.innerHTML;
-                customTextsInput.value = JSON.stringify(customTexts);
-                savePositions($(this));
-            });
-        });
-
-        document.addEventListener('mousedown', function(e) {
-            if (!$(e.target).closest('#preview_card').length && !$(e.target).closest('.canvas-toolbar').length) {
-                toolbar.style.display = 'none';
-                if (activeElement) {
-                    activeElement.removeClass('editing-mode');
-                    activeElement.removeClass('selected');
-                    activeElement.removeAttr('contenteditable');
-                }
-                activeElement = null;
+                toolbar.style.top = '-60px';
+                toolbar.style.left = '50%';
             }
-        });
+        }
 
-        document.getElementById('tool_bold').addEventListener('mousedown', function(e) {
+        function hideToolbar() {
+            toolbar.style.display = 'none';
+        }
+
+        document.getElementById('tool_bold').addEventListener('click', function(e) {
             e.preventDefault();
-            document.execCommand('bold', false, null);
-            if(activeElement) {
-                customTexts[activeElement.attr('id')] = activeElement.html();
-                customTextsInput.value = JSON.stringify(customTexts);
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) {
+                activeObj.set('fontWeight', activeObj.fontWeight === 'bold' ? 'normal' : 'bold');
+                canvas.renderAll();
+                saveCanvasState();
             }
         });
         
-        document.getElementById('tool_italic').addEventListener('mousedown', function(e) {
+        document.getElementById('tool_italic').addEventListener('click', function(e) {
             e.preventDefault();
-            document.execCommand('italic', false, null);
-            if(activeElement) {
-                customTexts[activeElement.attr('id')] = activeElement.html();
-                customTextsInput.value = JSON.stringify(customTexts);
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) {
+                activeObj.set('fontStyle', activeObj.fontStyle === 'italic' ? 'normal' : 'italic');
+                canvas.renderAll();
+                saveCanvasState();
             }
         });
 
         document.getElementById('tool_align_left').addEventListener('click', function(e) {
             e.preventDefault();
-            if(activeElement) { 
-                activeElement.css({ 'left': '0%', 'transform': 'none', 'text-align': 'left' }); 
-                savePositions(activeElement); 
-            }
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('textAlign', 'left'); canvas.renderAll(); saveCanvasState(); }
         });
         document.getElementById('tool_align_center').addEventListener('click', function(e) {
             e.preventDefault();
-            if(activeElement) { 
-                activeElement.css({ 'left': '50%', 'transform': 'translateX(-50%)', 'text-align': 'center' }); 
-                savePositions(activeElement); 
-            }
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('textAlign', 'center'); canvas.renderAll(); saveCanvasState(); }
         });
         document.getElementById('tool_align_right').addEventListener('click', function(e) {
             e.preventDefault();
-            if(activeElement) { 
-                activeElement.css({ 'left': '100%', 'transform': 'translateX(-100%)', 'text-align': 'right' }); 
-                savePositions(activeElement); 
-            }
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('textAlign', 'right'); canvas.renderAll(); saveCanvasState(); }
+        });
+
+        document.getElementById('tool_color').addEventListener('input', function(e) {
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('fill', this.value); canvas.renderAll(); saveCanvasState(); }
+        });
+
+        document.getElementById('tool_font_family').addEventListener('change', function(e) {
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('fontFamily', this.value); canvas.renderAll(); saveCanvasState(); }
         });
 
         document.getElementById('tool_size_up').addEventListener('click', function(e) {
             e.preventDefault();
-            if(activeElement) {
-                let size = parseFloat(activeElement.css('font-size'));
-                activeElement.css('font-size', (size + 2) + 'px');
-                savePositions(activeElement);
-            }
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('fontSize', (activeObj.fontSize || 16) + 2); canvas.renderAll(); saveCanvasState(); }
         });
+
         document.getElementById('tool_size_down').addEventListener('click', function(e) {
             e.preventDefault();
-            if(activeElement) {
-                let size = parseFloat(activeElement.css('font-size'));
-                activeElement.css('font-size', (size - 2) + 'px');
-                savePositions(activeElement);
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.set('fontSize', Math.max(10, (activeObj.fontSize || 16) - 2)); canvas.renderAll(); saveCanvasState(); }
+        });
+
+        
+        function playAnimationPreview(obj) {
+            if (!obj) return;
+            const origTop = obj.top;
+            const dur = parseFloat(obj.animDuration || '0.8') * 1000;
+            
+            // Cancel existing animations if any
+            
+            if (obj.animType === 'fade-in') {
+                obj.set({ opacity: 0 });
+                obj.animate('opacity', 1, { onChange: canvas.renderAll.bind(canvas), duration: dur, easing: fabric.util.ease.easeOutQuad });
+            } else if (obj.animType === 'slide-up') {
+                obj.set({ top: origTop + 30, opacity: 0 });
+                obj.animate('top', origTop, { onChange: canvas.renderAll.bind(canvas), duration: dur, easing: fabric.util.ease.easeOutQuad });
+                obj.animate('opacity', 1, { duration: dur, easing: fabric.util.ease.easeOutQuad });
+            } else if (obj.animType === 'slide-down') {
+                obj.set({ top: origTop - 30, opacity: 0 });
+                obj.animate('top', origTop, { onChange: canvas.renderAll.bind(canvas), duration: dur, easing: fabric.util.ease.easeOutQuad });
+                obj.animate('opacity', 1, { duration: dur, easing: fabric.util.ease.easeOutQuad });
+            } else if (obj.animType === 'zoom-in') {
+                const origScale = obj.scaleX || 1;
+                obj.set({ scaleX: origScale * 0.5, scaleY: origScale * 0.5, opacity: 0 });
+                obj.animate('scaleX', origScale, { onChange: canvas.renderAll.bind(canvas), duration: dur, easing: fabric.util.ease.easeOutBack });
+                obj.animate('scaleY', origScale, { duration: dur, easing: fabric.util.ease.easeOutBack });
+                obj.animate('opacity', 1, { duration: dur, easing: fabric.util.ease.easeOutQuad });
+            } else if (obj.animType === 'bounce') {
+                obj.set({ top: origTop - 20 });
+                obj.animate('top', origTop, { onChange: canvas.renderAll.bind(canvas), duration: dur, easing: fabric.util.ease.easeOutBounce });
+            }
+        }
+
+        document.getElementById('tool_animation_type').addEventListener('change', function(e) {
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { 
+                activeObj.animType = this.value; 
+                saveCanvasState(); 
+                playAnimationPreview(activeObj);
             }
         });
 
-        document.getElementById('tool_color').addEventListener('input', function() {
-            if(activeElement) {
-                activeElement.css('color', this.value);
-                savePositions(activeElement);
-            }
+        
+        document.getElementById('tool_animation_duration').addEventListener('input', function(e) {
+            const activeObj = canvas.getActiveObject();
+            if(activeObj) { activeObj.animDuration = this.value; saveCanvasState(); }
         });
+    });
 
-        document.getElementById('tool_font_family').addEventListener('change', function() {
-            if(activeElement) {
-                activeElement.css('font-family', this.value);
-                savePositions(activeElement);
-            }
-        });
-
-        document.getElementById('tool_animation_type').addEventListener('change', function() {
-            if(activeElement) {
-                activeElement.attr('data-anim-type', this.value);
-                savePositions(activeElement);
-            }
-        });
-
-        document.getElementById('tool_animation_duration').addEventListener('input', function() {
-            if(activeElement) {
-                activeElement.attr('data-anim-duration', this.value);
-                savePositions(activeElement);
-            }
-        });
-
-        const pinLoad = document.getElementById('pin_load') || document.createElement('small');
-        document.getElementById('q_v_pin').addEventListener('keyup', function() {
-            let pin = this.value;
-            if (pin.length === 6) {
-                pinLoad.style.display = 'block';
-                fetch(`https://api.postalpincode.in/pincode/${pin}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        pinLoad.style.display = 'none';
-                        if (data[0].Status === "Success") {
-                            let offices = data[0].PostOffice;
-                            let area = document.getElementById('q_v_area');
-                            area.innerHTML = '';
-                            offices.forEach(o => {
-                                area.innerHTML += `<option value="${o.Name}">${o.Name}</option>`;
-                            });
-                            document.getElementById('q_v_district').value = offices[0].District;
-                            document.getElementById('q_v_state').value = offices[0].State;
-                            document.getElementById('q_v_circle').value = offices[0].Circle;
-                            document.getElementById('q_v_country').value = offices[0].Country;
-                        }
-                    });
-            }
-        });
-
-        document.getElementById('venueForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-            // map form names appropriately if backend expects different ones
-            fetch("{{ route('host.venue.store') }}", {
-                    method: "POST",
-                    body: formData,
-                    headers: { "X-Requested-With": "XMLHttpRequest" }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    let select = document.getElementById('venue_dropdown');
-                    let option = new Option(data.venue_name, data.id, true, true);
-                    option.setAttribute('data-name', data.venue_name);
-                    select.add(option);
-                    select.dispatchEvent(new Event('change'));
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('venueModal'));
-                    modal.hide();
-                })
-                .catch(err => alert("Error saving venue."));
-        });
+    // Venue Modal Ajax logic
+    document.getElementById('venueForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        fetch("{{ route('host.venue.store') }}", {
+                method: "POST",
+                body: formData,
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+            .then(res => res.json())
+            .then(data => {
+                let select = document.getElementById('venue_dropdown');
+                let option = new Option(data.venue_name, data.id, true, true);
+                option.setAttribute('data-name', data.venue_name);
+                select.add(option);
+                select.dispatchEvent(new Event('change'));
+                var modal = bootstrap.Modal.getInstance(document.getElementById('venueModal'));
+                modal.hide();
+            })
+            .catch(err => alert("Error saving venue."));
     });
 </script>
 @endpush

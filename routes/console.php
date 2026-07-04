@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('cleanup:completed-ceremonies')->daily();
 Schedule::command('cleanup:deleted-hosts-data')->daily();
+Schedule::command('reminders:send')->everyMinute();

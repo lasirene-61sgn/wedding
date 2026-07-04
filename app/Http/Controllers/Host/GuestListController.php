@@ -238,27 +238,47 @@ class GuestListController extends Controller
 
         return back()->with('success', 'Category assigned and guests updated!');
     }
-
-    public function sendReminders(Request $request, InvitationService $invitationService)
+    public function bulkSaveDate(Request $request, InvitationService $invitationService)
     {
         $request->validate([
-            'channels' => 'required|array',
+            'ids' => 'required|array',
+            'channels' => 'nullable|array',
         ]);
 
-        $selectedChannels = $request->channels;
-
-        // Fetch all guests for this host who have already been sent an invitation
-        $guests = GuestList::where('host_id', Auth::id())
-            ->where('invitation_sent', 1)
+        $selectedChannels = $request->channels ?? [];
+        $guests = GuestList::whereIn('id', $request->ids)
+            ->where('host_id', Auth::id())
             ->get();
 
-        $count = 0;
         foreach ($guests as $guest) {
-            $ceremonyNames = $guest->assigned_ceremonies ?? ($guest->ceramony ? $guest->ceramony->ceramony_name : 'the ceremonies');
-            $invitationService->sendBulkReminders($guest, $selectedChannels, $ceremonyNames);
-            $count++;
+            if (count($selectedChannels) > 0) {
+                $invitationService->sendBulkSaveDate($guest, $selectedChannels);
+            }
+            
+            $guest->update([
+                'save_date_sent' => true
+            ]);
         }
 
-        return back()->with('success', "Reminders sent to $count guests successfully!");
+        return back()->with('success', 'Save the Date sent successfully!');
+    }
+
+    public function sendReminders(Request $request)
+    {
+        $request->validate([
+            'reminder_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $host = Auth::user();
+
+        if ($request->hasFile('reminder_image')) {
+            $imagePath = $request->file('reminder_image')->store('reminders', 'public');
+            $host->reminder_image = $imagePath;
+        }
+
+        $host->reminders_active = true;
+        $host->save();
+
+        return back()->with('success', "Automated WhatsApp reminders have been activated successfully!");
     }
 }

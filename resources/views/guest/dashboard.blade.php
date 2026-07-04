@@ -405,7 +405,32 @@
                         <div class="card-content" style="position: relative; width: 100%; height: 100%;">
                             @php
                                 $pos = $ceremony->text_positions ?? [];
-                                $customTexts = $ceremony->custom_canvas_texts ?? [];
+                                $posArray = is_string($pos) ? json_decode($pos, true) : $pos;
+                                $mappedPos = [];
+
+                                if (isset($posArray['objects'])) {
+                                    foreach($posArray['objects'] as $obj) {
+                                        if (isset($obj['id'])) {
+                                            $mappedPos[$obj['id']] = [
+                                                'top' => ($obj['top'] / 600 * 100) . '%',
+                                                'left' => ($obj['left'] / 450 * 100) . '%',
+                                                'transform' => 'translate(-50%, -50%)',
+                                                'textAlign' => $obj['textAlign'],
+                                                'fontSize' => $obj['fontSize'] . 'px',
+                                                'color' => $obj['fill'],
+                                                'fontFamily' => $obj['fontFamily'],
+                                                'animationType' => $obj['animType'] ?? 'none',
+                                                'animationDuration' => $obj['animDuration'] ?? '0.8'
+                                            ];
+                                        }
+                                    }
+                                } else {
+                                    $mappedPos = is_array($posArray) ? $posArray : [];
+                                }
+
+                                $pos = $mappedPos;
+
+                                $customTexts = is_string($ceremony->custom_canvas_texts) ? json_decode($ceremony->custom_canvas_texts, true) : ($ceremony->custom_canvas_texts ?? []);
 
                                 $defaults = [
                                     'preview_title' => ['top' => '10%', 'left' => '50%', 'transform' => 'translateX(-50%)', 'textAlign' => 'center', 'fontSize' => '2.2rem'],

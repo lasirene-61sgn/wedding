@@ -33,6 +33,48 @@ class InvitationService
         }
     }
 
+    public function sendBulkSaveDate(GuestList $guest, array $channels)
+    {
+        foreach ($channels as $channel) {
+            try {
+                if ($channel === 'sms' && $guest->guest_number) {
+                    $this->sendSaveDateSMS($guest);
+                }
+
+                if ($channel === 'whatsapp') {
+                    $this->sendSaveDateWhatsApp($guest);
+                }
+
+                if ($channel === 'email') {
+                    $this->sendSaveDateEmail($guest);
+                }
+            } catch (\Exception $e) {
+                Log::error("Failed to send Save the Date to {$channel} to guest {$guest->id} : " . $e->getMessage());
+            }
+        }
+    }
+
+    protected function sendSaveDateSMS(\App\Models\GuestList $guest)
+    {
+        // TODO: Implement MSG91 SMS flow for Save the Date
+        // User will provide the template ID and payload structure later.
+        Log::info("Stub: sendSaveDateSMS called for Guest ID {$guest->id}");
+    }
+
+    protected function sendSaveDateWhatsApp(\App\Models\GuestList $guest)
+    {
+        // TODO: Implement MSG91 WhatsApp flow for Save the Date
+        // User will provide the template ID and payload structure later.
+        Log::info("Stub: sendSaveDateWhatsApp called for Guest ID {$guest->id}");
+    }
+
+    protected function sendSaveDateEmail(\App\Models\GuestList $guest)
+    {
+        // TODO: Implement MSG91 Email flow for Save the Date
+        // User will provide the template ID and payload structure later.
+        Log::info("Stub: sendSaveDateEmail called for Guest ID {$guest->id}");
+    }
+
     /**
      * Core SMS Engine utilizing the unified MSG91 Flow API endpoint.
      * Backed by hardcoded fallback parameters to guarantee execution if the .env is cached.
@@ -137,24 +179,29 @@ class InvitationService
         if (strlen($cleanNumber) === 10) {
             $cleanNumber = '91' . $cleanNumber;
         }
+        $venue = $invitation->venue ?? null;
 
         // Mirror sendEmail logic for variables
         $val1 = '';
         $val2 = '';
+        $val3 = '';
         $templateName = '';
 
         if ($relation === 'bride' || $relation === 'groom') {
-            $templateName = 'invit_org2';
-            $val1 = $invitation->bride_name ?? '';
-            $val2 = $invitation->groom_name ?? '';
+            $templateName = 'wed_couple_meta';
+            $val1 = !empty($guest->guest_name) ? $guest->guest_name : 'Guest';
+            $val2 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
+            $val3 = !empty($venue->venue_name) ? $venue->venue_name : 'Our Wedding Venue';
         } elseif ($relation === 'groom_parent') {
             $templateName = 'invit_org1';
-            $val1 = $invitation->groom_mother_name ?? '';
-            $val2 = $invitation->groom_father_name ?? '';
+            $val1 = !empty($invitation->groom_mother_name) ? $invitation->groom_mother_name : 'Mother';
+            $val2 = !empty($invitation->groom_father_name) ? $invitation->groom_father_name : 'Father';
+            $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
         } elseif ($relation === 'bride_parent') {
             $templateName = 'invite_bridemsg';
-            $val1 = $invitation->bride_mother_name ?? '';
-            $val2 = $invitation->bride_father_name ?? '';
+            $val1 = !empty($invitation->bride_mother_name) ? $invitation->bride_mother_name : 'Mother';
+            $val2 = !empty($invitation->bride_father_name) ? $invitation->bride_father_name : 'Father';
+            $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
         } else {
             return;
         }
@@ -162,7 +209,7 @@ class InvitationService
         $bodyVariables = [
             'body_1' => ['type' => 'text', 'value' => $val1],
             'body_2' => ['type' => 'text', 'value' => $val2],
-            'body_3' => ['type' => 'text', 'value' => $weddingDate],
+            'body_3' => ['type' => 'text', 'value' => $val3],
             'body_4' => ['type' => 'text', 'value' => $shortLink],
         ];
 

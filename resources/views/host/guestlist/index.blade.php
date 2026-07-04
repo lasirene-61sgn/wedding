@@ -6,7 +6,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin: 0;">Guest Management</h1>
-                <p style="color: #64748b; font-size: 14px;">Total Guests: {{ $guestlists->total() }}</p>
+                <p style="color: #64748b; font-size: 14px; margin-top: 4px;">Total Guests: {{ $guestlists->total() }} | Reminders Sent: <span style="font-weight: 700; color: #f59e0b;">{{ Auth::user()->reminders_sent_count ?? 0 }}</span></p>
             </div>
             <div style="display: flex; gap: 12px;">
                 <a href="data:text/csv;charset=utf-8,name,number,email,relation%0ARamesh,9876543210,ramesh@example.com,groom%0ASunita,9123456789,sunita@test.com,bride"
@@ -97,10 +97,14 @@
                         </div>
                     </div>
 
-                    <div style="align-self: flex-end;">
+                    <div style="align-self: flex-end; display: flex; gap: 10px;">
+                        <button type="button" onclick="submitSaveDate()"
+                            style="background: #10b981; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
+                            Send Save the Date
+                        </button>
                         <button type="submit"
-                            style="background: #4f46e5; color: white; border: none; padding: 14px 35px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px;">
-                            Execute Bulk Action
+                            style="background: #4f46e5; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);">
+                            Send Invitations
                         </button>
                     </div>
                 </div>
@@ -247,10 +251,14 @@
                 <button onclick="closeReminderModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #94a3b8;">&times;</button>
             </div>
             <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-                Reminders will only be sent to guests who have already received their invitations.
+                Upload a header image for your automated WhatsApp reminders. The campaign will run daily to keep your guests updated!
             </p>
-            <form action="{{ route('host.guestlist.sendReminders') }}" method="POST">
+            <form action="{{ route('host.guestlist.sendReminders') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 10px;">Reminder Image:</label>
+                    <input type="file" name="reminder_image" required accept="image/*" style="width: 100%; padding: 10px; border: 1px dashed #ddd; border-radius: 8px;">
+                </div>
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 10px;">Select Channels:</label>
                     <div style="display: flex; flex-direction: column; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
@@ -267,7 +275,7 @@
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="button" onclick="closeReminderModal()" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; background: #fff; cursor: pointer;">Cancel</button>
-                    <button type="submit" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #4f46e5; color: white; font-weight: 600; cursor: pointer;">Send Reminders</button>
+                    <button type="submit" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #f59e0b; color: white; font-weight: 600; cursor: pointer;">Activate Reminders</button>
                 </div>
             </form>
         </div>
@@ -297,5 +305,11 @@
         });
 
         items.forEach(i => i.addEventListener('change', toggleBar));
+
+        function submitSaveDate() {
+            const form = document.getElementById('bulk-send-form');
+            form.action = "{{ route('host.guestlist.bulkSaveDate') }}";
+            form.submit();
+        }
     </script>
 @endsection

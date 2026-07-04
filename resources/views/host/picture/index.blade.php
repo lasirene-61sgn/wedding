@@ -125,9 +125,64 @@
                                             <div class="card-body p-3">
                                                 <h6 class="fw-bold mb-3">{{ $album->album_name }}</h6>
                                                 <div class="d-flex justify-content-between">
-                                                    <button class="btn btn-link btn-sm text-decoration-none fw-bold p-0" onclick="toggleAlbum({{ $album->id }})">
+                                                    <button type="button" class="btn btn-link btn-sm text-decoration-none fw-bold p-0" data-bs-toggle="modal" data-bs-target="#albumModal-{{ $album->id }}">
                                                         <i class="bi bi-eye me-1"></i>View
                                                     </button>
+                                                    
+                                                    <!-- Modal for Album Images -->
+                                                    <div class="modal fade" id="albumModal-{{ $album->id }}" tabindex="-1" aria-labelledby="albumModalLabel-{{ $album->id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                                            <div class="modal-content border-0 rounded-4 shadow">
+                                                                <div class="modal-header border-0 pb-0">
+                                                                    <h5 class="modal-title fw-bold" id="albumModalLabel-{{ $album->id }}">{{ $album->album_name }}</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body p-4">
+                                                                    <!-- Add Photos Form -->
+                                                                    <div class="mb-4 p-3 bg-light rounded-3 border border-dashed">
+                                                                        <form action="{{ route('host.album.update', $album->id) }}" method="POST" enctype="multipart/form-data" class="d-flex flex-column flex-sm-row align-items-sm-end gap-3">
+                                                                            @csrf
+                                                                            @method('PUT')
+                                                                            <input type="hidden" name="album_name" value="{{ $album->album_name }}">
+                                                                            <div class="flex-grow-1 w-100">
+                                                                                <label class="small fw-bold text-secondary mb-1">Add More Photos</label>
+                                                                                <input type="file" name="album_images[]" multiple class="form-control rounded-3" accept="image/*" required>
+                                                                            </div>
+                                                                            <button type="submit" class="btn btn-primary rounded-3 fw-bold shadow-sm w-100 w-sm-auto">
+                                                                                <i class="bi bi-upload me-1"></i>Upload
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+
+                                                                    <h6 class="fw-bold mb-3">Album Photos</h6>
+                                                                    <div class="row g-3">
+                                                                        @if($album->album_images && count($album->album_images) > 0)
+                                                                            @foreach($album->album_images as $index => $image)
+                                                                                <div class="col-6 col-md-4">
+                                                                                    <div class="position-relative rounded-3 overflow-hidden shadow-sm" style="aspect-ratio: 1/1;">
+                                                                                        <img src="{{ asset('storage/' . $image) }}" class="w-100 h-100" style="object-fit: cover;" alt="Album Image">
+                                                                                        <form action="{{ route('host.album.delete-image', $album->id) }}" method="POST" class="position-absolute top-0 end-0 m-2" onsubmit="return confirm('Delete this image from the album?')">
+                                                                                            @csrf
+                                                                                            @method('DELETE')
+                                                                                            <input type="hidden" name="image_index" value="{{ $index }}">
+                                                                                            <button type="submit" class="btn btn-danger btn-sm rounded-circle shadow p-1 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;" title="Remove image">
+                                                                                                <i class="bi bi-trash" style="font-size: 0.85rem;"></i>
+                                                                                            </button>
+                                                                                        </form>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endforeach
+                                                                        @else
+                                                                            <div class="col-12 text-center py-4">
+                                                                                <p class="text-muted mb-0">No images in this album.</p>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                     <form action="{{ route('host.album.destroy', $album->id) }}" method="POST" onsubmit="return confirm('Delete this album?')">
                                                         @csrf @method('DELETE')
                                                         <button class="btn btn-link btn-sm text-danger text-decoration-none fw-bold p-0">
@@ -225,22 +280,6 @@
 </style>
 
 <script>
-    function toggleAlbum(id) {
-        // Implement album viewer logic here if needed
-        console.log('Viewing album:', id);
-    }
-</script>
-
-
-<script>
-    // Toggle Album Images on Title Click
-    function toggleAlbum(albumId) {
-        const albumCard = document.getElementById(`album-${albumId}`);
-        const header = albumCard.querySelector('.album-header');
-        albumCard.classList.toggle('active');
-        header.classList.toggle('active');
-    }
-
     // Persist active tab
     document.addEventListener("DOMContentLoaded", function() {
         let activeTab = localStorage.getItem('hostActiveTab');
