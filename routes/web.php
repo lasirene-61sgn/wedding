@@ -53,7 +53,10 @@ use App\Http\Controllers\Host\TimelineController;
 use App\Http\Controllers\Host\VendorController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CanvaOAuthController;
 
+Route::get('/oauth/canva/redirect', [CanvaOAuthController::class, 'redirect'])->name('canva.redirect');
+Route::get('/oauth/canva/callback', [CanvaOAuthController::class, 'callback'])->name('canva.callback');
 Route::get('/test-whatsapp', function () {
     // Fetches the absolute latest guest added to your database, ignoring Auth rules
     $guest = \App\Models\GuestList::latest()->first();

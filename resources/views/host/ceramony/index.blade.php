@@ -95,6 +95,11 @@
                             <small class="text-muted fst-italic"><i class="bi bi-info-circle me-1"></i> Managed from Invitation</small>
                         </div>
                     @endif
+                    @if($item->canva_design_url)
+                        <div class="card-footer bg-light border-0 py-2 text-center {{ $item->is_main ? 'pt-0' : '' }}">
+                            <a href="{{ $item->canva_design_url }}" target="_blank" class="btn btn-sm btn-info text-white w-100 rounded-pill"><i class="bi bi-magic me-1"></i> View Canva Design</a>
+                        </div>
+                    @endif
                 </div>
             </div>
         @empty
