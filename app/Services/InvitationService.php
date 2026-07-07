@@ -56,23 +56,251 @@ class InvitationService
 
     protected function sendSaveDateSMS(\App\Models\GuestList $guest)
     {
-        // TODO: Implement MSG91 SMS flow for Save the Date
-        // User will provide the template ID and payload structure later.
-        Log::info("Stub: sendSaveDateSMS called for Guest ID {$guest->id}");
+        try {
+            $authKey = env('MSG91_AUTH_KEY');
+
+            $invitation = \App\Models\Invitation::where('host_id', $guest->host_id)->latest()->first();
+            if (!$invitation) {
+                \Illuminate\Support\Facades\Log::error("SMS Engine Failure: Invitation metadata record missing for Host ID [{$guest->host_id}]");
+                return;
+            }
+
+            // Note: Change 'Ceremonies' back to 'Ceramonies' if your model filename uses an 'a'
+            $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
+            $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
+
+            $rawNumber = $guest->guest_number;
+            $cleanNumber = preg_replace('/[^0-9]/', '', $rawNumber);
+            if (strlen($cleanNumber) === 10) {
+                $cleanNumber = '91' . $cleanNumber;
+            }
+
+            $relation = strtolower(trim($guest->relation ?? ''));
+            $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+
+            // 1. Determine who is creating the invitation and put their name first
+            if ($relation === 'bride' || $relation === 'groom') {
+                // For bride_groom_invit template
+                $msg91TemplateId = env('MSG91_FLOW_COUPLE_ID', '6a17d05b5e19870c280f5242');
+                $smsVariables = [
+                    'var1' => $invitation->bride_name ?? 'Bride',
+                    'var2' => $invitation->groom_name ?? 'Groom',
+                    'var3' => $shortLink,
+                ];
+            } elseif ($relation === 'bride_parent') {
+                // For Invite_Bride template
+                $msg91TemplateId = env('MSG91_FLOW_BRIDE_PARENT_ID', '68a577370fc63d1e78442d26');
+                $smsVariables = [
+                    'var1' => $invitation->bride_mother_name ?? '',
+                    'var2' => $invitation->bride_father_name ?? '',
+                    'var3' => $shortLink,
+                ];
+            } elseif ($relation === 'groom_parent') {
+                // For Invite_Groom template
+                $msg91TemplateId = env('MSG91_FLOW_GROOM_PARENT_ID', '68a598a35af05446a26303f9');
+                $smsVariables = [
+                    'var1' => $invitation->groom_mother_name ?? '',
+                    'var2' => $invitation->groom_father_name ?? '',
+                    'var3' => $shortLink,
+                ];
+            } else {
+                return; // Unknown relation, abort
+            }
+
+            // Also keep legacy variables just in case the template still uses them
+            $smsVariables['inviterName'] = $smsVariables['var1'] . ' & ' . $smsVariables['var2'];
+            $smsVariables['weddingDate'] = $weddingDate;
+            $smsVariables['shortLink'] = $shortLink;
+
+            $recipient = array_merge(['mobiles' => $cleanNumber], $smsVariables);
+
+            $payload = [
+                'template_id' => $msg91TemplateId,
+                'short_url'   => 0,
+                'recipients'  => [$recipient]
+            ];
+
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'authkey'      => $authKey,
+                'accept'       => 'application/json',
+                'content-type' => 'application/json',
+            ])->post('https://control.msg91.com/api/v5/flow/', $payload);
+
+            \Illuminate\Support\Facades\Log::info("MSG91 Save the Date SMS Dispatched [Guest ID: {$guest->id}]. HTTP Status Code: " . $response->status());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Fatal execution runtime failure inside sendSaveDateSMS: " . $e->getMessage());
+        }
     }
 
     protected function sendSaveDateWhatsApp(\App\Models\GuestList $guest)
     {
-        // TODO: Implement MSG91 WhatsApp flow for Save the Date
-        // User will provide the template ID and payload structure later.
-        Log::info("Stub: sendSaveDateWhatsApp called for Guest ID {$guest->id}");
+        $authKey = config('services.msg91.authkey', env('MSG91_AUTH_KEY'));
+
+        $invitation = \App\Models\Invitation::where('host_id', $guest->host_id)->latest()->first();
+        if (!$invitation) return;
+
+        $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
+        $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
+
+        $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+        $relation = trim(strtolower($guest->relation ?? ''));
+
+        $rawNumber = $guest->whatsapp_number ?? $guest->guest_number;
+        $cleanNumber = preg_replace('/[^0-9]/', '', $rawNumber);
+        if (strlen($cleanNumber) === 10) {
+            $cleanNumber = '91' . $cleanNumber;
+        }
+        $venue = $invitation->venue ?? null;
+
+        // Mirror sendEmail logic for variables
+        $val1 = '';
+        $val2 = '';
+        $val3 = '';
+        $templateName = '';
+
+        if ($relation === 'bride' || $relation === 'groom') {
+            $templateName = 'wed_couple_meta';
+            $val1 = !empty($guest->guest_name) ? $guest->guest_name : 'Guest';
+            $val2 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
+            $val3 = !empty($venue->venue_name) ? $venue->venue_name : 'Our Wedding Venue';
+        } elseif ($relation === 'groom_parent') {
+            $templateName = 'invit_org1';
+            $val1 = !empty($invitation->groom_mother_name) ? $invitation->groom_mother_name : 'Mother';
+            $val2 = !empty($invitation->groom_father_name) ? $invitation->groom_father_name : 'Father';
+            $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
+        } elseif ($relation === 'bride_parent') {
+            $templateName = 'invite_bridemsg';
+            $val1 = !empty($invitation->bride_mother_name) ? $invitation->bride_mother_name : 'Mother';
+            $val2 = !empty($invitation->bride_father_name) ? $invitation->bride_father_name : 'Father';
+            $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
+        } else {
+            return;
+        }
+
+        $bodyVariables = [
+            'body_1' => ['type' => 'text', 'value' => $val1],
+            'body_2' => ['type' => 'text', 'value' => $val2],
+            'body_3' => ['type' => 'text', 'value' => $val3],
+            'body_4' => ['type' => 'text', 'value' => $shortLink],
+        ];
+
+        $payload = [
+            'integrated_number' => '919360777089',
+            'content_type' => 'template',
+            'payload' => [
+                'messaging_product' => 'whatsapp',
+                'type' => 'template',
+                'template' => [
+                    'name' => $templateName,
+                    'language' => [
+                        'code' => 'en',
+                        'policy' => 'deterministic'
+                    ],
+                    'namespace' => 'bc3735fb_a2e9_4e83_8b62_377bca25c09f',
+                    'to_and_components' => [
+                        [
+                            'to' => [$cleanNumber],
+                            'components' => $bodyVariables
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $response = \Illuminate\Support\Facades\Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => $authKey,
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+
+        \Illuminate\Support\Facades\Log::info("MSG91 Save the Date WhatsApp Status for Guest ID [{$guest->id}]: " . $response->status());
+        if (!$response->successful()) {
+            \Illuminate\Support\Facades\Log::error("MSG91 Save the Date WhatsApp Failure for Guest ID {$guest->id}: " . $response->body());
+        }
     }
 
     protected function sendSaveDateEmail(\App\Models\GuestList $guest)
     {
-        // TODO: Implement MSG91 Email flow for Save the Date
-        // User will provide the template ID and payload structure later.
-        Log::info("Stub: sendSaveDateEmail called for Guest ID {$guest->id}");
+        try {
+            $authKey = env('MSG91_AUTH_KEY');
+            $fromEmail = env('MAIL_FROM_ADDRESS');
+            $fromName = env('MAIL_FROM_NAME');
+            $mailDomain = explode('@', $fromEmail)[1] ?? 'localhost.com';
+
+            $invitation = \App\Models\Invitation::where('host_id', $guest->host_id)->latest()->first();
+            if (!$invitation) {
+                \Illuminate\Support\Facades\Log::error('Invitation data not found', ['guest_id' => $guest->id]);
+                return;
+            }
+
+            $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
+            $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
+            $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+            $relation = strtolower(trim($guest->relation ?? ''));
+
+            $templateId = '';
+            $emailVariables = [];
+
+            if ($relation === 'bride' || $relation === 'groom') {
+                $templateId = 'invite_org_6';
+                $emailVariables = [
+                    'brideName' => $invitation->bride_name ?? '',
+                    'groomName' => $invitation->groom_name ?? '',
+                    'date' => $weddingDate,
+                    'shortLink' => $shortLink,
+                ];
+            } elseif ($relation === 'groom_parent') {
+                $templateId = 'invite_org_4';
+                $emailVariables = [
+                    'groomMotherName' => $invitation->groom_mother_name ?? '',
+                    'groomFatherName' => $invitation->groom_father_name ?? '',
+                    'date' => $weddingDate,
+                    'shortLink' => $shortLink,
+                ];
+            } elseif ($relation === 'bride_parent') {
+                $templateId = 'invite_org_5';
+                $emailVariables = [
+                    'brideMotherName' => $invitation->bride_mother_name ?? '',
+                    'brideFatherName' => $invitation->bride_father_name ?? '',
+                    'date' => $weddingDate,
+                    'shortLink' => $shortLink,
+                ];
+            } else {
+                return;
+            }
+
+            $payload = [
+                'template_id' => $templateId,
+                'domain' => $mailDomain,
+                'from' => [
+                    'name' => $fromName,
+                    'email' => $fromEmail,
+                ],
+                'recipients' => [
+                    [
+                        'to' => [
+                            [
+                                'name' => $guest->guest_name,
+                                'email' => $guest->guest_email,
+                            ]
+                        ],
+                        'variables' => $emailVariables,
+                    ]
+                ]
+            ];
+
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'authkey' => $authKey,
+            ])->post('https://control.msg91.com/api/v5/email/send', $payload);
+
+            \Illuminate\Support\Facades\Log::info("MSG91 Save the Date Email Status for Guest ID [{$guest->id}]: " . $response->status());
+            if (!$response->successful()) {
+                \Illuminate\Support\Facades\Log::error('MSG91 Save the Date Email Failed', ['guest_id' => $guest->id, 'response' => $response->body()]);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('MSG91 Save the Date Email Exception', ['guest_id' => $guest->id, 'message' => $e->getMessage()]);
+        }
     }
 
     /**

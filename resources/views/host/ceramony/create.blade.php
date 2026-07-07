@@ -76,9 +76,13 @@
                                 <span class="text-muted small">or enter a Template ID below to auto-generate:</span>
                             </div>
                             
-                            <input type="text" name="canva_template_id" id="canva_template_id" class="form-control" placeholder="Enter Canva Template ID (e.g. DACxxxx)">
-                            <small class="text-muted">Enter a template ID if you want Canva to auto-generate an invitation based on the details above.</small>
+                            <input type="text" name="canva_template_id" id="canva_template_id" class="form-control mb-2" placeholder="Enter Canva Template ID (e.g. DACxxxx)">
+                            <small class="text-muted d-block mb-3">Enter a template ID if you want Canva to auto-generate an invitation based on the details above.</small>
                             
+                            <label class="form-label fw-bold">Canva Public View Link (For Guests)</label>
+                            <input type="url" name="canva_public_link" id="canva_public_link" class="form-control" placeholder="https://www.canva.com/design/.../view">
+                            <small class="text-muted">To show your design to guests, edit your design in Canva, click "Share" -> "Public View Link", and paste it here.</small>
+
                             <input type="hidden" name="canva_design_url" id="canva_design_url_input">
                             <div id="canva_preview_container" class="mt-3 text-center" style="display: none;">
                                 <label class="fw-bold text-success d-block text-start mb-2">Your Canva Design Preview:</label>

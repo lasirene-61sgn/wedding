@@ -91,6 +91,29 @@ class CeramonyController extends Controller
         return null;
     }
 
+    /**
+     * Helper to resolve Canva shortlinks and force /view for embeds
+     */
+    private function resolveCanvaPublicLink($url) {
+        if (!$url) return null;
+        
+        if (str_contains($url, 'canva.link')) {
+            $headers = @get_headers($url, 1);
+            if ($headers && isset($headers['Location'])) {
+                $url = is_array($headers['Location']) ? end($headers['Location']) : $headers['Location'];
+            }
+        }
+        
+        $parsed = parse_url($url);
+        if (isset($parsed['path'])) {
+            if (preg_match('/^\/design\/([A-Za-z0-9_-]+)/', $parsed['path'], $matches)) {
+                return "https://www.canva.com/design/" . $matches[1] . "/view";
+            }
+        }
+        
+        return $url;
+    }
+
     public function index()
     {
         $ceramonies = Ceramonies::with(['category', 'venue'])->where('host_id', Auth::id())->get();
@@ -120,7 +143,8 @@ class CeramonyController extends Controller
             'text_positions'         => 'nullable|string',
             'custom_canvas_texts'    => 'nullable|string',
             'canva_template_id'      => 'nullable|string',
-            'canva_design_url'       => 'nullable|string'
+            'canva_design_url'       => 'nullable|string',
+            'canva_public_link'      => 'nullable|url|max:1000'
         ]);
 
         if ($request->venue_id) {
@@ -142,6 +166,10 @@ class CeramonyController extends Controller
 
         if ($request->ceramony_image) {
             $validated['ceramony_image'] = $request->file('ceramony_image')->store('ceramonies', 'public');
+        }
+
+        if (!empty($validated['canva_public_link'])) {
+            $validated['canva_public_link'] = $this->resolveCanvaPublicLink($validated['canva_public_link']);
         }
 
         // --- CANVA COMPILATION API PATH ---
@@ -197,7 +225,8 @@ class CeramonyController extends Controller
             'text_positions'         => 'nullable|string',
             'custom_canvas_texts'    => 'nullable|string',
             'canva_template_id'      => 'nullable|string',
-            'canva_design_url'       => 'nullable|string'
+            'canva_design_url'       => 'nullable|string',
+            'canva_public_link'      => 'nullable|url|max:1000'
         ]);
 
         if (isset($validated['text_positions'])) {
@@ -231,6 +260,10 @@ class CeramonyController extends Controller
             }
         }
         // --------------------------------------
+
+        if (!empty($validated['canva_public_link'])) {
+            $validated['canva_public_link'] = $this->resolveCanvaPublicLink($validated['canva_public_link']);
+        }
 
         $ceramony->update($validated);
         return redirect()->route('host.ceramony.index', $ceramony->id)->with('success', 'Ceramony Updated');

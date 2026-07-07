@@ -139,9 +139,22 @@ class GuestInvitationController extends Controller
 
     public function saveTheDate($id)
     {
-        $phone = session('guest_phone');
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
-        return view('guest.save_the_date', compact('invite'));
+        // Allow access directly via link without needing to be logged in first
+        $invite = GuestList::where('id', $id)->with('host')->firstOrFail();
+
+        // Auto-login the guest for this session so they can navigate the dashboard later
+        if (!session()->has('guest_phone')) {
+            session(['guest_phone' => $invite->guest_number]);
+        }
+        
+        $saveDateData = \App\Models\SaveDate::where('host_id', $invite->host_id)->latest()->first();
+        $invitation = \App\Models\Invitation::where('host_id', $invite->host_id)->latest()->first();
+        $ceremony = \App\Models\Ceramonies::where('host_id', $invite->host_id)->latest()->first();
+        
+        // Prioritize the actual Invitation's wedding date over an arbitrary ceremony date
+        $weddingDate = $invitation->wedding_date ?? $ceremony->ceramony_date ?? null;
+
+        return view('guest.save_the_date', compact('invite', 'saveDateData', 'weddingDate', 'invitation'));
     }
 
     public function showCeremonies($id)

@@ -117,6 +117,12 @@
             background-color: #fff9e6;
         }
 
+        .ceremony-card.is-canva {
+            padding: 0 !important;
+            aspect-ratio: auto !important;
+            background: transparent !important;
+        }
+
         .ceremony-card .card-content {
             background: transparent !important;
             border: none !important;
@@ -394,15 +400,20 @@
                 <h3 class="pane-title">Ceremony Schedule</h3>
 
                 @forelse($detailedCeremonies as $ceremony)
-                    <div class="ceremony-card {{ $ceremony->background ? 'has-bg' : '' }}"
+                    <div class="ceremony-card {{ $ceremony->background && empty($ceremony->canva_public_link) ? 'has-bg' : '' }} {{ !empty($ceremony->canva_public_link) ? 'is-canva' : '' }}"
                          style="
-                            @if($ceremony->background) 
+                            @if($ceremony->background && empty($ceremony->canva_public_link)) 
                                 --bg-url: url('{{ asset('storage/' . $ceremony->background->image_path) }}');
                             @endif
                          ">
 
                         <!-- Inner Text Content Box -->
                         <div class="card-content" style="position: relative; width: 100%; height: 100%;">
+                            @if($ceremony->canva_public_link)
+                                <div style="position: relative; width: 100%; height: 0; padding-top: 177.7778%;">
+                                    <iframe src="{{ $ceremony->canva_public_link }}?embed" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 24px;" allowfullscreen="allowfullscreen" allow="fullscreen"></iframe>
+                                </div>
+                            @else
                             @php
                                 $pos = $ceremony->text_positions ?? [];
                                 $posArray = is_string($pos) ? json_decode($pos, true) : $pos;
@@ -486,6 +497,7 @@
                                     @endif
                                 @endif
                             </div>
+                            @endif
                         </div>
                     </div>
                 @empty

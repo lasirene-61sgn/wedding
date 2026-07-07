@@ -223,14 +223,18 @@ class GuestListController extends Controller
 
         foreach ($guests as $guest) {
 
-        if(count($selectedChannels) > 0){
-            $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
-        }
+            // Enforce logic: Invitation can only be sent if Save the Date has been sent
+            $canSendInvitation = $guest->save_date_sent == 1;
+
+            if ($canSendInvitation && count($selectedChannels) > 0) {
+                $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
+            }
+
             $guest->update([
                 'category_id' => $request->category_id,
                 'assigned_ceremonies' => $allCeremonyNames,
                 'send_via' => $channelsString,
-                'invitation_sent' => $request->has('channels') ? true : $guest->invitation_sent,
+                'invitation_sent' => ($canSendInvitation && $request->has('channels')) ? true : $guest->invitation_sent,
                 // Optional: Store the first ceremony ID for relation consistency
                 'ceramony_id' => $ceremonyIds[0] ?? $guest->ceramony_id,
             ]);

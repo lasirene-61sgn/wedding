@@ -26,6 +26,7 @@ class Ceramonies extends Model
         'custom_canvas_texts',
         'canva_template_id',
         'canva_design_url',
+        'canva_public_link',
     ];
 
     protected $casts = [

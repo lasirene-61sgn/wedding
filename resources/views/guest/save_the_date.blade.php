@@ -100,107 +100,111 @@
 <div class="invitation-wrapper">
     <div class="glass-panel save-the-date-card">
         
-        <h1 class="std-title">Save the Date</h1>
-        <p class="sub-text">We invite you to the wedding of</p>
+        <div style="margin-bottom: 20px;">
+            <h4 style="color: var(--gold-dark); font-weight: 500; font-size: 2rem; font-family: 'Great Vibes', cursive; letter-spacing: 2px; margin: 0;">Welcome {{ $invite->guest_name ?? 'Guest' }},</h4>
+        </div>
+
+        <h1 class="std-title" style="margin-top: 10px;">Save the Date</h1>
+        
+        @php
+            $relation = strtolower(trim($invite->relation ?? ''));
+            
+            $invitingParents = null;
+            if (in_array($relation, ['bride', 'bride_parent'])) {
+                $parents = array_filter([$invitation->bride_mother_name ?? null, $invitation->bride_father_name ?? null]);
+                if (!empty($parents)) {
+                    $invitingParents = implode(' & ', $parents);
+                }
+            } elseif (in_array($relation, ['groom', 'groom_parent'])) {
+                $parents = array_filter([$invitation->groom_mother_name ?? null, $invitation->groom_father_name ?? null]);
+                if (!empty($parents)) {
+                    $invitingParents = implode(' & ', $parents);
+                }
+            }
+        @endphp
+
+        @if($invitingParents)
+            <p class="sub-text" style="font-weight: 600; font-size: 1rem; color: var(--dark); margin-bottom: 5px; text-transform: uppercase;">{{ $invitingParents }}</p>
+            <p class="sub-text" style="text-transform: none; font-size: 0.9rem; letter-spacing: 1px; color: var(--gray);">cordially invite you to the wedding of</p>
+        @else
+            <p class="sub-text">We cordially invite you to the wedding of</p>
+        @endif
         
         <div class="couple-names">
-            <h3>{{ $invite->host->bride_name ?? 'Bride' }} & {{ $invite->host->groom_name ?? 'Groom' }}</h3>
+            <h3>{{ $invitation->bride_name ?? 'Bride' }} & {{ $invitation->groom_name ?? 'Groom' }}</h3>
         </div>
         
         <p style="color: var(--gray); font-size: 0.9rem; font-style: italic;">Hosted by {{ $invite->host->name ?? 'Unknown Host' }}</p>
 
-        <hr class="elegant-divider">
+        @if(isset($saveDateData) && $saveDateData->image)
+            <div style="margin: 25px 0;">
+                <img src="{{ asset('storage/' . $saveDateData->image) }}" alt="Save the Date" style="max-width: 100%; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                @if($saveDateData->message)
+                    <p style="margin-top: 15px; font-style: italic; color: var(--dark);">"{{ $saveDateData->message }}"</p>
+                @endif
+            </div>
+        @endif
 
-        <div class="ceremonies-preview" style="text-align: left;">
-            <h4 style="margin-bottom: 20px;">Ceremonies you are invited to:</h4>
-            
-            @php 
-                $assignedCeremonies = explode(', ', $invite->assigned_ceremonies); 
-                $statuses = $invite->ceremony_status ?? [];
-            @endphp
-            
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                @foreach($assignedCeremonies as $ceremonyName)
-                    @php 
-                        $status = $statuses[$ceremonyName] ?? 'pending'; 
-                    @endphp
-                    <div style="background: rgba(255,255,255,0.8); padding: 15px; border-radius: 10px; border: 1px solid rgba(214, 51, 132, 0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                        <div>
-                            <strong style="color: var(--dark); font-size: 1.1rem;">{{ $ceremonyName }}</strong>
-                            <div style="font-size: 0.85rem; margin-top: 5px;">
-                                Status: 
-                                @if($status === 'accepted') <span style="color: green; font-weight: 600;"><i class="fas fa-check"></i> Accepted</span>
-                                @elseif($status === 'rejected' || $status === 'declined') <span style="color: red; font-weight: 600;"><i class="fas fa-times"></i> Declined</span>
-                                @else <span style="color: orange; font-weight: 600;"><i class="fas fa-hourglass-half"></i> Pending</span>
-                                @endif
-                            </div>
-                        </div>
+        @if(isset($weddingDate))
+            <div style="margin: 20px 0; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border: 1px dashed var(--gold); display: inline-block; min-width: 250px;">
+                <h4 style="color: var(--pink-dark); font-size: 1.3rem; margin-bottom: 15px;"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($weddingDate)->format('l, F jS, Y') }}</h4>
+                
+                <div id="countdown" style="display: flex; gap: 15px; justify-content: center; color: var(--gold-dark);">
+                    <div style="text-align: center;">
+                        <div id="cd-days" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Days</div>
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
+                    <div style="text-align: center;">
+                        <div id="cd-hours" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Hours</div>
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
+                    <div style="text-align: center;">
+                        <div id="cd-minutes" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Mins</div>
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
+                    <div style="text-align: center;">
+                        <div id="cd-seconds" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
+                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Secs</div>
+                    </div>
+                </div>
+                <div id="cd-expired" style="display: none; font-size: 1.5rem; font-weight: bold; color: var(--gold-dark); margin: 0;">It's Today!</div>
+            </div>
 
-                                        @if($status === 'pending')
-                                        <div style="display: flex; gap: 10px;">
-                                            <form action="{{ route('guest.update_ceremony_status', $invite->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <input type="hidden" name="ceremony_name" value="{{ $ceremonyName }}">
-                                                <input type="hidden" name="status" value="accepted">
-                                                <button type="submit" class="btn-primary-wedding" style="padding: 8px 15px; font-size: 0.85rem; background: var(--gold); border: none;">
-                                                    <i class="fas fa-check"></i> Accept
-                                                </button>
-                                            </form>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Set the date we're counting down to
+                    var countDownDate = new Date("{{ \Carbon\Carbon::parse($weddingDate)->format('M d, Y 00:00:00') }}").getTime();
 
-                                            <form action="{{ route('guest.update_ceremony_status', $invite->id) }}" method="POST" style="margin: 0;">
-                                                @csrf
-                                                <input type="hidden" name="ceremony_name" value="{{ $ceremonyName }}">
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="btn-reject" style="padding: 8px 15px; font-size: 0.85rem;">
-                                                    <i class="fas fa-times"></i> Decline
-                                                </button>
-                                            </form>
-                                        </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
+                    // Update the count down every 1 second
+                    var x = setInterval(function() {
+                        var now = new Date().getTime();
+                        var distance = countDownDate - now;
 
-                            @php
-                                $hasPending = false;
-                                foreach($assignedCeremonies as $c) {
-                                    if (($statuses[$c] ?? 'pending') === 'pending') {
-                                        $hasPending = true;
-                                        break;
-                                    }
-                                }
-                            @endphp
+                        if (distance <= 0) {
+                            clearInterval(x);
+                            document.getElementById("countdown").style.display = "none";
+                            document.getElementById("cd-expired").style.display = "block";
+                            return;
+                        }
 
-                            @if($hasPending)
-                            <div style="margin-top: 30px; text-align: center;">
-                                <hr class="elegant-divider" style="margin: 20px 0;">
-                                <h4 style="margin-bottom: 20px;">Or respond to all at once:</h4>
-                                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                                    <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="margin: 0;">
-                                        @csrf
-                                        <input type="hidden" name="status" value="accepted">
-                                        <button type="submit" class="btn-primary-wedding" style="padding: 12px 30px;">
-                                            <i class="fas fa-check-double"></i> Accept All Ceremonies
-                                        </button>
-                                    </form>
+                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                                    <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="margin: 0;">
-                                        @csrf
-                                        <input type="hidden" name="status" value="rejected">
-                                        <button type="submit" class="btn-reject" style="padding: 12px 30px;">
-                                            <i class="fas fa-times-circle"></i> Decline All Ceremonies
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            @endif
-        </div>
+                        document.getElementById("cd-days").innerHTML = days < 10 ? '0' + days : days;
+                        document.getElementById("cd-hours").innerHTML = hours < 10 ? '0' + hours : hours;
+                        document.getElementById("cd-minutes").innerHTML = minutes < 10 ? '0' + minutes : minutes;
+                        document.getElementById("cd-seconds").innerHTML = seconds < 10 ? '0' + seconds : seconds;
+                    }, 1000);
+                });
+            </script>
+        @endif
 
-        <div class="actions" style="margin-top: 30px;">
-            <a href="{{ route('guest.wedding.details', $invite->id) }}" class="btn-primary-wedding" style="width: 100%; display: block; box-sizing: border-box;">
-                Enter Wedding Dashboard
-            </a>
-        </div>
+
     </div>
 </div>
 @endsection

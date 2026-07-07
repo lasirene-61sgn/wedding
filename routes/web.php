@@ -208,6 +208,9 @@ Route::prefix('guest')->name('guest.')->group(function () {
     // Login routes
     Route::get('/login', [GuestInvitationController::class, 'showLogin'])->name('login');
     Route::post('/login', [GuestInvitationController::class, 'login'])->name('login.post');
+    
+    // Public invitation links
+    Route::get('/wedding/{id}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
 
     // Routes requiring phone session
     Route::middleware(['guest.auth'])->group(function () {
@@ -217,7 +220,6 @@ Route::prefix('guest')->name('guest.')->group(function () {
         Route::get('/guest/profile/{id}', [GuestInvitationController::class, 'editProfile'])->name('profile.edit');
         Route::put('/guest/profile/{id}', [GuestInvitationController::class, 'updateProfile'])->name('profile.update');
         // Save the Date Page (Shows Accept/Reject buttons)
-        Route::get('/wedding/{id}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
         Route::post('/wedding/{id}/status', [GuestInvitationController::class, 'updateStatus'])->name('update_status');
         Route::post('/wedding/{id}/ceremony-status', [GuestInvitationController::class, 'updateCeremonyStatus'])->name('update_ceremony_status');
 
