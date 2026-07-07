@@ -20,6 +20,15 @@
         position: relative;
     }
 
+    .welcome-title {
+        color: var(--gold-dark);
+        font-weight: 500;
+        font-size: 2rem;
+        font-family: 'Great Vibes', cursive;
+        letter-spacing: 2px;
+        margin: 0;
+    }
+
     h1.std-title {
         font-family: 'Great Vibes', cursive;
         color: var(--gold);
@@ -27,6 +36,7 @@
         margin-bottom: 0;
         letter-spacing: 2px;
         animation: fadeInDown 0.8s;
+        margin-top: 10px;
     }
 
     .sub-text {
@@ -37,6 +47,19 @@
         font-size: 0.8rem;
         margin-bottom: 20px;
         margin-top: 5px;
+    }
+
+    .sub-text.parents {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+    
+    .sub-text.invite-line {
+        text-transform: none;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        color: var(--gray);
     }
 
     hr.elegant-divider {
@@ -51,6 +74,67 @@
         font-family: 'Great Vibes', cursive;
         color: var(--pink-dark);
         margin: 10px 0;
+    }
+
+    .host-text {
+        color: var(--gray);
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .std-image-container {
+        margin: 25px 0;
+    }
+    .std-image {
+        max-width: 100%;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .std-message {
+        margin-top: 15px;
+        font-style: italic;
+        color: var(--dark);
+    }
+
+    .date-container {
+        margin: 20px 0;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px dashed var(--gold);
+        display: inline-block;
+        min-width: 250px;
+    }
+    
+    .date-text {
+        color: var(--pink-dark);
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .countdown-wrapper {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        color: var(--gold-dark);
+    }
+    
+    .countdown-item {
+        text-align: center;
+    }
+    .countdown-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        line-height: 1;
+    }
+    .countdown-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .countdown-colon {
+        font-size: 1.5rem;
+        font-weight: bold;
     }
 
     .ceremonies-preview {
@@ -84,6 +168,57 @@
         background: #f1f2f6;
         color: var(--dark);
     }
+
+    @media (max-width: 768px) {
+        .invitation-wrapper {
+            padding: 15px 10px;
+        }
+        .save-the-date-card {
+            padding: 25px 15px;
+        }
+        .welcome-title {
+            font-size: 1.5rem;
+        }
+        h1.std-title {
+            font-size: 2.2rem;
+            margin-top: 5px;
+        }
+        .couple-names h3 {
+            font-size: 1.8rem;
+        }
+        .sub-text {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .sub-text.parents {
+            font-size: 0.85rem;
+        }
+        .sub-text.invite-line {
+            font-size: 0.8rem;
+        }
+        .date-container {
+            min-width: auto;
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .countdown-wrapper {
+            gap: 8px;
+        }
+        .countdown-value {
+            font-size: 1.3rem;
+        }
+        .countdown-label {
+            font-size: 0.6rem;
+        }
+        .countdown-colon {
+            font-size: 1.1rem;
+        }
+        .date-text {
+            font-size: 1.1rem;
+        }
+    }
 </style>
 @endpush
 
@@ -101,10 +236,10 @@
     <div class="glass-panel save-the-date-card">
         
         <div style="margin-bottom: 20px;">
-            <h4 style="color: var(--gold-dark); font-weight: 500; font-size: 2rem; font-family: 'Great Vibes', cursive; letter-spacing: 2px; margin: 0;">Welcome {{ $invite->guest_name ?? 'Guest' }},</h4>
+            <h4 class="welcome-title">Welcome {{ $invite->guest_name ?? 'Guest' }},</h4>
         </div>
 
-        <h1 class="std-title" style="margin-top: 10px;">Save the Date</h1>
+        <h1 class="std-title">Save the Date</h1>
         
         @php
             $relation = strtolower(trim($invite->relation ?? ''));
@@ -124,8 +259,8 @@
         @endphp
 
         @if($invitingParents)
-            <p class="sub-text" style="font-weight: 600; font-size: 1rem; color: var(--dark); margin-bottom: 5px; text-transform: uppercase;">{{ $invitingParents }}</p>
-            <p class="sub-text" style="text-transform: none; font-size: 0.9rem; letter-spacing: 1px; color: var(--gray);">cordially invite you to the wedding of</p>
+            <p class="sub-text parents">{{ $invitingParents }} cordially invite you to the wedding of</p>
+            <p class="sub-text invite-line"></p>
         @else
             <p class="sub-text">We cordially invite you to the wedding of</p>
         @endif
@@ -134,43 +269,43 @@
             <h3>{{ $invitation->bride_name ?? 'Bride' }} & {{ $invitation->groom_name ?? 'Groom' }}</h3>
         </div>
         
-        <p style="color: var(--gray); font-size: 0.9rem; font-style: italic;">Hosted by {{ $invite->host->name ?? 'Unknown Host' }}</p>
+        <p class="host-text">Hosted by {{ $invite->host->name ?? 'Unknown Host' }}</p>
 
         @if(isset($saveDateData) && $saveDateData->image)
-            <div style="margin: 25px 0;">
-                <img src="{{ asset('storage/' . $saveDateData->image) }}" alt="Save the Date" style="max-width: 100%; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+            <div class="std-image-container">
+                <img src="{{ asset('storage/' . $saveDateData->image) }}" alt="Save the Date" class="std-image">
                 @if($saveDateData->message)
-                    <p style="margin-top: 15px; font-style: italic; color: var(--dark);">"{{ $saveDateData->message }}"</p>
+                    <p class="std-message">"{{ $saveDateData->message }}"</p>
                 @endif
             </div>
         @endif
 
         @if(isset($weddingDate))
-            <div style="margin: 20px 0; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 12px; border: 1px dashed var(--gold); display: inline-block; min-width: 250px;">
-                <h4 style="color: var(--pink-dark); font-size: 1.3rem; margin-bottom: 15px;"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($weddingDate)->format('l, F jS, Y') }}</h4>
+            <div class="date-container">
+                <h4 class="date-text"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($weddingDate)->format('l, F jS, Y') }}</h4>
                 
-                <div id="countdown" style="display: flex; gap: 15px; justify-content: center; color: var(--gold-dark);">
-                    <div style="text-align: center;">
-                        <div id="cd-days" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
-                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Days</div>
+                <div id="countdown" class="countdown-wrapper">
+                    <div class="countdown-item">
+                        <div id="cd-days" class="countdown-value">00</div>
+                        <div class="countdown-label">Days</div>
                     </div>
-                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
-                    <div style="text-align: center;">
-                        <div id="cd-hours" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
-                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Hours</div>
+                    <div class="countdown-colon">:</div>
+                    <div class="countdown-item">
+                        <div id="cd-hours" class="countdown-value">00</div>
+                        <div class="countdown-label">Hours</div>
                     </div>
-                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
-                    <div style="text-align: center;">
-                        <div id="cd-minutes" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
-                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Mins</div>
+                    <div class="countdown-colon">:</div>
+                    <div class="countdown-item">
+                        <div id="cd-minutes" class="countdown-value">00</div>
+                        <div class="countdown-label">Mins</div>
                     </div>
-                    <div style="font-size: 1.5rem; font-weight: bold;">:</div>
-                    <div style="text-align: center;">
-                        <div id="cd-seconds" style="font-size: 1.8rem; font-weight: bold; line-height: 1;">00</div>
-                        <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Secs</div>
+                    <div class="countdown-colon">:</div>
+                    <div class="countdown-item">
+                        <div id="cd-seconds" class="countdown-value">00</div>
+                        <div class="countdown-label">Secs</div>
                     </div>
                 </div>
-                <div id="cd-expired" style="display: none; font-size: 1.5rem; font-weight: bold; color: var(--gold-dark); margin: 0;">It's Today!</div>
+                <div id="cd-expired">It's Today!</div>
             </div>
 
             <script>
