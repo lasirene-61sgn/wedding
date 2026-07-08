@@ -219,6 +219,24 @@
             font-size: 1.1rem;
         }
     }
+
+    @keyframes pumpEffect {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+        100% { transform: scale(1); }
+    }
+
+    .pump-animation {
+        animation: pumpEffect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .revealed-color .date-text,
+    .revealed-color .countdown-value,
+    .revealed-color .countdown-colon {
+        color: #d4af37 !important; /* Elegant gold color upon reveal */
+        text-shadow: 0px 4px 15px rgba(212, 175, 55, 0.4);
+        transition: color 0.5s ease-in-out, text-shadow 0.5s ease-in-out;
+    }
 </style>
 @endpush
 
@@ -239,7 +257,7 @@
             <h4 class="welcome-title">Welcome {{ $invite->guest_name ?? 'Guest' }},</h4>
         </div>
 
-        <h1 class="std-title">Save the Date</h1>
+        
         
         @php
             $relation = strtolower(trim($invite->relation ?? ''));
@@ -281,33 +299,39 @@
         @endif
 
         @if(isset($weddingDate))
-            <div class="date-container">
-                <h4 class="date-text"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($weddingDate)->format('l, F jS, Y') }}</h4>
-                
-                <div id="countdown" class="countdown-wrapper">
-                    <div class="countdown-item">
-                        <div id="cd-days" class="countdown-value">00</div>
-                        <div class="countdown-label">Days</div>
+            <div class="scratch-wrapper" style="position: relative; display: inline-block; margin: 20px 0;">
+                <div class="date-container" id="reveal-content" style="margin: 0; position: relative; z-index: 1;">
+                    <h4 class="date-text"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($weddingDate)->format('l, F jS, Y') }}</h4>
+                    
+                    <div id="countdown" class="countdown-wrapper">
+                        <div class="countdown-item">
+                            <div id="cd-days" class="countdown-value">00</div>
+                            <div class="countdown-label">Days</div>
+                        </div>
+                        <div class="countdown-colon">:</div>
+                        <div class="countdown-item">
+                            <div id="cd-hours" class="countdown-value">00</div>
+                            <div class="countdown-label">Hours</div>
+                        </div>
+                        <div class="countdown-colon">:</div>
+                        <div class="countdown-item">
+                            <div id="cd-minutes" class="countdown-value">00</div>
+                            <div class="countdown-label">Mins</div>
+                        </div>
+                        <div class="countdown-colon">:</div>
+                        <div class="countdown-item">
+                            <div id="cd-seconds" class="countdown-value">00</div>
+                            <div class="countdown-label">Secs</div>
+                        </div>
                     </div>
-                    <div class="countdown-colon">:</div>
-                    <div class="countdown-item">
-                        <div id="cd-hours" class="countdown-value">00</div>
-                        <div class="countdown-label">Hours</div>
-                    </div>
-                    <div class="countdown-colon">:</div>
-                    <div class="countdown-item">
-                        <div id="cd-minutes" class="countdown-value">00</div>
-                        <div class="countdown-label">Mins</div>
-                    </div>
-                    <div class="countdown-colon">:</div>
-                    <div class="countdown-item">
-                        <div id="cd-seconds" class="countdown-value">00</div>
-                        <div class="countdown-label">Secs</div>
-                    </div>
+                    <div id="cd-expired" style="display: none;">It's Today!</div>
                 </div>
-                <div id="cd-expired">It's Today!</div>
+                <canvas id="scratch-canvas" style="position: absolute; top: 0; left: 0; z-index: 2; border-radius: 12px; cursor: pointer; touch-action: none;"></canvas>
             </div>
+            <h1 class="std-title">Save the Date</h1>
+            <p id="scratch-instruction" class="text-muted small mt-1" style="font-style: italic;">Scratch the card to reveal the date!</p>
 
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     // Set the date we're counting down to
@@ -335,6 +359,126 @@
                         document.getElementById("cd-minutes").innerHTML = minutes < 10 ? '0' + minutes : minutes;
                         document.getElementById("cd-seconds").innerHTML = seconds < 10 ? '0' + seconds : seconds;
                     }, 1000);
+
+                    // Scratch Card Logic
+                    const canvas = document.getElementById('scratch-canvas');
+                    const ctx = canvas.getContext('2d');
+                    const content = document.getElementById('reveal-content');
+                    const instruction = document.getElementById('scratch-instruction');
+
+                    // Initialize canvas size (slight delay ensures fonts/styles load)
+                    setTimeout(() => {
+                        canvas.width = content.offsetWidth;
+                        canvas.height = content.offsetHeight;
+                        
+                        // Fill canvas with metallic scratch color
+                        ctx.fillStyle = '#D4AF37'; 
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        // Add pattern/text
+                        ctx.font = 'bold 22px Arial';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('Scratch to Reveal', canvas.width / 2, canvas.height / 2);
+                    }, 100);
+
+                    let isDrawing = false;
+
+                    function getCoordinates(e) {
+                        const rect = canvas.getBoundingClientRect();
+                        let clientX = e.clientX;
+                        let clientY = e.clientY;
+                        
+                        if (e.touches && e.touches.length > 0) {
+                            clientX = e.touches[0].clientX;
+                            clientY = e.touches[0].clientY;
+                        }
+                        
+                        return {
+                            x: clientX - rect.left,
+                            y: clientY - rect.top
+                        };
+                    }
+
+                    function scratch(e) {
+                        if (!isDrawing) return;
+                        e.preventDefault();
+                        
+                        const pos = getCoordinates(e);
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        checkScratchPercent();
+                    }
+
+                    canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+                    canvas.addEventListener('mousemove', scratch);
+                    window.addEventListener('mouseup', () => { isDrawing = false; });
+                    
+                    canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+                    canvas.addEventListener('touchmove', scratch);
+                    window.addEventListener('touchend', () => { isDrawing = false; });
+
+                    let cleared = false;
+                    function checkScratchPercent() {
+                        if (cleared) return;
+                        const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        let transparentPixels = 0;
+                        const totalPixels = pixels.length / 4;
+                        
+                        // Check every 10th pixel for performance
+                        for (let i = 3; i < pixels.length; i += 4 * 10) {
+                            if (pixels[i] === 0) {
+                                transparentPixels++;
+                            }
+                        }
+                        
+                        const percent = (transparentPixels / (totalPixels / 10)) * 100;
+                        
+                        if (percent > 45) { // If 45% scratched, auto clear
+                            cleared = true;
+                            canvas.style.transition = 'opacity 0.6s ease-out';
+                            canvas.style.opacity = '0';
+                            instruction.style.transition = 'opacity 0.4s';
+                            instruction.style.opacity = '0';
+                            setTimeout(() => {
+                                canvas.style.display = 'none';
+                                instruction.style.display = 'none';
+                                
+                                // Trigger animation and color change
+                                content.classList.add('pump-animation', 'revealed-color');
+                                
+                                // Elegant Wedding Cascading Confetti Effect
+                                var duration = 3000;
+                                var end = Date.now() + duration;
+
+                                (function frame() {
+                                    confetti({
+                                        particleCount: 5,
+                                        angle: 60,
+                                        spread: 55,
+                                        origin: { x: 0 },
+                                        colors: ['#d4af37', '#ffd700', '#ffffff', '#ffb6c1']
+                                    });
+                                    confetti({
+                                        particleCount: 5,
+                                        angle: 120,
+                                        spread: 55,
+                                        origin: { x: 1 },
+                                        colors: ['#d4af37', '#ffd700', '#ffffff', '#ffb6c1']
+                                    });
+
+                                    if (Date.now() < end) {
+                                        requestAnimationFrame(frame);
+                                    }
+                                }());
+                                
+                            }, 600);
+                        }
+                    }
                 });
             </script>
         @endif
