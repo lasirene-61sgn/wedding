@@ -222,10 +222,66 @@
 
         /* Mobile Adjustments */
         @media (max-width: 768px) {
-            header.wedding-header h1 { font-size: 2.8rem; }
-            .nav-bar a { font-size: 0.75rem; padding: 8px 12px; }
-            .nav-bar { gap: 2px; }
+            header.wedding-header { padding: 30px 15px 15px; }
+            header.wedding-header h1 { font-size: 2.5rem; }
+            header.wedding-header p { font-size: 0.95rem; }
+            
+            /* Modern App-Like Bottom Navigation */
+            .nav-bar-container {
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid var(--glass-border);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+                border-radius: 20px 20px 0 0;
+                z-index: 1000;
+            }
+            .nav-bar {
+                display: flex;
+                justify-content: space-around;
+                width: 100%;
+                padding: 10px 5px 20px; /* Extra bottom padding for newer phones (safe area) */
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .nav-bar a {
+                flex-direction: column;
+                font-size: 0.65rem;
+                font-weight: 600;
+                padding: 5px;
+                color: #a0aec0;
+                border-radius: 12px;
+                gap: 5px;
+                letter-spacing: 0;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            .nav-bar a i {
+                font-size: 1.3rem;
+                transition: 0.3s ease;
+            }
+            .nav-bar a.active {
+                color: var(--pink-primary) !important;
+            }
+            .nav-bar a.active i {
+                transform: translateY(-3px);
+                color: var(--pink-primary);
+                text-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
+            }
+            
+            main.main-content {
+                padding-bottom: 100px; /* Space for the fixed bottom nav */
+            }
         }
+
 
     </style>
     @stack('styles')

@@ -256,6 +256,13 @@
             .ceremony-card { padding: 15px 10px; }
             .ceremony-card .ceremony-title { font-size: 1.5rem !important; }
             .ceremony-card .details-row { font-size: 0.85rem !important; }
+            
+            .welcome-badge-card { padding: 25px 15px; border-radius: 20px; }
+            .invitation-card { padding: 15px; border-radius: 15px; }
+            .std-highlight { font-size: 2rem !important; }
+            
+            .bulk-rsvp-container { flex-direction: column !important; gap: 10px; }
+            .pane-title { font-size: 1.6rem !important; margin-bottom: 20px !important; }
         }
 
         .anim-element { opacity: 0; }
@@ -384,18 +391,18 @@
                         @if($hasPending)
                         <hr style="border:0; height:1px; background:linear-gradient(to right, transparent, rgba(212, 175, 55, 0.5), transparent); margin: 25px 0;">
                         <h4 style="font-size: 0.95rem; color: var(--dark); margin-bottom: 15px;">Or respond to all at once:</h4>
-                        <div style="display: flex; gap: 10px;">
-                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1;">
+                        <div class="bulk-rsvp-container" style="display: flex; gap: 10px;">
+                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1; margin: 0;">
                                 @csrf
                                 <input type="hidden" name="status" value="accepted">
                                 <button type="submit" class="btn-primary-wedding" style="width: 100%; padding: 10px; font-size: 0.85rem;">
                                     <i class="fas fa-check-double"></i> Accept All
                                 </button>
                             </form>
-                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1;">
+                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1; margin: 0;">
                                 @csrf
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="btn-reject" style="width: 100%; padding: 10px; font-size: 0.85rem;">
+                                <button type="submit" class="btn-outline-wedding" style="width: 100%; padding: 10px; font-size: 0.85rem; border-color: #ef4444; color: #ef4444;">
                                     <i class="fas fa-times-circle"></i> Decline All
                                 </button>
                             </form>
