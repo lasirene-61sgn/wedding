@@ -246,7 +246,16 @@
         }
 
         @media (max-width: 767px) {
-            .ceremony-card { max-width: 100%; }
+            .ceremony-card { max-width: 100%; padding: 20px 15px; }
+            .ceremony-card .ceremony-title { font-size: 1.8rem !important; }
+            .ceremony-card .details-row { font-size: 0.95rem !important; }
+            .ceremony-card .venue-address { font-size: 0.85rem !important; }
+        }
+
+        @media (max-width: 480px) {
+            .ceremony-card { padding: 15px 10px; }
+            .ceremony-card .ceremony-title { font-size: 1.5rem !important; }
+            .ceremony-card .details-row { font-size: 0.85rem !important; }
         }
 
         .anim-element { opacity: 0; }
@@ -290,6 +299,7 @@
         <div class="nav-bar">
             <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Back</a>
             <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="{{ route('guest.save_the_date', $invite->id) }}"><i class="fas fa-calendar-check"></i> Save The Date</a>
             <a href="{{ route('guest.profile.edit', $invite->id) }}"><i class="fas fa-user"></i> Profile</a>
             <a href="{{ route('guest.gallery', $invite->id) }}"><i class="fas fa-images"></i> Gallery</a>
         </div>
