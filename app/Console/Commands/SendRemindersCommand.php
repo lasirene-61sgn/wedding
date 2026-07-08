@@ -48,28 +48,36 @@ class SendRemindersCommand extends Command
                     continue;
                 }
 
-                $guests = GuestList::where('host_id', $host->id)
-                    ->where('invitation_sent', 1)
-                    ->get();
-
-                if ($guests->isEmpty()) {
-                    $this->warn("Host {$host->id} skipped: No guests with invitation_sent = 1.");
+                // Only send scheduled reminders exactly 1 day before the wedding
+                if ($daysRemaining !== 1) {
+                    $this->info("Host {$host->id} skipped: Days remaining is $daysRemaining, not 1.");
                     continue;
                 }
 
-                $this->info("Processing Host {$host->id}: $daysRemaining days left, sending to {$guests->count()} guests.");
+                $guests = GuestList::where('host_id', $host->id)
+                    ->where('reminder_scheduled', true)
+                    ->where('reminder_sent', false)
+                    ->get();
+
+                if ($guests->isEmpty()) {
+                    $this->warn("Host {$host->id} skipped: No scheduled guests found for today.");
+                    continue;
+                }
+
+                $this->info("Processing Host {$host->id}: 1 day left, sending to {$guests->count()} scheduled guests.");
 
                 $venueName = $invitation->venue ? $invitation->venue->venue_name : 'Our Wedding Venue';
                 $venueUrl = $invitation->venue ? $invitation->venue->location_map : env('APP_URL');
 
                 $imageUrl = env('APP_URL') . '/storage/' . $host->reminder_image;
 
-                // Format "26 days" or "1 day"
-                $daysText = $daysRemaining > 1 ? $daysRemaining . ' days' : $daysRemaining . ' day';
+                // Format "1 day"
+                $daysText = '1 day';
 
                 // Send to each guest
                 foreach ($guests as $guest) {
                     $this->sendWhatsAppReminder($guest, $invitation, $daysText, $venueName, $venueUrl, $imageUrl);
+                    $guest->update(['reminder_sent' => true]);
                 }
 
                 // Increment counter by the number of guests

@@ -180,6 +180,16 @@
                                         Pending
                                     </div>
                                 @endif
+
+                                @if($guest->reminder_sent)
+                                    <div style="font-size: 11px; color: #10b981; margin-top: 5px; font-weight: 600;">
+                                        Reminder: Sent
+                                    </div>
+                                @elseif($guest->reminder_scheduled)
+                                    <div style="font-size: 11px; color: #f59e0b; margin-top: 5px; font-weight: 600;">
+                                        Reminder: Scheduled
+                                    </div>
+                                @endif
                             </td>
                             <td style="padding: 18px; text-align: right;">
                                 <div style="display: flex; justify-content: flex-end; gap: 15px; align-items: center;">

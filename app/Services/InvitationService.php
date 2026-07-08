@@ -770,7 +770,7 @@ class InvitationService
         }
     }
 
-    public function sendBulkReminders(GuestList $guest, array $channels, string $ceremonyNames)
+    public function sendBulkReminders(GuestList $guest, array $channels, string $ceremonyNames = '')
     {
         foreach ($channels as $channel) {
             try {
@@ -779,7 +779,7 @@ class InvitationService
                 }
 
                 if ($channel === 'whatsapp') {
-                    $this->sendReminderWhatsApp($guest, $ceremonyNames);
+                    $this->sendReminderWhatsApp($guest);
                 }
 
                 if ($channel === 'email' && $guest->guest_email) {
@@ -798,11 +798,106 @@ class InvitationService
         \Illuminate\Support\Facades\Log::info("sendReminderSMS triggered for Guest ID {$guest->id}");
     }
 
-    protected function sendReminderWhatsApp(GuestList $guest, string $ceremonyNames)
+    protected function sendReminderWhatsApp(\App\Models\GuestList $guest)
     {
-        // TODO: Apply reminder WhatsApp template here when provided.
-        // For now, just logging the action.
-        \Illuminate\Support\Facades\Log::info("sendReminderWhatsApp triggered for Guest ID {$guest->id}");
+        \Illuminate\Support\Facades\Log::info("sendReminderWhatsApp started for Guest ID {$guest->id}");
+        $authKey = env('MSG91_AUTH_KEY');
+        $rawNumber = $guest->whatsapp_number ?? $guest->guest_number;
+        
+        if (empty($rawNumber)) {
+            \Illuminate\Support\Facades\Log::warning("Guest {$guest->id} has no phone number.");
+            return;
+        }
+
+        $cleanNumber = preg_replace('/[^0-9]/', '', $rawNumber);
+        if (strlen($cleanNumber) === 10) {
+            $cleanNumber = '91' . $cleanNumber;
+        }
+
+        $invitation = \App\Models\Invitation::with('venue')->where('host_id', $guest->host_id)->latest()->first();
+        if (!$invitation) {
+            \Illuminate\Support\Facades\Log::error("No invitation found for Host ID {$guest->host_id}");
+            return;
+        }
+
+        $weddingDateString = $invitation->wedding_date ?? null;
+        if ($weddingDateString) {
+            $weddingDate = \Carbon\Carbon::parse($weddingDateString)->startOfDay();
+            $today = \Carbon\Carbon::now()->startOfDay();
+            $daysRemaining = (int) $today->diffInDays($weddingDate, false);
+            if ($daysRemaining < 0) {
+                $daysRemaining = 0;
+            }
+            $daysText = $daysRemaining > 1 ? $daysRemaining . ' days' : $daysRemaining . ' day';
+        } else {
+            $daysText = 'a few days';
+        }
+
+        $host = \App\Models\Host::find($guest->host_id);
+        $imageUrl = $host->reminder_image ? env('APP_URL') . '/storage/' . $host->reminder_image : 'https://picsum.photos/600/400';
+
+        if (str_contains($imageUrl, 'localhost') || str_contains($imageUrl, '127.0.0.1')) {
+            $imageUrl = 'https://picsum.photos/600/400';
+        }
+
+        $venueName = $invitation->venue ? $invitation->venue->venue_name : 'Our Wedding Venue';
+        $venueUrl = $invitation->venue ? $invitation->venue->location_map : env('APP_URL');
+
+        $relation = trim(strtolower($guest->relation ?? ''));
+
+        $brideName = $invitation->bride_name ?? 'Bride';
+        $groomName = $invitation->groom_name ?? 'Groom';
+
+        if ($relation === 'bride' || $relation === 'bride_parent') {
+            $var2 = $brideName;
+            $var3 = $groomName;
+        } else {
+            $var2 = $groomName;
+            $var3 = $brideName;
+        }
+
+        $safeVar2 = !empty($var2) ? (string)$var2 : 'Guest';
+        $safeVar3 = !empty($var3) ? (string)$var3 : 'Guest';
+        $safeVenueName = !empty($venueName) ? (string)$venueName : 'Wedding Venue';
+        $safeVenueUrl = !empty($venueUrl) ? (string)$venueUrl : 'https://maps.google.com';
+
+        $payload = [
+            'integrated_number' => '919360777089',
+            'content_type' => 'template',
+            'payload' => [
+                'messaging_product' => 'whatsapp',
+                'type' => 'template',
+                'template' => [
+                    'name' => 'remin_der',
+                    'language' => ['code' => 'en', 'policy' => 'deterministic'],
+                    'namespace' => 'bc3735fb_a2e9_4e83_8b62_377bca25c09f',
+                    'to_and_components' => [
+                        [
+                            'to' => [$cleanNumber],
+                            'components' => [
+                                'header_1' => [
+                                    'type' => 'image',
+                                    'value' => $imageUrl
+                                ],
+                                'body_var_1' => ['type' => 'text', 'value' => (string)$daysText, 'parameter_name' => 'var_1'],
+                                'body_var_2' => ['type' => 'text', 'value' => $safeVar2, 'parameter_name' => 'var_2'],
+                                'body_var_3' => ['type' => 'text', 'value' => $safeVar3, 'parameter_name' => 'var_3'],
+                                'body_var_4' => ['type' => 'text', 'value' => $safeVenueName, 'parameter_name' => 'var_4'],
+                                'body_var_5' => ['type' => 'text', 'value' => $safeVenueUrl, 'parameter_name' => 'var_5'],
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => $authKey,
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+
+        Log::info("MSG91 Payload: ", $payload);
+        Log::info("MSG91 Response: " . $response->body());
     }
 
     protected function sendReminderEmail(GuestList $guest, string $ceremonyNames)

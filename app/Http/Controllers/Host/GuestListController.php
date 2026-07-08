@@ -267,7 +267,8 @@ class GuestListController extends Controller
         return back()->with('success', 'Save the Date sent successfully!');
     }
 
-    public function sendReminders(Request $request)
+
+    public function sendReminders(Request $request, InvitationService $invitationService)
     {
         $request->validate([
             'reminder_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -283,6 +284,20 @@ class GuestListController extends Controller
         $host->reminders_active = true;
         $host->save();
 
-        return back()->with('success', "Automated WhatsApp reminders have been activated successfully!");
+        $guests = \App\Models\GuestList::where('host_id', $host->id)
+            ->where('invitation_sent', true)
+            ->where('reminder_sent', false)
+            ->get();
+
+        foreach ($guests as $guest) {
+            $invitationService->sendBulkReminders($guest, ['whatsapp']);
+            
+            $guest->update([
+                'reminder_sent' => true,
+                'reminder_scheduled' => true
+            ]);
+        }
+
+        return back()->with('success', "Reminders sent successfully to all invited guests!");
     }
 }
