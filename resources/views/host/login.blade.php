@@ -47,10 +47,21 @@
 
         <div class="p-5 sm:p-7">
             
-            {{-- Status/Error Messages --}}
+            {{-- 1. Catch Custom Session Errors (e.g., Auth failure) --}}
             @if(session('error'))
-                <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm rounded-r animate-pulse">
+                <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm rounded-r">
                     <p class="font-medium">{{ session('error') }}</p>
+                </div>
+            @endif
+
+            {{-- 2. Catch Standard Validation Errors Bag --}}
+            @if($errors->any())
+                <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-700 text-sm rounded-r">
+                    <ul class="list-disc list-inside font-medium">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 
@@ -59,20 +70,6 @@
                     <p class="font-medium">{{ session('success') }}</p>
                 </div>
             @endif
-
-            <!-- <div class="mb-6">
-                <a href="{{ route('host.google.login') }}" 
-                   class="w-full flex items-center justify-center gap-3 bg-white border border-stone-300 py-3 rounded-lg hover:bg-stone-50 transition-all duration-200 shadow-sm active:scale-[0.98]">
-                    <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt="Google Logo">
-                    <span class="text-sm font-semibold text-stone-700 font-sans">Continue with Google</span>
-                </a>
-
-                <div class="relative flex items-center my-6">
-                    <div class="flex-grow border-t border-stone-200"></div>
-                    <span class="flex-shrink mx-4 text-stone-400 text-[10px] uppercase tracking-[0.2em] font-medium">Or email login</span>
-                    <div class="flex-grow border-t border-stone-200"></div>
-                </div>
-            </div> -->
 
             <form action="{{ route('host.login.submit') }}" method="POST" class="space-y-5">
                 @csrf
@@ -83,11 +80,11 @@
                            id="email"
                            name="email" 
                            value="{{ old('email') }}"
-                           class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:border-wedding-primary focus:ring-2 focus:ring-wedding-primary/30 transition placeholder-stone-400 text-base bg-white" 
+                           class="w-full px-4 py-3 rounded-lg border @error('email') border-red-400 focus:border-red-400 focus:ring-red-400/30 @else border-stone-300 focus:border-wedding-primary focus:ring-wedding-primary/30 @enderror transition placeholder-stone-400 text-base bg-white" 
                            placeholder="host@wedding.com" 
                            required>
                     @error('email') 
-                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> 
+                        <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> 
                     @enderror
                 </div>
 
@@ -96,11 +93,11 @@
                     <input type="password" 
                            id="password"
                            name="password" 
-                           class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:border-wedding-primary focus:ring-2 focus:ring-wedding-primary/30 transition placeholder-stone-400 text-base bg-white" 
+                           class="w-full px-4 py-3 rounded-lg border @error('password') border-red-400 focus:border-red-400 focus:ring-red-400/30 @else border-stone-300 focus:border-wedding-primary focus:ring-wedding-primary/30 @enderror transition placeholder-stone-400 text-base bg-white" 
                            placeholder="••••••••" 
                            required>
                     @error('password') 
-                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> 
+                        <span class="text-xs text-red-500 mt-1 block font-medium">{{ $message }}</span> 
                     @enderror
                 </div>
 

@@ -21,21 +21,39 @@ class HostLoginController extends Controller
 
     public function login(Request $request)
     {
+        // 1. Validate the incoming data
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        if (auth()->guard('host')->attempt($credentials, $request->filled('remember'))) {
+        // 2. Attempt to sign the host in
+        if (Auth::guard('host')->attempt($credentials, $request->filled('remember'))) {
             $user = Auth::guard('host')->user();
+
+            // Check if the host account is suspended
             if ($user->status !== 'active') {
                 Auth::guard('host')->logout();
-                return redirect()->back()->withInput($request->only('email'))->with('error', 'Your Account is Suspended');
+
+                return redirect()
+                    ->back()
+                    ->withInput($request->only('email'))
+                    ->with('error', 'Your Account is Suspended'); // Fixed casing
             }
+
+            // Session security check passed
             $request->session()->regenerate();
-            return redirect()->route('host.dashboard')->with('Success', 'Login Success');
+
+            return redirect()
+                ->route('host.dashboard')
+                ->with('success', 'Login Success'); // Fixed casing to lowercase 'success'
         }
-        return redirect()->route('host.login')->with('Errror', 'Invalid Credentials');
+
+        // 3. Failed authentication attempt
+        return redirect()
+            ->back() // Sends them back to the login page form
+            ->withInput($request->only('email')) // Keeps the email filled in for them
+            ->with('error', 'Invalid Credentials'); // Fixed typo from 'Errror' to 'error'
     }
 
     public function logout(Request $request)
@@ -93,7 +111,7 @@ class HostLoginController extends Controller
         $request->validate([
             'otp' => 'required|numeric',
         ]);
-        
+
         $sessionData = $request->session()->get('register_data');
 
         if (!$sessionData) {
@@ -110,7 +128,7 @@ class HostLoginController extends Controller
 
         // FIX: Read registration properties from $sessionData instead of raw $request input
         $host = Host::create([
-            
+
             'name' => $sessionData['name'],
             'email' => $sessionData['email'],
             'status' => 'active',
