@@ -20,7 +20,7 @@ class CleanupCompletedCeremonies extends Command
 
     public function handle()
     {
-        $cutoffDate = now()->subDays(7)->toDateString();
+        $cutoffDate = now()->subDays(1)->toDateString();
 
         // Find hosts that have at least one ceremony, but NO ceremonies on or after the cutoff date
         $hosts = \App\Models\Host::whereHas('ceramonies')
