@@ -263,7 +263,7 @@
 <body>
 
     <nav>
-        <a href="#" class="brand">Wedding Portal</a>
+        <a href="" class="brand">Wedding Portal</a>
         <div class="nav-links">
             <a href="{{ route('guest.login') }}" class="btn btn-outline">Guest Login</a>
             <a href="{{ route('host.login') }}" class="btn btn-filled">Host Login</a>
