@@ -57,4 +57,17 @@ class Host extends Authenticatable
     {
         return $this->belongsTo(Admin::class, 'created_by');
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($host) {
+            \App\Models\Ceramonies::where('host_id', $host->id)->delete();
+            \App\Models\Pictures::where('host_id', $host->id)->delete();
+            \App\Models\Videos::where('host_id', $host->id)->delete();
+            \App\Models\Albums::where('host_id', $host->id)->delete();
+            \App\Models\Invitation::where('host_id', $host->id)->delete();
+            \App\Models\SaveDate::where('host_id', $host->id)->delete();
+            \App\Models\HostFamilyDetails::where('host_id', $host->id)->delete();
+        });
+    }
 }
