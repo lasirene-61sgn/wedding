@@ -426,7 +426,7 @@ class InvitationService
             $val2 = !empty($invitation->groom_father_name) ? $invitation->groom_father_name : 'Father';
             $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
         } elseif ($relation === 'bride_parent') {
-            $templateName = 'invite_bridemsg';
+            $templateName = '';
             $val1 = !empty($invitation->bride_mother_name) ? $invitation->bride_mother_name : 'Mother';
             $val2 = !empty($invitation->bride_father_name) ? $invitation->bride_father_name : 'Father';
             $val3 = !empty($invitation->wedding_date) ? $invitation->wedding_date : 'Our Wedding Day';
