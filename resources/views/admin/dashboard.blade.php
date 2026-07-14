@@ -6,7 +6,7 @@
 <div class="w-full">
     <div class="bg-white shadow-sm rounded-lg border border-gray-100">
         <div class="text-center p-8 sm:p-12">
-            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Welcome back, Admin!</h2>
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Welcome back, Super Admin!</h2>
             <p class="text-gray-500 mt-2">You are now logged into the secure administrative area.</p>
             
             {{-- Grid container replacing bootstrap layout columns --}}
