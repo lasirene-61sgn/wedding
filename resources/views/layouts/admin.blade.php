@@ -50,7 +50,7 @@
 
                 <!-- User Management -->
                 <a href="{{ route('admin.host.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.host.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-people-fill mr-4 text-lg"></i> Host
+                    <i class="bi bi-people-fill mr-4 text-lg"></i> Hosts
                 </a>
 
                 <!-- Event Assets & Lists -->
@@ -63,7 +63,7 @@
                     <i class="bi bi-palette-fill mr-4 text-lg"></i> Customs
                 </a>
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-translate mr-4 text-lg"></i> Languages
+                    <i class="bi bi-translate mr-4 text-lg"></i> Language
                 </a>
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors">
                     <i class="bi bi-gear-fill mr-4 text-lg"></i> Settings
@@ -79,7 +79,7 @@
                 </a>
 
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-person-workspace mr-4 text-lg"></i> Planners
+                    <i class="bi bi-person-workspace mr-4 text-lg"></i> Planner
                 </a>
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-shop-window mr-4 text-lg"></i> Vendors
