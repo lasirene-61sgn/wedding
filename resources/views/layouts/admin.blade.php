@@ -17,7 +17,7 @@
     <div id="overlay" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-300"></div>
 
     <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="fixed top-0 bottom-0 left-0 z-50 w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
+    <aside id="sidebar" class="fixed top-0 bottom-0 left-0 z-50 w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 overflow-y-auto">
         <div>
             <!-- Brand -->
             <a href="#" class="block text-xl font-extrabold tracking-wider text-gray-800 mb-8 px-2">
@@ -26,38 +26,89 @@
 
             <!-- Navigation Links -->
             <nav class="space-y-1">
+                <!-- Core Dashboard -->
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-grid-1x2-fill mr-4 text-lg"></i> Dashboard
                 </a>
+
+                <a href="{{ route('admin.package.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.package.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-box-seam-fill mr-4 text-lg"></i> Packages
+                </a>
+
+                <a href="{{ route('admin.venues.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.venues.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-geo-alt-fill mr-4 text-lg"></i>Venues
+                </a>
+
+                 <!-- Venue & Event Configurations -->
+                <a href="{{ route('admin.categoryvenue.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.categoryvenue.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-building-fill mr-4 text-lg"></i> Events
+                </a>
+                
+                <a href="{{ route('admin.ceramony.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.ceramony.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-calendar-event-fill mr-4 text-lg"></i> Ceramonies
+                </a>
+
+                <!-- User Management -->
                 <a href="{{ route('admin.host.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.host.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-people-fill mr-4 text-lg"></i> Host
                 </a>
-                <a href="{{ route('admin.categoryvenue.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.categoryvenue.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-building-fill mr-4 text-lg"></i> Category Venue
-                </a>
-                <a href="{{ route('admin.ceramony.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.ceramony.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-calendar-event-fill mr-4 text-lg"></i> Ceremony
-                </a>
+
+                <!-- Event Assets & Lists -->
                 <a href="{{ route('admin.invitation.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.invitation.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-envelope-paper-fill mr-4 text-lg"></i> Invitation
                 </a>
-                <a href="{{ route('admin.package.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.package.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-box-seam-fill mr-4 text-lg"></i> Package
+
+                 <!-- Customization & Settings -->
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-palette-fill mr-4 text-lg"></i> Customs
                 </a>
-                <a href="{{ route('admin.guestlist.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.guestlist.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-person-lines-fill mr-4 text-lg"></i> Guest List
-                </a>
-                <a href="{{ route('admin.venues.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.venue.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-geo-alt-fill mr-4 text-lg"></i> Manage Venues
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-translate mr-4 text-lg"></i> Languages
                 </a>
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors">
                     <i class="bi bi-gear-fill mr-4 text-lg"></i> Settings
                 </a>
+
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-file-earmark-richtext-fill mr-4 text-lg"></i> CMS
+                </a>
+
+                <!-- Business Relations -->
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-person-vcard-fill mr-4 text-lg"></i> CRM
+                </a>
+
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-person-workspace mr-4 text-lg"></i> Planners
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-shop-window mr-4 text-lg"></i> Vendors
+                </a>
+
+                <!-- Marketing & Content -->
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-images mr-4 text-lg"></i> Showcase
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-journal-text mr-4 text-lg"></i> Blog
+                </a>
+                
+                <!-- Commerce & Financials -->
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-cart-fill mr-4 text-lg"></i> Shop
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-cash-stack mr-4 text-lg"></i> Revenue
+                </a>
+
+                <!-- <a href="{{ route('admin.guestlist.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.guestlist.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-person-lines-fill mr-4 text-lg"></i> Guest List
+                </a>                -->
             </nav>
         </div>
 
         <!-- Logout Action -->
-        <div class="mt-auto">
+        <div class="mt-auto pt-6">
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full flex items-center justify-center px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-semibold hover:bg-red-600 hover:text-white transition-colors cursor-pointer">
