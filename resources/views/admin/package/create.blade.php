@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mx-auto px-4 py-6 max-w-3xl">
+<!-- Increased max-width to 5xl for a better widescreen balance -->
+<div class="container mx-auto px-4 py-6 max-w-5xl">
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h4 class="text-xl font-bold text-gray-800 tracking-tight">Create Package</h4>
@@ -15,55 +16,35 @@
             <form action="{{ route('admin.package.store') }}" method="POST" class="space-y-5">
                 @csrf
 
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Package Name</label>
-                    <input type="text" name="package_name" value="{{ old('package_name') }}" placeholder="e.g. Gold Plan"
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                    @error('package_name') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                </div>
+                <!-- Top section converted to a responsive grid to fill out space -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Plan Name</label>
+                        <input type="text" name="package_name" value="{{ old('package_name') }}" placeholder="e.g. Gold Plan"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        @error('package_name') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
 
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Package Description (Message Service)</label>
-                    <textarea name="package_description" rows="3" placeholder="Enter package details..."
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description') }}</textarea>
-                    @error('package_description') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">VAF</label>
-                    <textarea name="vaf" rows="2" placeholder="Enter VAF information..."
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('vaf') }}</textarea>
-                    @error('vaf') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <div class="md:col-span-4">
+                    <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Price</label>
                         <input type="text" name="price" value="{{ old('price') }}" placeholder="e.g. 1500+GST"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('price') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="md:col-span-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Guest Limit</label>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Guest Count</label>
                         <input type="number" name="guest_limit" value="{{ old('guest_limit') }}" placeholder="e.g. 100"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('guest_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <div class="md:col-span-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Invite Limit</label>
-                        <input type="number" name="invite_limit" value="{{ old('invite_limit') }}" placeholder="e.g. 5"
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Validity</label>
+                        <input type="text" name="validity" value="{{ old('validity') }}"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('invite_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                        @error('validity') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Validity</label>
-                    <input type="date" name="validity" value="{{ old('validity') }}"
-                        class="block w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                    @error('validity') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <hr class="border-gray-200 my-5">
@@ -84,7 +65,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Ceramonies</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Ceremonies</label>
                         <input type="text" name="ceramonies" value="{{ old('ceramonies') }}" placeholder="Enter ceremonies info"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('ceramonies') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
@@ -105,18 +86,32 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service</label>
+                        <textarea name="package_description" rows="3" placeholder="Enter package details..."
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description') }}</textarea>
+                        @error('package_description') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Wishboard <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
                         <input type="text" name="wishboard" value="{{ old('wishboard') }}" placeholder="Enter wishboard info"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
                         @error('wishboard') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
+                        <input type="text" name="dcgqrcode" value="{{ old('dcgqrcode') }}" placeholder="Enter QR code info"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('dcgqrcode') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
-                    <input type="text" name="dcgqrcode" value="{{ old('dcgqrcode') }}" placeholder="Enter QR code info"
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                    @error('dcgqrcode') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">VAF</label>
+                    <textarea name="vaf" rows="2" placeholder="Enter VAF information..."
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('vaf') }}</textarea>
+                    @error('vaf') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Dynamic Fields Section -->

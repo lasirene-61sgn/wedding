@@ -31,7 +31,7 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <h3 class="text-base font-bold text-gray-900">{{ $package->package_name }}</h3>
-                        <p class="text-xs text-gray-400 mt-0.5">Valid: {{ $package->validity ? \Carbon\Carbon::parse($package->validity)->format('M d, Y') : 'N/A' }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ $package->validity}}</p>
                     </div>
                     <!-- Fixed Mobile Custom Price Representation String -->
                     <span class="text-lg font-bold text-indigo-600">
@@ -106,7 +106,7 @@
                             <!-- Package Name -->
                             <td class="px-6 py-4 truncate">
                                 <span class="font-bold text-gray-900 block truncate">{{ $package->package_name }}</span>
-                                <span class="text-[11px] text-gray-400 font-medium">Expires: {{ $package->validity ? \Carbon\Carbon::parse($package->validity)->format('Y-m-d') : 'N/A' }}</span>
+                                <span class="text-[11px] text-gray-400 font-medium">{{ $package->validity }}</span>
                             </td>
                             
                             <!-- Fixed Desktop Custom Price Representation String -->

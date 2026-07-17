@@ -32,7 +32,7 @@ class PackageSelectController extends Controller
             'wishboard' => 'nullable',
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
-            'invite_limit' =>' required|integer',
+            'invite_limit' =>' nullable|integer',
             'custom_fields' => 'nullable|array',
             
         ]);
@@ -77,7 +77,7 @@ class PackageSelectController extends Controller
             'wishboard' => 'nullable',
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
-            'invite_limit' =>' required|integer',
+            'invite_limit' =>' nullable|integer',
             'custom_fields' => 'nullable|array',
         ]);
 

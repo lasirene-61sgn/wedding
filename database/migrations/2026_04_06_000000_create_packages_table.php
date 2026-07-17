@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('package_name'); //plans
             $table->string('price');
             $table->integer('guest_limit'); //guest count
-            $table->date('validity');
+            $table->string('validity');
             $table->string('invitaion');
             $table->string('rsvp');
             $table->string('ceramonies');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('wishboard')->nullable();
             $table->string('dcgqrcode')->nullable();
             $table->text('vaf');
-            $table->integer('invite_limit');
+            $table->integer('invite_limit')->nullable();
             $table->string('actual_amount');
             $table->timestamps();
         });
