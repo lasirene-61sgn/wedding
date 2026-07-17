@@ -44,7 +44,7 @@
                         
                         <!-- Price -->
                         <td class="whitespace-nowrap px-6 py-4 text-gray-600 font-medium">
-                            ${{ number_format($package->price, 2) }}
+                            {{ number_format($package->price, 2) }}
                         </td>
                         
                         <!-- Guest Limit -->
