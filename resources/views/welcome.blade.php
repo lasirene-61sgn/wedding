@@ -867,34 +867,7 @@
     <div class="w-full h-[1px] luxury-line"></div>
 
     <!-- Photo Gallery Section -->
-    <!-- <section class="py-24 px-6 md:px-16 bg-royal-champagne">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <span class="text-royal-gold font-serif tracking-[0.2em] text-xs uppercase">Moments Captured</span>
-                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-royal-burgundy font-light mt-1">Our Love Story</h2>
-                <div class="w-12 h-[1px] bg-royal-gold mx-auto mt-4"></div>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="gallery-item aspect-square bg-royal-rosewater" data-aos="fade-up">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=400&fit=crop" alt="Couple" class="w-full h-full object-cover" />
-                </div>
-                <div class="gallery-item aspect-square bg-royal-rosewater md:col-span-2 md:row-span-2" data-aos="fade-up" data-aos-delay="100">
-                    <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&h=800&fit=crop" alt="Wedding" class="w-full h-full object-cover" />
-                </div>
-                <div class="gallery-item aspect-square bg-royal-rosewater" data-aos="fade-up" data-aos-delay="200">
-                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&h=400&fit=crop" alt="Rings" class="w-full h-full object-cover" />
-                </div>
-                <div class="gallery-item aspect-square bg-royal-rosewater" data-aos="fade-up" data-aos-delay="300">
-                    <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=400&fit=crop" alt="Flowers" class="w-full h-full object-cover" />
-                </div>
-                <div class="gallery-item aspect-square bg-royal-rosewater" data-aos="fade-up" data-aos-delay="400">
-                    <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=400&fit=crop" alt="Venue" class="w-full h-full object-cover" />
-                </div>
-            </div>
-        </div>
-    </section> -->
-
+    <!--  
     <!-- Section Divider Line -->
     <div class="w-full h-[1px] luxury-line"></div>
 

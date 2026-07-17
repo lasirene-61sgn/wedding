@@ -12,7 +12,8 @@ class PackageSelectController extends Controller
         $packages = Package::all();
         return view('admin.package.index', compact('packages'));
     }
-
+// 'package_name', 'price', 'guest_limit',  'validity', 'invitaion', 'rsvp', 'ceramonies', 'reports', 'gallery', 
+        // 'package_description', 'wishboard', 'dcgqrcode', 'vaf' ,'invite_limit',
     public function create(){
         return view('admin.package.create');
     }
@@ -20,10 +21,20 @@ class PackageSelectController extends Controller
     public function store(Request $request){
         $request->validate([
             'package_name' => 'required',
-            'package_description' => 'required',
             'price' => 'required|numeric',
-            'invite_limit' =>' required|integer',
             'guest_limit' => 'required|integer',
+            'validity' => 'required',
+            'invitaion' => 'required',
+            'rsvp' => 'required',
+            'ceramonies' => 'required',
+            'reports' => 'required',
+            'gallery' => 'required',
+            'package_description' => 'required',
+            'wishboard' => 'nullable',
+            'dcgqrcode' => 'nullable',
+            'vaf' => 'nullable',
+            'invite_limit' =>' required|integer',
+            
         ]);
 
         Package::create($request->all());
@@ -39,11 +50,20 @@ class PackageSelectController extends Controller
     public function update(Request $request, $id){
         $package = Package::findOrFail($id);
         $request->validate([
-            'package_name' => 'nullable',
-            'package_description' => 'nullable',
-            'price' => 'nullable',
-            'invite_limit' => 'nullable|integer',
-            'guest_limit' => 'nullable|integer',
+            'package_name' => 'required',
+            'price' => 'required|numeric',
+            'guest_limit' => 'required|integer',
+            'validity' => 'required',
+            'invitaion' => 'required',
+            'rsvp' => 'required',
+            'ceramonies' => 'required',
+            'reports' => 'required',
+            'gallery' => 'required',
+            'package_description' => 'required',
+            'wishboard' => 'nullable',
+            'dcgqrcode' => 'nullable',
+            'vaf' => 'nullable',
+            'invite_limit' =>' required|integer',
         ]);
 
         $package->update($request->all());

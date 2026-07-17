@@ -13,11 +13,20 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
-            $table->string('package_name');
-            $table->text('package_description');
-            $table->integer('guest_limit');
-            $table->integer('invite_limit');
+            $table->string('package_name'); //plans
             $table->decimal('price', 8,2);
+            $table->integer('guest_limit'); //guest count
+            $table->date('validity');
+            $table->string('invitaion');
+            $table->string('rsvp');
+            $table->string('ceramonies');
+            $table->string('reports');
+            $table->string('gallery');
+            $table->text('package_description'); // Message Service
+            $table->string('wishboard')->nullable();
+            $table->string('dcgqrcode')->nullable();
+            $table->text('vaf');
+            $table->integer('invite_limit');
             $table->timestamps();
         });
     }

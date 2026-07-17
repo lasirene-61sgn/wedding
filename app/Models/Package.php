@@ -9,7 +9,8 @@ class Package extends Model
     protected $table = 'packages';
 
     protected $fillable = [
-        'package_name', 'package_description', 'price', 'guest_limit', 'invite_limit',
+        'package_name', 'price', 'guest_limit',  'validity', 'invitaion', 'rsvp', 'ceramonies', 'reports', 'gallery', 
+        'package_description', 'wishboard', 'dcgqrcode', 'vaf' ,'invite_limit',
     ];
 
     public function hosts(){

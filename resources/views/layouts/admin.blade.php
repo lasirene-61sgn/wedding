@@ -32,7 +32,11 @@
                 </a>
 
                 <a href="{{ route('admin.package.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.package.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
-                    <i class="bi bi-box-seam-fill mr-4 text-lg"></i> Packages
+                    <i class="bi bi-box-seam-fill mr-4 text-lg"></i>Host Packages
+                </a>
+
+                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-box-seam-fill mr-4 text-lg"></i>Planner Packages
                 </a>
 
                 <a href="{{ route('admin.venues.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.venues.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
