@@ -20,7 +20,7 @@ class PackageSelectController extends Controller
     public function store(Request $request){
         $request->validate([
             'package_name' => 'required',
-            'price' => 'required|numeric',
+            'price' => 'required|string',
             'guest_limit' => 'required|integer',
             'validity' => 'required',
             'invitaion' => 'required',
@@ -65,7 +65,7 @@ class PackageSelectController extends Controller
         $package = Package::findOrFail($id);
         $request->validate([
             'package_name' => 'required',
-            'price' => 'required|numeric',
+            'price' => 'required|string',
             'guest_limit' => 'required|integer',
             'validity' => 'required',
             'invitaion' => 'required',

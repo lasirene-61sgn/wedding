@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->string('package_name'); //plans
-            $table->decimal('price', 8,2);
+            $table->string('price');
             $table->integer('guest_limit'); //guest count
             $table->date('validity');
             $table->string('invitaion');
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('dcgqrcode')->nullable();
             $table->text('vaf');
             $table->integer('invite_limit');
+            $table->string('actual_amount');
             $table->timestamps();
         });
     }

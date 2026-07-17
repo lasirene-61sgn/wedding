@@ -5,23 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Your Wedding Plan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: { 
                 extend: { 
-                    colors: { wedding: { dark: '#1e3a2f', primary: '#2c5f41', gold: '#c4a373', cream: '#f9f7f4' } },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Cormorant Garamond', 'serif'] }
+                    colors: { wedding: { dark: '#000000', primary: '#222222', gold: '#c4a373', cream: '#f9f7f4' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 } 
             }
         }
     </script>
 </head>
-<body class="bg-stone-50 py-16 px-4 font-sans antialiased">
-    <div class="max-w-6xl mx-auto text-center">
-        <h2 class="text-4xl md:text-5xl font-serif text-wedding-dark mb-3">Choose Your Planning Suite</h2>
-        <p class="text-stone-600 mb-12 text-lg max-w-xl mx-auto">Select a beautifully crafted package tailored perfectly to manage your guests, invitations, and wedding ceremonies.</p>
+<body class="bg-stone-50 py-16 px-4 font-sans antialiased text-black">
+    <div class="max-w-7xl mx-auto text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 mb-12">Happywed - Host Packages</h2>
 
+        <!-- Notification Alerts -->
         <div class="max-w-xl mx-auto mb-10 text-left">
             @if ($errors->any() || session('error'))
                 <div class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-2xl shadow-sm flex gap-3">
@@ -29,7 +29,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     <div>
-                        <h4 class="font-semibold text-sm">Action Required</h4>
                         <ul class="list-disc pl-4 text-xs text-red-700 mt-1 space-y-1">
                             @if(session('error')) <li>{{ session('error') }}</li> @endif
                             @foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach
@@ -48,130 +47,128 @@
             @endif
         </div>
 
-        <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8 items-stretch justify-center">
+        <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-6 items-stretch justify-center">
             @foreach($packages as $package)
-            <div class="bg-white border border-stone-200 hover:border-wedding-gold transition-all duration-300 rounded-3xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-xl relative overflow-hidden group">
+            <div class="bg-white border-2 border-gray-300 rounded-xl p-5 flex flex-col shadow-sm transition-all duration-300 hover:shadow-md relative text-left">
                 
-                <h3 class="text-xs font-bold text-wedding-gold uppercase tracking-widest mb-2">{{ $package->package_name }}</h3>
+                <!-- 1. Package Name Data -->
+                <h3 class="text-xl font-bold text-black border-b border-gray-200 pb-2 mb-3">{{ $package->package_name }}</h3>
                 
-                <div class="flex items-baseline justify-center gap-1 mb-4">
-                    <span class="text-4xl font-serif text-wedding-dark font-semibold">₹{{ number_format($package->price, 0) }}</span>
-                    @if($package->validity)
-                        <span class="text-stone-400 text-xs font-medium">/ Valid until {{ \Carbon\Carbon::parse($package->validity)->format('M d, Y') }}</span>
+                <!-- 2. Price Data -->
+                <div class="flex items-baseline gap-2 mb-3 flex-wrap text-lg">
+                    @php
+                        $priceParts = explode(' ', trim($package->price));
+                    @endphp
+
+                    @if(count($priceParts) > 1 && is_numeric($priceParts[0]))
+                        <span class="font-bold text-gray-950 line-through">₹{{ $priceParts[0] }}</span>
+                        <span class="font-bold text-gray-950">
+                            {{ implode(' ', array_slice($priceParts, 1)) }}
+                        </span>
+                    @else
+                        <span class="font-bold text-gray-950">₹{{ $package->price }}</span>
                     @endif
                 </div>
                 
-                <p class="text-stone-500 text-sm mb-6 leading-relaxed min-h-[40px]">{{ $package->package_description }}</p>
-
-                <div class="grid grid-cols-2 gap-3 bg-stone-50 rounded-2xl p-4 mb-6 border border-stone-100 text-left">
-                    <div>
-                        <span class="block text-[10px] font-bold tracking-wider text-stone-400 uppercase">Invites Allowed</span>
-                        <span class="text-base font-semibold text-wedding-dark font-serif">{{ $package->invite_limit }} Invites</span>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] font-bold tracking-wider text-stone-400 uppercase">Guest Capacity</span>
-                        <span class="text-base font-semibold text-wedding-dark font-serif">{{ $package->guest_limit }} Guests</span>
-                    </div>
+                <!-- 3. Guest Limit Data -->
+                <div class="text-base font-bold text-black mb-2">
+                    Guest up to {{ $package->guest_limit }}
                 </div>
 
-                <div class="text-left border-t border-stone-100 pt-5 flex-grow mb-8">
-                    <span class="block text-[11px] font-bold tracking-wider text-stone-400 uppercase mb-4">Included Features</span>
-                    <ul class="space-y-3.5 text-sm">
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">Invitation</strong>
-                                <span class="text-stone-800">{{ $package->invitaion }}</span>
-                            </div>
+                <!-- 4. Validity Data (Calculated dynamically into years format instead of explicit calendar terms) -->
+                <div class="text-sm text-gray-900 mb-4 font-normal">
+                    @php
+                        $years = 1; 
+                        if ($package->validity) {
+                            try {
+                                $parsedDate = \Carbon\Carbon::parse($package->validity);
+                                $diffInYears = round(\Carbon\Carbon::now()->diffInYears($parsedDate));
+                                $years = $diffInYears > 0 ? $diffInYears : 1;
+                            } catch (\Exception $e) {
+                                $years = 1;
+                            }
+                        }
+                    @endphp
+                    Validity {{ $years }} {{ \Illuminate\Support\Str::plural('Year', $years) }}
+                </div>
+
+                <!-- Core Data Stack Container -->
+                <div class="border-t border-gray-200 pt-4 flex-grow mb-6">
+                    <ul class="space-y-3.5 text-sm text-gray-900 font-medium">
+                        <!-- 5. Invitation Data -->
+                        <li class="flex items-start gap-2">
+                            <span class="text-gray-400 font-bold shrink-0">+</span>
+                            <span class="leading-tight">{!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->invitaion)) !!}</span>
                         </li>
 
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">RSVP Suite</strong>
-                                <span class="text-stone-800">{{ $package->rsvp }}</span>
-                            </div>
+                        <!-- 6. RSVP Data -->
+                        <li class="pl-4 leading-tight">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->rsvp)) !!}
                         </li>
 
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">Ceremonies</strong>
-                                <span class="text-stone-800">{{ $package->ceramonies }}</span>
-                            </div>
+                        <!-- 7. Ceremonies Data -->
+                        <li class="pl-4 leading-tight">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->ceramonies)) !!}
                         </li>
 
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">Reports & Analytics</strong>
-                                <span class="text-stone-800">{{ $package->reports }}</span>
-                            </div>
+                        <!-- 8. Reports Data -->
+                        <li class="pl-4 leading-tight">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->reports)) !!}
                         </li>
 
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">Gallery Access</strong>
-                                <span class="text-stone-800">{{ $package->gallery }}</span>
-                            </div>
+                        <!-- 9. Gallery Data -->
+                        <li class="pl-4 leading-tight">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->gallery)) !!}
                         </li>
 
-                        <li class="flex items-start gap-3 text-stone-700">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mt-0.5">✓</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-stone-500 uppercase tracking-tight">VAF Allocation</strong>
-                                <span class="text-stone-800">{{ $package->vaf }}</span>
-                            </div>
+                        <!-- 10. Package Description Data -->
+                        <li class="pl-4 leading-normal text-xs text-gray-800 border-t border-gray-100 pt-2 font-normal">
+                            {!! preg_replace('/(\d+|Upto|Free|Rs\.\/Per Msg\.)/i', '<span class="font-bold">$1</span>', e($package->package_description)) !!}
                         </li>
 
+                        <!-- 11. Wishboard Data -->
                         @if(!empty($package->wishboard))
-                        <li class="flex items-start gap-3 text-stone-700 border-t border-dashed border-stone-200 pt-2">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 mt-0.5">✦</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-amber-700 uppercase tracking-tight">Wishboard Option</strong>
-                                <span class="text-stone-800">{{ $package->wishboard }}</span>
-                            </div>
+                        <li class="pl-4 leading-tight text-gray-900 border-t border-gray-100 pt-2">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->wishboard)) !!}
                         </li>
                         @endif
 
+                        <!-- 12. DCG QR Code Data -->
                         @if(!empty($package->dcgqrcode))
-                        <li class="flex items-start gap-3 text-stone-700 border-t border-dashed border-stone-200 pt-2">
-                            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-600 mt-0.5">✦</span>
-                            <div>
-                                <strong class="font-medium block text-xs text-amber-700 uppercase tracking-tight">DCG QR Access</strong>
-                                <span class="text-stone-800">{{ $package->dcgqrcode }}</span>
-                            </div>
+                        <li class="pl-4 leading-tight text-gray-900 border-t border-gray-100 pt-1">
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->dcgqrcode)) !!}
                         </li>
                         @endif
 
-                        <!-- Render Custom features cleanly -->
+                        <!-- 13. VAF Data -->
+                        <li class="pl-4 leading-tight text-xs text-gray-600 border-t border-gray-100 pt-2 font-normal">
+                            {{ $package->vaf }}
+                        </li>
+
+                        <!-- 14. Dynamic Custom Fields Data -->
                         @if($package->customFeatures && $package->customFeatures->count() > 0)
                             @foreach($package->customFeatures as $feature)
-                                <li class="flex items-start gap-3 text-stone-700 border-t border-dashed border-stone-200 pt-2">
-                                    <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-stone-100 text-wedding-gold mt-0.5">✦</span>
-                                    <div>
-                                        <strong class="font-medium block text-xs text-stone-400 uppercase tracking-tight">{{ $feature->field_label }}</strong>
-                                        <span class="text-stone-800 font-semibold">
-                                            @if($feature->field_type == 'price')
-                                                ₹{{ number_format((float)$feature->field_value, 2) }}
-                                            @elseif($feature->field_type == 'date')
-                                                {{ \Carbon\Carbon::parse($feature->field_value)->format('M d, Y') }}
-                                            @else
-                                                {{ $feature->field_value }}
-                                            @endif
-                                        </span>
-                                    </div>
+                                <li class="pl-4 leading-tight text-xs border-t border-dashed border-gray-200 pt-2 font-normal">
+                                    <span>
+                                        @if($feature->field_type == 'price')
+                                            ₹{{ $feature->field_value }}
+                                        @elseif($feature->field_type == 'date')
+                                            {{ \Carbon\Carbon::parse($feature->field_value)->format('M d, Y') }}
+                                        @else
+                                            {{ $feature->field_value }}
+                                        @endif
+                                    </span>
                                 </li>
                             @endforeach
                         @endif
                     </ul>
                 </div>
 
+                <!-- Form Action Selection Button -->
                 <form action="{{ route('host.packages.select') }}" method="POST" class="mt-auto">
                     @csrf
                     <input type="hidden" name="package_id" value="{{ $package->id }}">
-                    <button type="submit" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white py-3.5 rounded-xl font-semibold shadow-md transition-all tracking-wide text-sm">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-bold text-center transition-all text-sm tracking-wide cursor-pointer shadow-sm">
                         Select Plan
                     </button>
                 </form>

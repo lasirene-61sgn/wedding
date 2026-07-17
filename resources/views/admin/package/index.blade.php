@@ -33,8 +33,9 @@
                         <h3 class="text-base font-bold text-gray-900">{{ $package->package_name }}</h3>
                         <p class="text-xs text-gray-400 mt-0.5">Valid: {{ $package->validity ? \Carbon\Carbon::parse($package->validity)->format('M d, Y') : 'N/A' }}</p>
                     </div>
+                    <!-- Fixed Mobile Custom Price Representation String -->
                     <span class="text-lg font-bold text-indigo-600">
-                        ₹{{ number_format($package->price, 2) }}
+                        ₹{{ $package->price }}
                     </span>
                 </div>
                 
@@ -108,9 +109,9 @@
                                 <span class="text-[11px] text-gray-400 font-medium">Expires: {{ $package->validity ? \Carbon\Carbon::parse($package->validity)->format('Y-m-d') : 'N/A' }}</span>
                             </td>
                             
-                            <!-- Price -->
+                            <!-- Fixed Desktop Custom Price Representation String -->
                             <td class="px-6 py-4 text-gray-900 font-bold truncate">
-                                ₹{{ number_format($package->price, 2) }}
+                                ₹{{ $package->price }}
                             </td>
                             
                             <!-- Guest Limit -->

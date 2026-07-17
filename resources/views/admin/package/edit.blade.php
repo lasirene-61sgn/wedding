@@ -5,12 +5,12 @@
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h4 class="text-xl font-bold text-gray-800 tracking-tight">Edit Package: {{ $package->package_name }}</h4>
-            <a href="{{ route('admin.package.index') }}" 
-               class="inline-flex items-center px-3 py-1.5 bg-gray-500 hover:bg-gray-600 border border-transparent rounded-md text-xs font-semibold text-white shadow-sm transition-colors">
+            <a href="{{ route('admin.package.index') }}"
+                class="inline-flex items-center px-3 py-1.5 bg-gray-500 hover:bg-gray-600 border border-transparent rounded-md text-xs font-semibold text-white shadow-sm transition-colors">
                 Back
             </a>
         </div>
-        
+
         <div class="p-6">
             <form action="{{ route('admin.package.update', $package->id) }}" method="POST" class="space-y-5">
                 @csrf
@@ -18,52 +18,51 @@
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1.5">Package Name</label>
-                    <input type="text" name="package_name" value="{{ old('package_name', $package->package_name) }}" 
-                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                    <input type="text" name="package_name" value="{{ old('package_name', $package->package_name) }}"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                     @error('package_name') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1.5">Description</label>
-                    <textarea name="package_description" rows="3" 
-                              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description', $package->package_description) }}</textarea>
+                    <textarea name="package_description" rows="3"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description', $package->package_description) }}</textarea>
                     @error('package_description') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1.5">VAF</label>
-                    <textarea name="vaf" rows="2" 
-                              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('vaf', $package->vaf) }}</textarea>
+                    <textarea name="vaf" rows="2"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('vaf', $package->vaf) }}</textarea>
                     @error('vaf') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-4">
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Price</label>
-                        <input type="number" step="0.01" name="price" value="{{ old('price', $package->price) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="price" value="{{ old('price', $package->price) }}" placeholder="e.g. 1500+GST"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('price') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
-
                     <div class="md:col-span-4">
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Guest Limit</label>
-                        <input type="number" name="guest_limit" value="{{ old('guest_limit', $package->guest_limit) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="number" name="guest_limit" value="{{ old('guest_limit', $package->guest_limit) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('guest_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-4">
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Invite Limit</label>
-                        <input type="number" name="invite_limit" value="{{ old('invite_limit', $package->invite_limit) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="number" name="invite_limit" value="{{ old('invite_limit', $package->invite_limit) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('invite_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1.5">Validity</label>
-                    <input type="date" name="validity" value="{{ old('validity', $package->validity) }}" 
-                           class="block w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                    <input type="date" name="validity" value="{{ old('validity', $package->validity) }}"
+                        class="block w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                     @error('validity') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                 </div>
 
@@ -72,51 +71,51 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Invitation</label>
-                        <input type="text" name="invitaion" value="{{ old('invitaion', $package->invitaion) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="invitaion" value="{{ old('invitaion', $package->invitaion) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('invitaion') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">RSVP</label>
-                        <input type="text" name="rsvp" value="{{ old('rsvp', $package->rsvp) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="rsvp" value="{{ old('rsvp', $package->rsvp) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('rsvp') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Ceramonies</label>
-                        <input type="text" name="ceramonies" value="{{ old('ceramonies', $package->ceramonies) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="ceramonies" value="{{ old('ceramonies', $package->ceramonies) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('ceramonies') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Reports</label>
-                        <input type="text" name="reports" value="{{ old('reports', $package->reports) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="reports" value="{{ old('reports', $package->reports) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('reports') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery</label>
-                        <input type="text" name="gallery" value="{{ old('gallery', $package->gallery) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
+                        <input type="text" name="gallery" value="{{ old('gallery', $package->gallery) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('gallery') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1.5">Wishboard <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" name="wishboard" value="{{ old('wishboard', $package->wishboard) }}" 
-                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        <input type="text" name="wishboard" value="{{ old('wishboard', $package->wishboard) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
                         @error('wishboard') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1.5">DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
-                    <input type="text" name="dcgqrcode" value="{{ old('dcgqrcode', $package->dcgqrcode) }}" 
-                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                    <input type="text" name="dcgqrcode" value="{{ old('dcgqrcode', $package->dcgqrcode) }}"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
                     @error('dcgqrcode') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                 </div>
 
@@ -132,33 +131,33 @@
 
                     <div id="custom-fields-container" class="space-y-3">
                         @if($package->customFeatures && $package->customFeatures->count() > 0)
-                            @foreach($package->customFeatures as $index => $feature)
-                                <div class="flex flex-wrap md:flex-nowrap gap-3 items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                    <div class="w-full md:w-1/3">
-                                        <input type="text" name="custom_fields[{{ $index }}][label]" value="{{ $feature->field_label }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
-                                    </div>
-                                    <div class="w-full md:w-1/4">
-                                        <select name="custom_fields[{{ $index }}][type]" class="field-type-selector w-full rounded-md border-gray-300 shadow-sm text-sm p-2">
-                                            <option value="text" {{ $feature->field_type == 'text' ? 'selected' : '' }}>Text / String</option>
-                                            <option value="number" {{ $feature->field_type == 'number' ? 'selected' : '' }}>Number</option>
-                                            <option value="date" {{ $feature->field_type == 'date' ? 'selected' : '' }}>Date</option>
-                                            <option value="price" {{ $feature->field_type == 'price' ? 'selected' : '' }}>Price (₹)</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-full flex-1 value-container">
-                                        @if($feature->field_type == 'date')
-                                            <input type="date" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
-                                        @elseif($feature->field_type == 'price')
-                                            <input type="number" step="0.01" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
-                                        @elseif($feature->field_type == 'number')
-                                            <input type="number" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
-                                        @else
-                                            <input type="text" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
-                                        @endif
-                                    </div>
-                                    <button type="button" class="remove-field px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-md text-xs font-semibold">Remove</button>
-                                </div>
-                            @endforeach
+                        @foreach($package->customFeatures as $index => $feature)
+                        <div class="flex flex-wrap md:flex-nowrap gap-3 items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                            <div class="w-full md:w-1/3">
+                                <input type="text" name="custom_fields[{{ $index }}][label]" value="{{ $feature->field_label }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
+                            </div>
+                            <div class="w-full md:w-1/4">
+                                <select name="custom_fields[{{ $index }}][type]" class="field-type-selector w-full rounded-md border-gray-300 shadow-sm text-sm p-2">
+                                    <option value="text" {{ $feature->field_type == 'text' ? 'selected' : '' }}>Text / String</option>
+                                    <option value="number" {{ $feature->field_type == 'number' ? 'selected' : '' }}>Number</option>
+                                    <option value="date" {{ $feature->field_type == 'date' ? 'selected' : '' }}>Date</option>
+                                    <option value="price" {{ $feature->field_type == 'price' ? 'selected' : '' }}>Price (₹)</option>
+                                </select>
+                            </div>
+                            <div class="w-full flex-1 value-container">
+                                @if($feature->field_type == 'date')
+                                <input type="date" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
+                                @elseif($feature->field_type == 'price')
+                                <input type="number" step="0.01" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
+                                @elseif($feature->field_type == 'number')
+                                <input type="number" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
+                                @else
+                                <input type="text" name="custom_fields[{{ $index }}][value]" value="{{ $feature->field_value }}" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>
+                                @endif
+                            </div>
+                            <button type="button" class="remove-field px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-md text-xs font-semibold">Remove</button>
+                        </div>
+                        @endforeach
                         @endif
                     </div>
                 </div>
@@ -193,7 +192,7 @@
             <button type="button" class="remove-field px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-md text-xs font-semibold">Remove</button>
         `;
         container.appendChild(row);
-        
+
         // FIXED: Replaced raw array text index with proper JavaScript template strings ${index}
         row.querySelector('.field-type-selector').addEventListener('change', function(e) {
             const type = e.target.value;
@@ -203,12 +202,12 @@
             else if (type === 'date') valueContainer.innerHTML = `<input type="date" name="custom_fields[${index}][value]" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
             else if (type === 'price') valueContainer.innerHTML = `<input type="number" step="0.01" name="custom_fields[${index}][value]" placeholder="0.00" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
         });
-        
+
         row.querySelector('.remove-field').addEventListener('click', () => row.remove());
     });
 
     document.getElementById('custom-fields-container').addEventListener('click', function(e) {
-        if(e.target && e.target.classList.contains('remove-field')) {
+        if (e.target && e.target.classList.contains('remove-field')) {
             e.target.closest('.flex').remove();
         }
     });
