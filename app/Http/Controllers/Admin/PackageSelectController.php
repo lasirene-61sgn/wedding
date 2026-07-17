@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 class PackageSelectController extends Controller
 {
     public function index(){
-        $packages = Package::all();
+        $packages = Package::with('customFeatures')->get();
         return view('admin.package.index', compact('packages'));
     }
-// 'package_name', 'price', 'guest_limit',  'validity', 'invitaion', 'rsvp', 'ceramonies', 'reports', 'gallery', 
-        // 'package_description', 'wishboard', 'dcgqrcode', 'vaf' ,'invite_limit',
+
     public function create(){
         return view('admin.package.create');
     }
@@ -34,16 +33,31 @@ class PackageSelectController extends Controller
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
             'invite_limit' =>' required|integer',
+            'custom_fields' => 'nullable|array',
             
         ]);
 
-        Package::create($request->all());
+        $package = Package::create($request->all());
+
+        //condition for adding custom fields
+        if($request->has('custom_fields')){
+            foreach($request->custom_fields as $field)
+            {
+                if(!empty($field['label']) && !empty($field['value'])){
+                    $package->customFeatures()->create([
+                        'field_label' => $field['label'],
+                        'field_type'  => $field['type'],
+                        'field_value'  => $field['value'],
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('admin.package.index')->with('Success', "Package Created Successfully");
     }
 
     public function edit($id){
-        $package = Package::findOrFail($id);
+        $package = Package::with('customFeatures')->findOrFail($id);
         return view('admin.package.edit', compact('package'));
     }
 
@@ -64,9 +78,24 @@ class PackageSelectController extends Controller
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
             'invite_limit' =>' required|integer',
+            'custom_fields' => 'nullable|array',
         ]);
 
         $package->update($request->all());
+
+        $package->customFeatures()->delete();
+
+        if($request->has('custom_fields')){
+            foreach($request->custom_fields as $field){
+                if(!empty($field['label']) && !empty($field['value'])){
+                    $package->customFeatures()->create([
+                        'field_label' => $field['label'],
+                        'field_type'  => $field['type'],
+                        'field_value'  => $field['value'],
+                    ]);
+                }
+            }
+        }
         return redirect()->route('admin.package.index')->with('Success', 'Package Updated Successfully');
     }
 

@@ -16,4 +16,9 @@ class Package extends Model
     public function hosts(){
         return $this->hasMany(Host::class);
     }
+
+    public function customFeatures()
+    {
+        return $this->hasMany(PackageFeature::class, 'package_id');
+    }
 }
