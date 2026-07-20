@@ -99,7 +99,7 @@
                     <ul class="space-y-3.5 text-sm text-gray-900 font-medium">
                         <!-- 5. Invitation Data -->
                         <li class="flex items-start gap-2">
-                            <span class="text-gray-400 font-bold shrink-0">+</span>
+                            <span class="text-gray-400 font-bold shrink-0"></span>
                             <span class="leading-tight">{!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->invitaion)) !!}</span>
                         </li>
 

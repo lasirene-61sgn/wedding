@@ -623,7 +623,7 @@
 
                 <!-- Modern Square Luxury Action Buttons -->
                 <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center gap-4 w-full max-w-sm lg:max-w-none">
-                    <a href="#host-experience" class="tilt-btn w-full text-center px-10 py-4 bg-royal-burgundy text-[#FFFDF9] font-serif tracking-[0.2em] text-xs uppercase shadow-xl hover:bg-royal-gold hover:text-royal-wine transition-all duration-300 rounded-none font-bold">
+                    <a href="{{route('host.register')}}" class="tilt-btn w-full text-center px-10 py-4 bg-royal-burgundy text-[#FFFDF9] font-serif tracking-[0.2em] text-xs uppercase shadow-xl hover:bg-royal-gold hover:text-royal-wine transition-all duration-300 rounded-none font-bold">
                         Host Entry
                     </a>
                     <a href="#guest-experience" class="tilt-btn w-full text-center px-10 py-4 border border-royal-burgundy text-royal-burgundy bg-white/40 font-serif tracking-[0.2em] text-xs uppercase font-bold transition-all duration-300 hover:bg-royal-burgundy hover:text-white shadow-sm rounded-none">
@@ -1072,6 +1072,8 @@
         const soundWave = document.getElementById('soundWave');
         const musicTooltip = document.getElementById('musicTooltip');
         let isPlaying = false;
+
+        weddingMusic.src = 'audio/wedding.mp3';
 
         // Set volume to 30% for pleasant background level
         weddingMusic.volume = 0.3;
