@@ -1,0 +1,69 @@
+.ceremony-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ceremony-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.1) !important;
+    }
+    .image-container {
+        height: 200px;
+        overflow: hidden;
+    }
+    .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .action-buttons {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+    }
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        color: #333;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        transition: 0.2s;
+        text-decoration: none;
+    }
+    .btn-edit:hover { background: #0d6efd; color: white; }
+    .btn-delete:hover { background: #dc3545; color: white; }
+    
+    .category-badge {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        color: #0d6efd;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .main-wedding-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: #0d6efd;
+        color: #fff;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+    .rounded-4 {
+        border-radius: 1rem !important;
+    }

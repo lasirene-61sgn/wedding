@@ -1,0 +1,59 @@
+.ceremony-card-preview {
+        background-color: #fff9e6; 
+        border-radius: 24px;
+        overflow: hidden;
+        margin-bottom: 35px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+        aspect-ratio: 3 / 4; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: cover !important;
+    }
+    .canvas-toolbar {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #343a40;
+        border-radius: 8px;
+        padding: 6px 12px;
+        display: none;
+        gap: 8px;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 1000;
+        width: max-content;
+    }
+    .canvas-toolbar button, .canvas-toolbar select, .canvas-toolbar input {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+    .canvas-toolbar select {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+    }
+    .canvas-toolbar input[type="number"] {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+        width: 60px;
+    }
+    .canvas-toolbar button:hover {
+        background: rgba(255,255,255,0.2);
+    }

@@ -1,6 +1,7 @@
 @extends('layouts.host')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/hostgallery.css') }}">
 <div class="container-fluid py-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
@@ -253,31 +254,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    .gallery-item { cursor: pointer; height: 100%; position: relative; }
-    .gallery-overlay, .video-overlay {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.4);
-        opacity: 0;
-        transition: all 0.3s;
-    }
-    .gallery-item:hover .gallery-overlay, .video-item:hover .video-overlay { opacity: 1; }
-    .album-badge {
-        position: absolute;
-        bottom: 10px; right: 10px;
-        background: rgba(255,255,255,0.9);
-        padding: 2px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: var(--primary-color);
-    }
-    .rounded-4 { border-radius: 1rem !important; }
-    .nav-pills .nav-link { color: var(--secondary-color); transition: all 0.2s; }
-    .nav-pills .nav-link.active { background: var(--accent-color); color: #fff; }
-</style>
 
 <script>
     // Persist active tab

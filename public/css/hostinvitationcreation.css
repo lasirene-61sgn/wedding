@@ -1,0 +1,129 @@
+.ceremony-card-preview {
+        background-color: #fff9e6; 
+        border-radius: 24px;
+        overflow: hidden;
+        margin-bottom: 35px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        position: relative;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+        aspect-ratio: 3 / 4; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        background-repeat: no-repeat !important;
+        background-position: center center !important;
+        background-size: cover !important;
+    }
+    .ceremony-card-preview .card-content {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: auto !important;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        z-index: 2;
+    }
+    .ceremony-card-preview .ceremony-title {
+        font-family: 'Georgia', cursive, serif !important;
+        font-size: 2.2rem !important;
+        line-height: 1.2;
+        word-wrap: break-word;
+        font-weight: 600;
+        margin: 0 !important;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 1), -2px -2px 4px rgba(255, 255, 255, 1);
+        cursor: grab;
+        position: absolute;
+    }
+    .ceremony-card-preview .ceremony-title:active {
+        cursor: grabbing;
+    }
+    .ceremony-card-preview .details-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1.1rem !important;
+        margin: 0 !important;
+        font-weight: 600;
+        text-shadow: 1.5px 1.5px 3px rgba(255, 255, 255, 1), -1.5px -1.5px 3px rgba(255, 255, 255, 1);
+        cursor: grab;
+        position: absolute;
+    }
+    .ceremony-card-preview .details-row:active {
+        cursor: grabbing;
+    }
+    #preview_card_inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .draggable-text {
+        width: max-content;
+        min-width: 50px;
+        padding: 5px;
+        margin: 0;
+        line-height: 1.2;
+        cursor: grab;
+        position: absolute;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        transition: border 0.2s;
+    }
+    .draggable-text.selected {
+        border: 2px solid rgba(0, 123, 255, 0.5); /* Blue border for selected */
+    }
+    .draggable-text.editing-mode {
+        outline: none;
+        border: 2px dashed rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        cursor: text;
+    }
+    .draggable-text:active {
+        cursor: grabbing;
+    }
+    .canvas-toolbar {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #343a40;
+        border-radius: 8px;
+        padding: 6px 12px;
+        display: none;
+        gap: 8px;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 1000;
+        width: max-content;
+    }
+    .canvas-toolbar button, .canvas-toolbar select, .canvas-toolbar input {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+    .canvas-toolbar select {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+    }
+    .canvas-toolbar input[type="number"] {
+        background: #495057;
+        color: white;
+        padding: 4px 8px;
+        width: 60px;
+    }
+    .canvas-toolbar button:hover {
+        background: rgba(255,255,255,0.2);
+    }

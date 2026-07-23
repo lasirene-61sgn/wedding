@@ -199,6 +199,48 @@
     }
     .fc-day-today { background-color: rgba(79, 70, 229, 0.03) !important; }
     .fc-daygrid-day-number { font-weight: 600; color: var(--secondary-color); text-decoration: none; }
+    
+    /* Calendar Responsive Customization */
+    @media (max-width: 991.98px) {
+        .fc .fc-header-toolbar {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .fc .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem !important;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 575.98px) {
+        .fc .fc-header-toolbar {
+            margin-bottom: 1rem !important;
+        }
+        .fc .fc-toolbar-title {
+            font-size: 1.25rem !important;
+        }
+        .fc-button-primary {
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
+        }
+        .fc-col-header-cell-cushion {
+            font-size: 0.75rem !important;
+        }
+        .fc-daygrid-day-number {
+            font-size: 0.75rem !important;
+            padding: 2px !important;
+        }
+        .fc-event {
+            font-size: 0.7rem !important;
+            padding: 2px 4px !important;
+        }
+    }
 </style>
 @endpush
 
