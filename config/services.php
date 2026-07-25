@@ -43,5 +43,9 @@ return [
         'auth_key' => env('MSG91_AUTH_KEY'),
         'integrated_number' => env('MSG91_INTEGRATED_NUMBER'),
     ],
+    'razorpay' => [
+        'key' => env('RAZORPAY_KEY'),
+        'secret' => env('RAZORPAY_SECRET'),
+    ],
 
 ];

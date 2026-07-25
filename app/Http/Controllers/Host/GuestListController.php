@@ -18,7 +18,7 @@ class GuestListController extends Controller
 {
     public function index(Request $request)
     {
-        $query = GuestList::with('ceramony')->where('host_id', Auth::id());
+        $query = GuestList::with(['ceramony', 'category'])->where('host_id', Auth::id());
         if ($request->has('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('guest_name', 'like', '%' . $request->search . '%')
@@ -49,11 +49,25 @@ class GuestListController extends Controller
     public function create()
     {
         $ceramonies = Ceramonies::where('host_id', Auth::id())->get();
-        return view('host.guestlist.create', compact('ceramonies'));
+        $categories = GuestCategory::where('host_id', Auth::id())->get();
+        return view('host.guestlist.create', compact('ceramonies', 'categories'));
     }
     public function store(Request $request)
     {
+        $host = Auth::user();
+        if ($host->package) {
+            $currentGuestCount = GuestList::where('host_id', $host->id)->count();
+            // Assuming guest_limit is a numeric string or integer. If it says "Unlimited", bypass.
+            $guestLimitStr = strtolower(trim($host->package->guest_limit));
+            if ($guestLimitStr !== 'unlimited' && is_numeric($guestLimitStr)) {
+                if ($currentGuestCount >= (int) $guestLimitStr) {
+                    return redirect()->back()->with('error', 'Guest limit reached for your current package. Please upgrade to add more guests.');
+                }
+            }
+        }
+
         $validated = $request->validate([
+            'category_id' => 'nullable|exists:guest_categories,id',
             'ceramony_id' => 'nullable|exists:ceramonies,id',
             'guest_name' => 'required',
             'guest_number' => [
@@ -89,6 +103,17 @@ class GuestListController extends Controller
             'family.*.gender' => 'nullable',
         ]);
         $validated['host_id'] = Auth::id();
+
+        if (!empty($validated['category_id'])) {
+            $category = GuestCategory::find($validated['category_id']);
+            if ($category) {
+                $ceremonyIds = $category->ceremony_ids ?? [];
+                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
+                $validated['assigned_ceremonies'] = $allCeremonyNames;
+                $validated['ceramony_id'] = $ceremonyIds[0] ?? null;
+            }
+        }
+
         $guest = GuestList::create($validated);
         if($request->has('family')){
             foreach($request->family as $member){
@@ -112,6 +137,7 @@ class GuestListController extends Controller
     {
         $guestlist = GuestList::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
         $validated = $request->validate([
+            'category_id' => 'nullable|exists:guest_categories,id',
             'ceramony_id' => 'nullable|exists:ceramonies,id',
             'guest_name' => 'required',
             'guest_number' => [
@@ -148,12 +174,24 @@ class GuestListController extends Controller
             'family.*.gender' => 'nullable',
         ]);
 
+        if (!empty($validated['category_id'])) {
+            $category = GuestCategory::find($validated['category_id']);
+            if ($category) {
+                $ceremonyIds = $category->ceremony_ids ?? [];
+                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
+                $guestlist->assigned_ceremonies = $allCeremonyNames;
+                $guestlist->ceramony_id = $ceremonyIds[0] ?? null;
+                // clear ceremony_ids so it doesn't overwrite below
+                unset($request['ceremony_ids']); 
+            }
+        }
+
         if ($request->has('ceremony_ids')) {
             $allCeremonyNames = Ceramonies::whereIn('id', $request->ceremony_ids)->pluck('ceramony_name')->implode(', ');
 
             $guestlist->assigned_ceremonies = $allCeremonyNames;
             $guestlist->ceramony_id = $request->ceremony_ids[0] ?? null;
-        } else {
+        } elseif (empty($validated['category_id'])) {
             $guestlist->assigned_ceremonies = '';
             $guestlist->ceramony_id = null;
         }
@@ -189,11 +227,31 @@ class GuestListController extends Controller
         return redirect()->route('host.guestlist.index')->with('Suceess', 'Guest Deleted');
     }
 
+    public function downloadSample()
+    {
+        return Excel::download(new \App\Exports\GuestListSampleExport(), 'wedding_guests_template.xlsx');
+    }
+
     public function import(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:csv,txt,xlsx|max:5048',
         ]);
+        
+        // Note: For full accuracy, you should count the rows in the excel file first,
+        // but for now, we enforce limits after or before based on basic checks.
+        // A simple check if they are already at limit:
+        $host = Auth::user();
+        if ($host->package) {
+            $currentGuestCount = GuestList::where('host_id', $host->id)->count();
+            $guestLimitStr = strtolower(trim($host->package->guest_limit));
+            if ($guestLimitStr !== 'unlimited' && is_numeric($guestLimitStr)) {
+                if ($currentGuestCount >= (int) $guestLimitStr) {
+                    return redirect()->back()->with('error', 'Guest limit reached for your current package. Cannot import more guests.');
+                }
+            }
+        }
+
         Excel::import(new GuestListimport(Auth::id()), $request->file('file'));
         return redirect()->route('host.guestlist.index')->with('Success', 'Guest List Imported');
     }
@@ -205,6 +263,11 @@ class GuestListController extends Controller
             'category_id' => 'nullable|exists:guest_categories,id',
             'channels' => 'nullable|array',
         ]);
+
+        $invitationExists = \App\Models\Invitation::where('host_id', Auth::id())->exists();
+        if (!$invitationExists) {
+            return back()->with('error', 'Please configure your Invitation Details first before sending messages.');
+        }
 
         $category = GuestCategory::find($request->category_id);
 
@@ -221,10 +284,18 @@ class GuestListController extends Controller
             ->where('host_id', Auth::id())
             ->get();
 
+        $skipped = 0;
         foreach ($guests as $guest) {
 
             // Enforce logic: Invitation can only be sent if Save the Date has been sent
             $canSendInvitation = $guest->save_date_sent == 1;
+            
+            $catId = $request->category_id ?? $guest->category_id;
+            
+            if (!$catId) {
+                $skipped++;
+                continue; // Skip guests with no category
+            }
 
             if ($canSendInvitation && count($selectedChannels) > 0) {
                 $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
@@ -240,6 +311,10 @@ class GuestListController extends Controller
             ]);
         }
 
+        if ($skipped > 0) {
+            return back()->with('success', 'Operation completed. Note: ' . $skipped . ' guest(s) were skipped because they have no category assigned.');
+        }
+
         return back()->with('success', 'Category assigned and guests updated!');
     }
     public function bulkSaveDate(Request $request, InvitationService $invitationService)
@@ -249,12 +324,23 @@ class GuestListController extends Controller
             'channels' => 'nullable|array',
         ]);
 
+        $invitationExists = \App\Models\Invitation::where('host_id', Auth::id())->exists();
+        if (!$invitationExists) {
+            return back()->with('error', 'Please configure your Invitation Details first before sending Save the Dates.');
+        }
+
         $selectedChannels = $request->channels ?? [];
         $guests = GuestList::whereIn('id', $request->ids)
             ->where('host_id', Auth::id())
             ->get();
 
+        $skipped = 0;
         foreach ($guests as $guest) {
+            if (!$guest->category_id) {
+                $skipped++;
+                continue;
+            }
+
             if (count($selectedChannels) > 0) {
                 $invitationService->sendBulkSaveDate($guest, $selectedChannels);
             }
@@ -262,6 +348,10 @@ class GuestListController extends Controller
             $guest->update([
                 'save_date_sent' => true
             ]);
+        }
+
+        if ($skipped > 0) {
+            return back()->with('success', 'Save the Date operation completed. ' . $skipped . ' guest(s) were skipped because they have no category assigned.');
         }
 
         return back()->with('success', 'Save the Date sent successfully!');
@@ -276,6 +366,11 @@ class GuestListController extends Controller
 
         $host = Auth::user();
 
+        $invitationExists = \App\Models\Invitation::where('host_id', $host->id)->exists();
+        if (!$invitationExists) {
+            return back()->with('error', 'Please configure your Invitation Details first before sending Reminders.');
+        }
+
         if ($request->hasFile('reminder_image')) {
             $imagePath = $request->file('reminder_image')->store('reminders', 'public');
             $host->reminder_image = $imagePath;
@@ -289,13 +384,23 @@ class GuestListController extends Controller
             ->where('reminder_sent', false)
             ->get();
 
+        $skipped = 0;
         foreach ($guests as $guest) {
+            if (!$guest->category_id) {
+                $skipped++;
+                continue;
+            }
+
             $invitationService->sendBulkReminders($guest, ['whatsapp']);
             
             $guest->update([
                 'reminder_sent' => true,
                 'reminder_scheduled' => true
             ]);
+        }
+
+        if ($skipped > 0) {
+            return back()->with('success', "Reminders operation completed. " . $skipped . " guest(s) were skipped because they have no category assigned.");
         }
 
         return back()->with('success', "Reminders sent successfully to all invited guests!");

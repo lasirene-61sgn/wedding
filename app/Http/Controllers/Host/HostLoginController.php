@@ -74,7 +74,6 @@ class HostLoginController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:host,email',
-            'password' => 'required|string|min:8',
             'mobile' => 'required|numeric|unique:host,mobile',
         ]);
 
@@ -83,9 +82,9 @@ class HostLoginController extends Controller
         $request->session()->put('register_data', [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
             'mobile' => $request->mobile,
             'otp' => $otp,
+            'otp_verified' => false,
         ]);
 
         // FIX: Match case structure precisely (sendWhatsAppOtp)
@@ -122,25 +121,10 @@ class HostLoginController extends Controller
             return redirect()->back()->with('error', 'invalid verification code');
         }
 
-        $defaultModules = ['Ceremonies', 'Gallery', 'Invitation', 'Save The Date', 'Guest List', 'Reports', 'Categories'];
-        // $defaultPermissionSlugs = array_map(fn($module) => Str::slug($module), $defaultModules);
-        $defaultPermissions = ['ceremonies', 'gallery', 'invitation', 'save-the-date', 'guest-list', 'reports', 'categories'];
+        $sessionData['otp_verified'] = true;
+        $request->session()->put('register_data', $sessionData);
 
-        // FIX: Read registration properties from $sessionData instead of raw $request input
-        $host = Host::create([
-
-            'name' => $sessionData['name'],
-            'email' => $sessionData['email'],
-            'status' => 'active',
-            'password' => $sessionData['password'], // Already Hashed in step 1
-            'mobile' => $sessionData['mobile'],
-            'is_password_set' => true,
-            'permissions' => $defaultPermissions,
-        ]);
-
-        session()->forget('register_data');
-        auth()->guard('host')->login($host);
-        return redirect()->route('host.packages.index')->with('success', 'Registered Successfully');
+        return redirect()->route('host.register.packages')->with('success', 'OTP Verified! Please select a package.');
     }
 
     protected function sendWhatsAppOtp($mobileNumber, $otp)
@@ -199,6 +183,170 @@ class HostLoginController extends Controller
             Log::error('MSG91 Exception Error: ' . $e->getMessage());
             return false;
         }
+    }
+
+    public function showRegisterPackagesForm()
+    {
+        $sessionData = session('register_data');
+        if (!$sessionData || empty($sessionData['otp_verified'])) {
+            return redirect()->route('host.register')->with('error', 'Please verify OTP first.');
+        }
+
+        $packages = \App\Models\Package::all();
+        return view('host.register-packages', compact('packages'));
+    }
+
+    public function initRegisterPayment(Request $request)
+    {
+        $sessionData = session('register_data');
+        if (!$sessionData || empty($sessionData['otp_verified'])) {
+            return response()->json(['error' => 'Not authenticated for registration'], 401);
+        }
+
+        $request->validate([
+            'package_id' => 'required|exists:packages,id'
+        ]);
+
+        $package = \App\Models\Package::find($request->package_id);
+        
+        $priceParts = explode(' ', trim($package->price));
+        $activePriceStr = count($priceParts) > 1 && is_numeric($priceParts[0]) ? implode(' ', array_slice($priceParts, 1)) : $package->price;
+        $numericPrice = (int) preg_replace('/[^0-9]/', '', $activePriceStr);
+
+        if ($numericPrice <= 0) {
+            return response()->json(['error' => 'Invalid package price for payment'], 400);
+        }
+
+        $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+        try {
+            $order = $api->order->create([
+                'receipt'         => 'order_rcptid_' . uniqid(),
+                'amount'          => $numericPrice * 100, // amount in paise
+                'currency'        => 'INR',
+                'payment_capture' => 1 // auto capture
+            ]);
+
+            return response()->json([
+                'order_id' => $order['id'],
+                'amount'   => $numericPrice * 100,
+                'key'      => env('RAZORPAY_KEY'),
+                'package_name' => $package->package_name,
+                'host_name' => $sessionData['name'] ?? '',
+                'host_email' => $sessionData['email'] ?? ''
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Razorpay Order Error: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function verifyRegisterPayment(Request $request)
+    {
+        $sessionData = session('register_data');
+        if (!$sessionData || empty($sessionData['otp_verified'])) {
+            return redirect()->route('host.register')->with('error', 'Please restart registration.');
+        }
+
+        try {
+            $request->validate([
+                'package_id' => 'required|exists:packages,id',
+                'razorpay_payment_id' => 'nullable|string',
+                'razorpay_order_id' => 'nullable|string',
+                'razorpay_signature' => 'nullable|string',
+            ]);
+
+            $package = \App\Models\Package::find($request->package_id);
+            $priceParts = explode(' ', trim($package->price));
+            $activePriceStr = count($priceParts) > 1 && is_numeric($priceParts[0]) ? implode(' ', array_slice($priceParts, 1)) : $package->price;
+            $numericPrice = (int) preg_replace('/[^0-9]/', '', $activePriceStr);
+
+            if ($numericPrice > 0) {
+                if (!$request->razorpay_payment_id || !$request->razorpay_signature) {
+                    return redirect()->back()->with('error', 'Payment details are missing.');
+                }
+
+                $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+                try {
+                    $attributes = array(
+                        'razorpay_order_id' => $request->razorpay_order_id,
+                        'razorpay_payment_id' => $request->razorpay_payment_id,
+                        'razorpay_signature' => $request->razorpay_signature
+                    );
+                    $api->utility->verifyPaymentSignature($attributes);
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('error', 'Payment verification failed: ' . $e->getMessage());
+                }
+            }
+
+            // Payment successful, store package ID in session
+            $sessionData['package_id'] = $request->package_id;
+            session(['register_data' => $sessionData]);
+
+            return redirect()->route('host.register.set-password.view')->with('success', 'Payment successful! Please set your password.');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    public function showRegisterSetPasswordForm()
+    {
+        $sessionData = session('register_data');
+        if (!$sessionData || empty($sessionData['package_id'])) {
+            return redirect()->route('host.register')->with('error', 'Please complete payment first.');
+        }
+        return view('host.register-set-password', compact('sessionData'));
+    }
+
+    public function submitRegisterSetPassword(Request $request)
+    {
+        $sessionData = session('register_data');
+        if (!$sessionData || empty($sessionData['package_id'])) {
+            return redirect()->route('host.register')->with('error', 'Session expired. Please restart registration.');
+        }
+
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $defaultPermissions = ['ceremonies', 'gallery', 'invitation', 'save-the-date', 'guest-list', 'reports', 'categories'];
+
+        $package = \App\Models\Package::find($sessionData['package_id']);
+        $expiresAt = null;
+        if ($package && $package->validity) {
+            $validityLower = strtolower(trim($package->validity));
+            if (str_contains($validityLower, 'year')) {
+                $num = (int) filter_var($validityLower, FILTER_SANITIZE_NUMBER_INT) ?: 1;
+                $expiresAt = now()->addYears($num);
+            } elseif (str_contains($validityLower, 'month')) {
+                $num = (int) filter_var($validityLower, FILTER_SANITIZE_NUMBER_INT) ?: 1;
+                $expiresAt = now()->addMonths($num);
+            } elseif (str_contains($validityLower, 'day')) {
+                $num = (int) filter_var($validityLower, FILTER_SANITIZE_NUMBER_INT) ?: 1;
+                $expiresAt = now()->addDays($num);
+            }
+        }
+
+        $host = Host::create([
+            'name' => $sessionData['name'],
+            'email' => $sessionData['email'],
+            'mobile' => $sessionData['mobile'],
+            'password' => Hash::make($request->password),
+            'status' => 'active',
+            'is_password_set' => true,
+            'permissions' => $defaultPermissions,
+            'package_id' => $sessionData['package_id'],
+            'package_status' => 'active',
+            'package_expires_at' => $expiresAt,
+        ]);
+
+        session()->forget('register_data');
+        Auth::guard('host')->login($host);
+
+        return redirect()->route('host.wizard.index')->with('success', "Account Created Successfully! Let's set up your wedding info.");
     }
 
     public function redirectToGoogle()

@@ -7,6 +7,8 @@ use App\Models\Ceramonies;
 use App\Models\GuestCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exports\GuestCategoryExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class GuestCategoryController extends Controller
 {
@@ -33,15 +35,22 @@ class GuestCategoryController extends Controller
             $request->validate([
                 'category_name' => 'required|string|max:255',
                 'ceremony_ids' => 'required|array|min:1',
+                'group_type' => 'required|string|in:single,couple,family',
             ]);
 
             GuestCategory::create([
                 'host_id' => Auth::id(),
                 'category_name' => $request->category_name,
                 'ceremony_ids' => $request->ceremony_ids, // Saved as JSON via Model casting
+                'group_type' => $request->group_type,
             ]);
 
             return redirect()->route('host.categories.index')->with('success', 'Category Created!');
         }
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new GuestCategoryExport(Auth::id()), 'guest_categories.xlsx');
     }
 }

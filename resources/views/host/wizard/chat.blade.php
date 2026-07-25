@@ -83,7 +83,10 @@
 
         let state = {
             venue_id: null,
-            invitation_id: null
+            invitation_id: null,
+            skipped_invitation: false,
+            bride_name: '',
+            groom_name: ''
         };
 
         let temporaryCeremonies = [];
@@ -99,7 +102,7 @@
 
         function appendBotMessage(messageHtml) {
             const html = `
-                <div class="flex gap-3 max-w-[85%] animate-fade-in">
+                <div class="flex gap-3 max-w-[85%] animate-fade-in mt-4">
                     <div class="w-8 h-8 rounded-full bg-wedding-cream flex-shrink-0 flex items-center justify-center text-xs font-semibold text-wedding-gold border border-stone-100">AI</div>
                     <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-stone-100 text-stone-700 text-sm leading-relaxed">
                         ${messageHtml}
@@ -112,7 +115,7 @@
 
         function appendUserMessage(text) {
             const html = `
-                <div class="flex gap-3 max-w-[85%] ml-auto justify-end">
+                <div class="flex gap-3 max-w-[85%] ml-auto justify-end mt-4">
                     <div class="bg-wedding-primary text-white p-4 rounded-2xl rounded-tr-none shadow-md text-sm leading-relaxed font-medium">
                         ${text}
                     </div>
@@ -120,111 +123,266 @@
             `;
             chatContainer.insertAdjacentHTML('beforeend', html);
             scrollToBottom();
+            inputZone.innerHTML = ''; // clear input zone
         }
 
-        // --- STEP 1: VENUE DETAILS ---
-        function initVenueStep() {
-            appendBotMessage("<p class='font-serif text-base text-wedding-dark mb-1'>Step 1: Your Wedding Venue Location</p><p>Where will the celebratory ceremonies take place? Please provide your basic venue coordinates below:</p>");
-
-            inputZone.innerHTML = `
-                <form id="venue-form" class="space-y-3">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input type="text" name="venue_name" placeholder="Venue Name (e.g., The Taj Palace)" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="pincode" placeholder="Pincode (6 digits)" maxlength="6" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="area_name" placeholder="Area Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="district" placeholder="District" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="state" placeholder="State" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="circle" placeholder="Circle" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="country" placeholder="Country" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="venue_address" placeholder="Full Postal Address Details" required class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-2 focus:outline-none focus:border-wedding-gold bg-stone-50">
-                    </div>
-                    <button type="submit" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white p-3.5 rounded-xl font-semibold text-sm transition tracking-wider uppercase">Save Venue Details & Next Step →</button>
-                </form>
-            `;
-
-            document.getElementById('venue-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                let formData = new FormData(this);
-
-                fetch("{{ route('host.wizard.storeVenue') }}", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(res => {
-                        if (!res.ok) throw res;
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            state.venue_id = data.venue_id; // Store this for use in the ceremony step later
-                            appendUserMessage(`📍 Venue Registered: ${formData.get('venue_name')}`);
-                            initInvitationStep();
-                        } else {
-                            alert("Please recheck inputs: " + (data.message || ""));
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Error processing request:", err);
-                        alert("A backend configuration error occurred. Please check your developer console.");
-                    });
+        function askQuestion(botMessageHtml, buttons) {
+            appendBotMessage(botMessageHtml);
+            
+            let buttonsHtml = '<div class="flex gap-3 justify-end">';
+            buttons.forEach(btn => {
+                const btnClass = btn.secondary 
+                    ? 'border border-stone-300 text-stone-600 hover:bg-stone-100' 
+                    : 'bg-wedding-dark text-white hover:bg-wedding-primary';
+                buttonsHtml += `<button onclick="${btn.action}" class="${btnClass} px-5 py-2.5 rounded-xl text-sm font-semibold transition">${btn.text}</button>`;
             });
+            buttonsHtml += '</div>';
+            inputZone.innerHTML = buttonsHtml;
+            scrollToBottom();
         }
 
-        // --- STEP 2: INVITATION DETAILS ---
-        function initInvitationStep() {
-            appendBotMessage("<p class='font-serif text-base text-wedding-dark mb-1'>Step 2: Couple & Invitation Details</p><p>Let's compile the registry layout details for the wedding invitation card.</p>");
+        // --- STEP 1: INVITATION DETAILS (INCLUDING VENUE) ---
+        function promptInvitationStep() {
+            askQuestion(
+                "<p class='font-serif text-base text-wedding-dark mb-1'>Step 1: Invitation & Venue Details</p><p>Would you like to set up your Wedding Invitation and Venue?</p>",
+                [
+                    { text: 'Skip Invitation & Venue', action: 'skipInvitation()', secondary: true },
+                    { text: 'Create Invitation', action: 'showInvitationForm()' }
+                ]
+            );
+        }
+
+        function skipInvitation() {
+            appendUserMessage("Skip Invitation");
+            state.skipped_invitation = true;
+            promptSaveDateStep();
+        }
+
+        function showInvitationForm() {
+            appendUserMessage("I want to create an Invitation.");
+            appendBotMessage("Let's compile the registry layout details for the wedding invitation card, along with your venue information.");
 
             inputZone.innerHTML = `
-                <form id="invitation-form" class="space-y-3 max-h-[45vh] overflow-y-auto custom-scrollbar pr-1">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="md:col-span-2">
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Who is sending out the invitation?</label>
-                            <select name="invite" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                                <option value="weddingcouple">The Wedding Couple</option>
-                                <option value="bride">The Bride</option>
-                                <option value="groom">The Groom</option>
-                                <option value="brideparents">Bride's Parents</option>
-                                <option value="groomparents">Groom's Parents</option>
+                <form id="invitation-form" class="space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar pr-1">
+                    
+                    <div class="bg-white p-3 border border-stone-200 rounded-xl">
+                        <h3 class="text-sm font-semibold text-wedding-dark mb-3">Venue Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input type="text" name="venue_name" placeholder="Venue Name (e.g., The Taj Palace)" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="pincode" id="v_pincode" placeholder="Pincode (6 digits)" maxlength="6" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            
+                            <select name="area_name" id="v_area_name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                <option value="">Select Area</option>
                             </select>
-                        </div>
-                        <input type="text" name="bride_name" placeholder="Bride's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="groom_name" placeholder="Groom's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="bride_number" placeholder="Bride's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="email" name="bride_email" placeholder="Bride's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="groom_number" placeholder="Groom's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="email" name="groom_email" placeholder="Groom's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="bride_father_name" placeholder="Bride's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="bride_mother_name" placeholder="Bride's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="groom_father_name" placeholder="Groom's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <input type="text" name="groom_mother_name" placeholder="Groom's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <div>
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Date</label>
-                            <input type="date" name="wedding_date" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        </div>
-                        <div>
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Muhurtham / Time</label>
-                            <input type="time" name="wedding_time" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="text-xs text-stone-400 font-medium block mb-1">Main Wedding Banner Image Cover</label>
-                            <input type="file" name="wedding_image" accept="image/*" required class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
+                            
+                            <input type="text" name="district" id="v_district" placeholder="District" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="state" id="v_state" placeholder="State" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="circle" id="v_circle" placeholder="Circle" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="country" id="v_country" placeholder="Country" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            
+                            <input type="text" name="wedding_location" placeholder="Wedding Location (City/Town)" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="location_map" placeholder="Google Maps Link" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50 md:col-span-2">
+                            
+                            <input type="text" name="venue_address" placeholder="Full Postal Address Details" required class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-3 focus:outline-none focus:border-wedding-gold bg-stone-50">
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white p-3.5 rounded-xl font-semibold text-sm transition tracking-wider uppercase">Save Invitation Card Details →</button>
+
+                    <div class="bg-white p-3 border border-stone-200 rounded-xl">
+                        <h3 class="text-sm font-semibold text-wedding-dark mb-3">Invitation Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Who is sending out the invitation?</label>
+                                <select name="invite" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                    <option value="weddingcouple">The Wedding Couple</option>
+                                    <option value="bride">The Bride</option>
+                                    <option value="groom">The Groom</option>
+                                    <option value="brideparents">Bride's Parents</option>
+                                    <option value="groomparents">Groom's Parents</option>
+                                </select>
+                            </div>
+                            <input type="text" name="bride_name" placeholder="Bride's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_name" placeholder="Groom's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_number" placeholder="Bride's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="email" name="bride_email" placeholder="Bride's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_number" placeholder="Groom's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="email" name="groom_email" placeholder="Groom's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_father_name" placeholder="Bride's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_mother_name" placeholder="Bride's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_father_name" placeholder="Groom's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_mother_name" placeholder="Groom's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <div>
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Date</label>
+                                <input type="date" name="wedding_date" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            </div>
+                            <div>
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Muhurtham / Time</label>
+                                <input type="time" name="wedding_time" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="text-xs text-stone-400 font-medium block mb-1">Main Wedding Banner Image Cover</label>
+                                <input type="file" name="wedding_image" accept="image/*" required class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="inv-submit-btn" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white p-3.5 rounded-xl font-semibold text-sm transition tracking-wider uppercase">Save Details →</button>
                 </form>
             `;
             scrollToBottom();
 
-            document.getElementById('invitation-form').addEventListener('submit', function(e) {
+            // Handle Pincode Auto-fetch
+            const pincodeInput = document.getElementById('v_pincode');
+            pincodeInput.addEventListener('input', async function() {
+                if(this.value.length === 6) {
+                    try {
+                        const response = await fetch(`https://api.postalpincode.in/pincode/${this.value}`);
+                        const data = await response.json();
+                        
+                        if(data && data[0].Status === 'Success') {
+                            const postOffices = data[0].PostOffice;
+                            
+                            // Fill fields
+                            document.getElementById('v_district').value = postOffices[0].District;
+                            document.getElementById('v_state').value = postOffices[0].State;
+                            document.getElementById('v_circle').value = postOffices[0].Circle;
+                            document.getElementById('v_country').value = postOffices[0].Country;
+                            
+                            // Populate area dropdown
+                            const areaSelect = document.getElementById('v_area_name');
+                            areaSelect.innerHTML = '<option value="">Select Area</option>';
+                            postOffices.forEach(po => {
+                                areaSelect.innerHTML += `<option value="${po.Name}">${po.Name}</option>`;
+                            });
+                            // If only 1 area, select it automatically
+                            if(postOffices.length === 1) {
+                                areaSelect.value = postOffices[0].Name;
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Failed to fetch pincode details', err);
+                    }
+                }
+            });
+
+            document.getElementById('invitation-form').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 let formData = new FormData(this);
-                formData.append('venue_id', state.venue_id);
+                let submitBtn = document.getElementById('inv-submit-btn');
+                submitBtn.innerText = 'Saving...';
+                submitBtn.disabled = true;
 
-                fetch("{{ route('host.wizard.storeInvitation') }}", {
+                try {
+                    // 1. Create Venue
+                    let venueResponse = await fetch("{{ route('host.wizard.storeVenue') }}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    let venueData = await venueResponse.json();
+                    if (!venueResponse.ok || !venueData.success) {
+                        alert("Venue Error: " + (venueData.message || "Please check inputs."));
+                        submitBtn.innerText = 'Save Details →';
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
+                    state.venue_id = venueData.venue_id;
+                    formData.append('venue_id', state.venue_id);
+
+                    // 2. Create Invitation
+                    let invResponse = await fetch("{{ route('host.wizard.storeInvitation') }}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    let invData = await invResponse.json();
+                    if (!invResponse.ok || !invData.success) {
+                        alert("Invitation Error encountered saving your invitation details.");
+                        submitBtn.innerText = 'Save Details →';
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    // Success
+                    state.invitation_id = invData.invitation_id;
+                    state.skipped_invitation = false;
+                    state.bride_name = formData.get('bride_name');
+                    state.groom_name = formData.get('groom_name');
+                    appendUserMessage(`💍 Invitation & Venue Configured for ${formData.get('bride_name')} & ${formData.get('groom_name')}`);
+                    promptSaveDateStep();
+
+                } catch (err) {
+                    console.error("Error processing request:", err);
+                    alert("A backend configuration error occurred. Please check your developer console.");
+                    submitBtn.innerText = 'Save Details →';
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // --- STEP 2: SAVE THE DATE ---
+        function promptSaveDateStep() {
+            if (state.skipped_invitation) {
+                // If they skipped invitation, automatically skip save the date because it requires an invitation ID
+                appendBotMessage("<p class='font-serif text-base text-wedding-dark mb-1'>Step 2: Save The Date Card</p><p>Since you skipped the Invitation step, we will also skip the Save The Date card for now.</p>");
+                setTimeout(() => {
+                    promptCeremonyStep();
+                }, 1500);
+                return;
+            }
+
+            askQuestion(
+                "<p class='font-serif text-base text-wedding-dark mb-1'>Step 2: Save The Date Card</p><p>Would you like to create your Save the Date card?</p>",
+                [
+                    { text: 'Skip Save the Date', action: 'skipSaveDate()', secondary: true },
+                    { text: 'Create Save the Date', action: 'showSaveDateForm()' }
+                ]
+            );
+        }
+
+        function skipSaveDate() {
+            appendUserMessage("Skip Save the Date");
+            promptCeremonyStep();
+        }
+
+        function showSaveDateForm() {
+            appendUserMessage("Let's create the Save the Date card.");
+            appendBotMessage("Upload a design flyer image and a welcome message to broadcast to early guest RSVPs:");
+
+            const defaultMessage = (state.bride_name && state.groom_name) ? `Save the date for ${state.bride_name} & ${state.groom_name}!` : '';
+
+            inputZone.innerHTML = `
+                <form id="savedate-form" class="space-y-4">
+                    <input type="text" name="message" value="${defaultMessage}" placeholder="Short Sweet Message (e.g., Save Our Date! Max 100 characters)" maxlength="100" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                    <div>
+                        <label class="text-xs text-stone-400 font-medium block mb-1">Upload Save the Date Poster Image Card</label>
+                        <input type="file" name="image" accept="image/*" required class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
+                    </div>
+                    <button type="submit" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white p-3.5 rounded-xl font-semibold text-sm transition tracking-wider uppercase">Save Date & Continue →</button>
+                </form>
+            `;
+            scrollToBottom();
+
+            document.getElementById('savedate-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                if (!state.invitation_id) {
+                    alert("Missing Invitation ID connection! Please ensure Step 2 completed successfully.");
+                    return;
+                }
+
+                let formData = new FormData(this);
+                formData.append('invitation_id', state.invitation_id);
+
+                fetch("{{ route('host.wizard.storeSaveDate') }}", {
                         method: "POST",
                         body: formData,
                         headers: {
@@ -232,29 +390,46 @@
                             'Accept': 'application/json'
                         }
                     })
-                    .then(res => {
-                        if (!res.ok) throw res;
+                    .then(async res => {
+                        if (!res.ok) {
+                            const errData = await res.json();
+                            alert("Validation Failed: " + JSON.stringify(errData.errors));
+                            throw errData;
+                        }
                         return res.json();
                     })
                     .then(data => {
                         if (data.success) {
-                            state.invitation_id = data.invitation_id;
-                            appendUserMessage(`💍 Invitation Configured for ${formData.get('bride_name')} & ${formData.get('groom_name')}`);
-                            initCeremonyStep();
-                        } else {
-                            alert("Validation error encountered saving your invitation details.");
+                            appendUserMessage("📷 Save the Date card saved successfully.");
+                            promptCeremonyStep();
                         }
                     })
                     .catch(err => {
                         console.error("Error processing request:", err);
-                        alert("Failed to save invitation data. Check that the image format is valid and fields match model limits.");
                     });
             });
         }
 
-        // --- STEP 3: CEREMONY DETAILS (MATCHES YOUR CONTROLLER) ---
-        function initCeremonyStep() {
-            appendBotMessage("<p class='font-serif text-base text-wedding-dark mb-1'>Step 3: Wedding Ceremonies & Events</p><p>Add the structural ceremonies for this venue partition layout (e.g., Sangeet, Muhurtham, Reception):</p>");
+
+        // --- STEP 3: CEREMONY DETAILS ---
+        function promptCeremonyStep() {
+            askQuestion(
+                "<p class='font-serif text-base text-wedding-dark mb-1'>Step 3: Wedding Ceremonies & Events</p><p>Would you like to add Ceremonies?</p>",
+                [
+                    { text: 'Skip Ceremonies', action: 'skipCeremonies()', secondary: true },
+                    { text: 'Add Ceremonies', action: 'showCeremonyForm()' }
+                ]
+            );
+        }
+
+        function skipCeremonies() {
+            appendUserMessage("Skip Ceremonies");
+            promptGalleryStep();
+        }
+
+        function showCeremonyForm() {
+            appendUserMessage("I want to add some Ceremonies.");
+            appendBotMessage("Add the structural ceremonies for this venue partition layout (e.g., Sangeet, Muhurtham, Reception):");
             temporaryCeremonies = [];
             renderCeremonyZone();
         }
@@ -319,12 +494,14 @@
                 return;
             }
 
-            // Save elements into a clean temporary layout list array matching your backend structural types
             temporaryCeremonies.push({
                 category_id: catId,
                 ceramony_name: name,
                 ceramony_date: date ? date : null,
-                ceramony_time: time ? time : null
+                ceramony_time: time ? time : null,
+                name: name,
+                date: date,
+                time: time
             });
 
             renderCeremonyZone();
@@ -341,17 +518,15 @@
                 return;
             }
 
-            // Lock UI with an update tracking notification context
             inputZone.innerHTML = `<div class="text-center py-4 text-stone-500 text-sm animate-pulse">Syncing events with active backend data blocks...</div>`;
 
             try {
-                // Loop over the ceremonies and send them individually to match your single-row controller store method!
                 for (let i = 0; i < temporaryCeremonies.length; i++) {
                     let item = temporaryCeremonies[i];
                     
                     let formData = new FormData();
                     formData.append('category_id', item.category_id);
-                    formData.append('venue_id', state.venue_id); // Automatically injected from Step 1
+                    if(state.venue_id) formData.append('venue_id', state.venue_id);
                     formData.append('ceramony_name', item.ceramony_name);
                     if(item.ceramony_date) formData.append('ceramony_date', item.ceramony_date);
                     if(item.ceramony_time) formData.append('ceramony_time', item.ceramony_time);
@@ -372,74 +547,36 @@
                 }
 
                 appendUserMessage(`✨ Successfully registered ${temporaryCeremonies.length} structural event timeline modules.`);
-                initSaveDateStep();
+                promptGalleryStep();
 
             } catch (error) {
                 console.error("Pipeline failure storing your nested records:", error);
                 alert("An error occurred while saving your ceremonies list: " + error.message);
-                renderCeremonyZone(); // Restore forms for safety adjustments
+                renderCeremonyZone(); 
             }
         }
 
-        // --- STEP 4: SAVE THE DATE ---
-        function initSaveDateStep() {
-            appendBotMessage("<p class='font-serif text-base text-wedding-dark mb-1'>Step 4: Save The Date Card</p><p>Finally, upload the design flyer image and a welcome message to broadcast to early guest RSVPs:</p>");
 
-            inputZone.innerHTML = `
-                <form id="savedate-form" class="space-y-4">
-                    <input type="text" name="message" placeholder="Short Sweet Message (e.g., Save Our Date! Max 100 characters)" maxlength="100" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                    <div>
-                        <label class="text-xs text-stone-400 font-medium block mb-1">Upload Save the Date Poster Image Card</label>
-                        <input type="file" name="image" accept="image/*" required class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
-                    </div>
-                    <button type="submit" class="w-full bg-wedding-dark hover:bg-wedding-primary text-white p-3.5 rounded-xl font-semibold text-sm transition tracking-wider uppercase">Complete Setup & Enter Dashboard ✨</button>
-                </form>
-            `;
-            scrollToBottom();
-
-            document.getElementById('savedate-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                if (!state.invitation_id) {
-                    console.error("Current Wizard State:", state);
-                    alert("Missing Invitation ID connection! Please ensure Step 2 completed successfully.");
-                    return;
-                }
-
-                let formData = new FormData(this);
-                formData.append('invitation_id', state.invitation_id);
-
-                fetch("{{ route('host.wizard.storeSaveDate') }}", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(async res => {
-                        if (!res.ok) {
-                            const errData = await res.json();
-                            console.log("❌ VAL_ERRORS:", errData.errors);
-                            alert("Validation Failed: " + JSON.stringify(errData.errors));
-                            throw errData;
-                        }
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            appendUserMessage("📷 Save the Date card saved successfully.");
-                            wrapUpWizard();
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Error processing request:", err);
-                    });
-            });
+        // --- STEP 4: GALLERY ---
+        function promptGalleryStep() {
+            askQuestion(
+                "<p class='font-serif text-base text-wedding-dark mb-1'>Step 4: Wedding Gallery</p><p>Would you like to set up your Gallery?</p>",
+                [
+                    { text: 'Skip to Dashboard', action: 'wrapUpWizard()', secondary: true },
+                    { text: 'Setup Gallery', action: 'wrapUpWizard("gallery")' }
+                ]
+            );
         }
 
-        function wrapUpWizard() {
-            appendBotMessage("<p class='font-serif text-lg text-wedding-dark'>✨ All Set!</p><p>Your custom wedding workspace parameters have been completely initialized. Redirecting you to your admin dashboard management layout now...</p>");
+
+        function wrapUpWizard(action = 'dashboard') {
+            if(action === 'gallery') {
+                appendUserMessage("I want to set up the Gallery.");
+            } else {
+                appendUserMessage("Skip to Dashboard.");
+            }
+
+            appendBotMessage("<p class='font-serif text-lg text-wedding-dark'>✨ All Set!</p><p>Your custom wedding workspace parameters have been completely initialized. Redirecting you now...</p>");
 
             inputZone.innerHTML = `
                 <div class="text-center py-4 text-wedding-primary font-semibold text-sm animate-pulse">
@@ -448,12 +585,16 @@
             `;
 
             setTimeout(() => {
+                // If there's a specific gallery setup route, you could redirect there. 
+                // For now, it goes to the host dashboard / invitation index.
                 window.location.href = "{{ route('host.invitation.index') }}";
             }, 2500);
         }
 
         window.onload = () => {
-            initVenueStep();
+            setTimeout(() => {
+                promptInvitationStep();
+            }, 500);
         };
     </script>
 </body>

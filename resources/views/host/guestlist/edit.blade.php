@@ -16,6 +16,19 @@
             @csrf @method('PUT')
 
             <div style="margin-bottom: 30px;">
+                <label style="display: block; font-weight: 700; color: #4f46e5; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Assign Category</label>
+                <select name="category_id" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                    <option value="">No Category</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ $guestlist->category_id == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->category_name }} ({{ ucfirst($cat->group_type) }})
+                        </option>
+                    @endforeach
+                </select>
+                <p style="font-size: 11px; color: #64748b; margin-top: 8px;">Selecting a category will automatically assign the appropriate ceremonies.</p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
                 <label style="display: block; font-weight: 700; color: #4f46e5; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Event Assignment</label>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #f1f5f9;">
                     @foreach($ceramonies as $ceremony)

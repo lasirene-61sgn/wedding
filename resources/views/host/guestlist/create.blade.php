@@ -7,12 +7,28 @@
     <div class="form-card">
         <h2 class="form-title">Add New Wedding Guest</h2>
 
+        @if(session('error'))
+            <div style="background-color: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; font-size: 14px;">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <form action="{{ route('host.guestlist.store') }}" method="POST">
             @csrf
             
             <div class="form-grid">
-                <!-- Ceremony Selection (Full Width) -->
-                
+                <!-- Category Selection -->
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label class="form-label">Assign Category (Auto-assigns ceremonies)</label>
+                    <select name="category_id" class="form-select">
+                        <option value="">No Category</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                                {{ $cat->category_name }} ({{ ucfirst($cat->group_type) }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <!-- Guest Name -->
                 <div class="form-group">

@@ -11,16 +11,7 @@
                 @csrf
                 @method('PUT')
                 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Link to Invitation</label>
-                    <select name="invitation_id" class="form-select @error('invitation_id') is-invalid @enderror" required>
-                        @foreach(\App\Models\Invitation::where('host_id', Auth::id())->get() as $inv)
-                            <option value="{{ $inv->id }}" {{ $savedate->invitation_id == $inv->id ? 'selected' : '' }}>
-                                {{ $inv->bride_name }} & {{ $inv->groom_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <input type="hidden" name="invitation_id" value="{{ $savedate->invitation_id }}">
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Change Message Template</label>

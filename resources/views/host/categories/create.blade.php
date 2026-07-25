@@ -26,6 +26,21 @@
             </div>
 
             <div style="margin-bottom: 25px;">
+                <label style="display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px;">
+                    Group Type
+                </label>
+                <select name="group_type" required 
+                    style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; background: white; cursor: pointer;">
+                    <option value="single">Single</option>
+                    <option value="couple">Couple</option>
+                    <option value="family">Family</option>
+                </select>
+                @error('group_type')
+                    <span style="color: #ef4444; font-size: 12px; margin-top: 5px; display: block;">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div style="margin-bottom: 25px;">
                 <label style="display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px;">
                     Select Ceremonies for this Category
                 </label>

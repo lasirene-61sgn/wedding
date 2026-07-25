@@ -7,12 +7,6 @@
             <h3 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">Save The Dates</h3>
             <p class="text-secondary small mb-0">Manage your digital wedding announcements and countdowns</p>
         </div>
-        
-        @if($savedates->isEmpty())
-        <a href="{{ route('host.savedate.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
-            <i class="bi bi-plus-lg me-2"></i>Add New Announcement
-        </a>
-        @endif
     </div>
 
     @if(session('Success'))
@@ -81,10 +75,7 @@
                     <i class="bi bi-calendar-heart" style="font-size: 5rem;"></i>
                 </div>
                 <h5 class="text-secondary fw-bold">No Announcements Yet</h5>
-                <p class="text-muted small">Share the big news with your guests via a beautiful digital announcement.</p>
-                <a href="{{ route('host.savedate.create') }}" class="btn btn-primary rounded-pill px-5 fw-bold mt-3">
-                    Create Now
-                </a>
+                <p class="text-muted small">Share the big news with your guests via a beautiful digital announcement. Create an invitation to automatically generate your Save the Date.</p>
             </div>
         @endforelse
     </div>

@@ -92,24 +92,8 @@
                     @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-stone-700 mb-1">Password</label>
-                        <input type="password" name="password" 
-                               class="w-full px-4 py-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-wedding-primary/30 outline-none @error('password') border-red-500 @enderror" 
-                               required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-stone-700 mb-1">Confirm Password</label>
-                        <input type="password" name="password_confirmation" 
-                               class="w-full px-4 py-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-wedding-primary/30 outline-none" 
-                               required>
-                    </div>
-                </div>
-                @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-
                 <button type="submit" class="w-full bg-wedding-primary hover:bg-wedding-dark text-white font-medium py-3.5 rounded-lg shadow-md transition-all mt-4">
-                    Create My Account
+                    Send Verification Code
                 </button>
             </form>
 

@@ -88,6 +88,13 @@ class ChatWizardController extends Controller
             'is_main' => true,
         ]);
 
+        SaveDate::create([
+            'host_id' => Auth::id(),
+            'invitation_id' => $invitation->id,
+            'image' => $invitation->wedding_image,
+            'message' => 'Save the date! We are getting married.',
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Invitation created successfully!',
@@ -104,14 +111,14 @@ class ChatWizardController extends Controller
             'message' => 'nullable|string|max:100',
         ]);
 
-        $data = [
-            'host_id' => Auth::id(),
-            'invitation_id' => $request->invitation_id,
-            'image' => $request->file('image')->store('savedates', 'public'),
-            'message' => $request->message,
-        ];
-
-        $saveDate = SaveDate::create($data);
+        $saveDate = SaveDate::updateOrCreate(
+            ['invitation_id' => $request->invitation_id],
+            [
+                'host_id' => Auth::id(),
+                'image' => $request->file('image')->store('savedates', 'public'),
+                'message' => $request->message,
+            ]
+        );
 
         return response()->json([
             'success' => true,

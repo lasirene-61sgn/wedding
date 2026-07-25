@@ -9,7 +9,7 @@ class GuestCategory extends Model
     protected $table = 'guest_categories';
 
     protected $fillable = [
-        'host_id', 'category_name', 'ceremony_ids'
+        'host_id', 'category_name', 'ceremony_ids', 'group_type'
     ];
 
     protected $casts = [

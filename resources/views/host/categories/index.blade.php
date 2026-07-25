@@ -7,9 +7,14 @@
             <h3 class="fw-bold mb-0">Guest Categories</h3>
             <p class="text-muted small">Manage ceremony presets for your guests</p>
         </div>
-        <a href="{{ route('host.categories.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
-            <i class="bi bi-plus-lg me-2"></i>Create New Category
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('host.categories.export') }}" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
+                <i class="bi bi-file-earmark-excel me-2"></i>Export Excel
+            </a>
+            <a href="{{ route('host.categories.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="bi bi-plus-lg me-2"></i>Create New Category
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -24,6 +29,7 @@
                 <thead class="bg-light">
                     <tr>
                         <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category Name</th>
+                        <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Group Type</th>
                         <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Included Ceremonies</th>
                         <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">Actions</th>
                     </tr>
@@ -33,6 +39,9 @@
                         <tr>
                             <td class="px-4 py-3">
                                 <h6 class="mb-0 fw-bold">{{ $category->category_name }}</h6>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="badge bg-secondary rounded-pill px-3 py-1">{{ ucfirst($category->group_type) }}</span>
                             </td>
                             <td class="px-4 py-3">
                                 @php

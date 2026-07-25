@@ -122,6 +122,15 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
     Route::post('/register', [HostLoginController::class, 'register'])->name('register.submit');
     Route::get('/register/verify-otp', [HostLoginController::class, 'showVerifyForm'])->name('verify.form');
     Route::post('/register/verify-otp', [HostLoginController::class, 'verifyOtp'])->name('verify.submit');
+    
+    // NEW REGISTRATION WIZARD ROUTES (Unauthenticated)
+    Route::get('/register/packages', [HostLoginController::class, 'showRegisterPackagesForm'])->name('register.packages');
+    Route::post('/register/packages', [HostLoginController::class, 'verifyRegisterPayment'])->name('register.packages.select');
+    Route::post('/register/init-payment', [HostLoginController::class, 'initRegisterPayment'])->name('register.initPayment');
+    
+    Route::get('/register/set-password', [HostLoginController::class, 'showRegisterSetPasswordForm'])->name('register.set-password.view');
+    Route::post('/register/set-password', [HostLoginController::class, 'submitRegisterSetPassword'])->name('register.set-password.submit');
+    
     Route::get('/auth/google', [HostLoginController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('/auth/google/callback', [HostLoginController::class, 'handleGoogleCallback']);
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -138,6 +147,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::post('/set-password', [HostLoginController::class, 'storeSetPassword'])->name('set-password.submit');
         Route::get('/select-package', [PackageController::class, 'index'])->name('packages.index');
         Route::post('/select-package', [PackageController::class, 'select'])->name('packages.select');
+        Route::post('/select-package/init-payment', [PackageController::class, 'initPayment'])->name('packages.initPayment');
         Route::get('/dashboard', [HostLoginController::class, 'dashboard'])->name('dashboard');
         Route::get('/logout', [HostLoginController::class, 'logout'])->name('host.login');
         Route::post('/logout', [HostLoginController::class, 'logout'])->name('logout');
@@ -167,12 +177,14 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
 
         Route::resource('invitation', InvitationController::class);
         Route::resource('savedate', SaveDateController::class);
+        Route::get('guestlist/sample', [GuestListController::class, 'downloadSample'])->name('guestlist.downloadSample');
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');
         Route::post('guestlist/bulk-save-date', [GuestListController::class, 'bulkSaveDate'])->name('guestlist.bulkSaveDate');
         Route::post('guestlist/bulk-reminders', [GuestListController::class, 'sendReminders'])->name('guestlist.sendReminders');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('categories/export', [GuestCategoryController::class, 'exportExcel'])->name('categories.export');
         Route::resource('categories', GuestCategoryController::class);
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

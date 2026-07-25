@@ -37,7 +37,8 @@ class Host extends Authenticatable
         'state',
         'country',
         'location_map',
-        'permissions'
+        'permissions',
+        'package_expires_at'
     ];
 
     protected $casts = [

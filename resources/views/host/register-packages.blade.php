@@ -169,7 +169,7 @@
                 </div>
 
                 <!-- Form Action Selection Button -->
-                <form action="{{ route('host.packages.select') }}" method="POST" class="mt-auto package-form" data-package-id="{{ $package->id }}">
+                <form action="{{ route('host.register.packages.select') }}" method="POST" class="mt-auto package-form" data-package-id="{{ $package->id }}">
                     @csrf
                     <input type="hidden" name="package_id" value="{{ $package->id }}">
                     <input type="hidden" name="razorpay_payment_id" class="rzp_payment_id">
@@ -196,7 +196,7 @@
                 submitBtn.disabled = true;
 
                 try {
-                    const response = await fetch("{{ route('host.packages.initPayment') }}", {
+                    const response = await fetch("{{ route('host.register.initPayment') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

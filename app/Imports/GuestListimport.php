@@ -30,12 +30,36 @@ class GuestListImport implements ToModel, WithHeadingRow
             return null; // Skip this row so the import doesn't crash
         }
 
+        $categoryId = null;
+        $assignedCeremonies = '';
+        $ceremonyId = null;
+
+        if (!empty($row['category'])) {
+            $category = \App\Models\GuestCategory::where('host_id', $this->host_id)
+                ->where('category_name', trim($row['category']))
+                ->first();
+
+            if ($category) {
+                $categoryId = $category->id;
+                $ceremonyIds = $category->ceremony_ids ?? [];
+                if (!empty($ceremonyIds)) {
+                    $assignedCeremonies = \App\Models\Ceramonies::whereIn('id', $ceremonyIds)
+                        ->pluck('ceramony_name')
+                        ->implode(', ');
+                    $ceremonyId = $ceremonyIds[0] ?? null;
+                }
+            }
+        }
+
         return new GuestList([
-            'host_id'      => $this->host_id,
-            'guest_name'   => $row['name'] ?? 'Unknown',
-            'guest_number' => $number,
-            'guest_email'  => $row['email'] ?? null,
-            'relation'     => $row['relation'] ?? null,
+            'host_id'             => $this->host_id,
+            'guest_name'          => $row['name'] ?? 'Unknown',
+            'guest_number'        => $number,
+            'guest_email'         => $row['email'] ?? null,
+            'relation'            => $row['relation'] ?? null,
+            'category_id'         => $categoryId,
+            'assigned_ceremonies' => $assignedCeremonies,
+            'ceramony_id'         => $ceremonyId,
         ]);
     }
 }

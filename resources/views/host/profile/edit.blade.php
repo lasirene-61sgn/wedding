@@ -28,8 +28,40 @@
                         @method('PUT')
 
                         <div class="row g-4">
+                            {{-- Package Info (Read-Only) --}}
+                            @if($host->package)
+                            <div class="col-12 mb-2">
+                                <div class="p-3 bg-primary-subtle border border-primary-subtle rounded-3">
+                                    <h6 class="text-primary text-uppercase fw-bold mb-2" style="font-size: 0.75rem; letter-spacing: 1px;">Current Package</h6>
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                        <div>
+                                            <h5 class="mb-1 fw-bold text-dark">{{ $host->package->package_name }}</h5>
+                                            @if($host->package_expires_at)
+                                                <p class="mb-0 text-muted small">Expires on: <span class="fw-bold">{{ \Carbon\Carbon::parse($host->package_expires_at)->format('d M, Y') }}</span></p>
+                                            @else
+                                                <p class="mb-0 text-muted small">Valid for {{ $host->package->validity }}</p>
+                                            @endif
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-primary px-3 py-2 rounded-pill shadow-sm">
+                                                Guest Limit: {{ $host->package->guest_limit }}
+                                            </span>
+                                            <div class="mt-2 text-dark fw-bold">
+                                                Price: ₹{{ $host->package->price }}
+                                            </div>
+                                            <div class="mt-3">
+                                                <a href="{{ route('host.packages.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold shadow-sm">
+                                                    <i class="bi bi-arrow-up-circle me-1"></i>Upgrade Package
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
                             {{-- Account Info --}}
-                            <div class="col-12">
+                            <div class="col-12 mt-4">
                                 <h6 class="text-primary text-uppercase fw-bold mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Account Information</h6>
                             </div>
                             

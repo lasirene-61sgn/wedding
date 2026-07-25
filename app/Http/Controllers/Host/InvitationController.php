@@ -7,6 +7,7 @@ use App\Models\CategoryVenue;
 use App\Models\Ceramonies;
 use App\Models\CeramonyBackground;
 use App\Models\Invitation;
+use App\Models\SaveDate;
 use App\Models\VenueName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,6 +90,13 @@ class InvitationController extends Controller
             'details_color' => $invitation->details_color,
             'text_positions' => $invitation->text_positions,
             'custom_canvas_texts' => $invitation->custom_canvas_texts,
+        ]);
+
+        SaveDate::create([
+            'host_id' => Auth::id(),
+            'invitation_id' => $invitation->id,
+            'image' => $invitation->wedding_image,
+            'message' => 'Save the date! We are getting married.',
         ]);
         return redirect()->route('host.invitation.index')->with('Message', 'Invitations Created');
     }
