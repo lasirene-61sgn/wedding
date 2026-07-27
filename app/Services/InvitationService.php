@@ -76,7 +76,7 @@ class InvitationService
             }
 
             $relation = strtolower(trim($guest->relation ?? ''));
-            $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+            $shortLink = route('guest.save_the_date', ['uuid' => $guest->uuid]);
 
             // 1. Determine who is creating the invitation and put their name first
             if ($relation === 'bride' || $relation === 'groom') {
@@ -142,7 +142,7 @@ class InvitationService
         $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
         $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
 
-        $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+        $shortLink = route('guest.save_the_date', ['uuid' => $guest->uuid]);
         $relation = trim(strtolower($guest->relation ?? ''));
 
         $rawNumber = $guest->whatsapp_number ?? $guest->guest_number;
@@ -234,7 +234,7 @@ class InvitationService
 
             $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
             $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
-            $shortLink = route('guest.save_the_date', ['id' => $guest->id]);
+            $shortLink = route('guest.save_the_date', ['uuid' => $guest->uuid]);
             $relation = strtolower(trim($guest->relation ?? ''));
 
             $templateId = '';
@@ -332,7 +332,7 @@ class InvitationService
             }
 
             $relation = strtolower(trim($guest->relation ?? ''));
-            $shortLink = route('guest.rsvp.portal', ['id' => $guest->id]);
+            $shortLink = route('guest.rsvp.portal', ['uuid' => $guest->uuid]);
 
             // 1. Determine who is creating the invitation and put their name first
             if ($relation === 'bride' || $relation === 'groom') {
@@ -399,7 +399,7 @@ class InvitationService
         $ceremony = \App\Models\Ceramonies::where('host_id', $guest->host_id)->latest()->first();
         $weddingDate = $ceremony->ceramony_date ?? $invitation->wedding_date ?? date('d F Y');
 
-        $shortLink = route('guest.rsvp.portal', ['id' => $guest->id]);
+        $shortLink = route('guest.rsvp.portal', ['uuid' => $guest->uuid]);
         $relation = trim(strtolower($guest->relation ?? ''));
 
         $rawNumber = $guest->whatsapp_number ?? $guest->guest_number;
@@ -544,7 +544,7 @@ class InvitationService
         */
 
             $shortLink = route('guest.rsvp.portal', [
-                'id' => $guest->id
+                'uuid' => $guest->uuid
             ]);
 
             /*

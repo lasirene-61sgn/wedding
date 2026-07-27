@@ -217,7 +217,7 @@
                     <strong style="color: var(--dark); font-size: 1.1rem;">{{ $mainInvitation->bride_name ?? 'Bride' }}</strong> & <strong style="color: var(--dark); font-size: 1.1rem;">{{ $mainInvitation->groom_name ?? 'Groom' }}</strong>
                 </p>
 
-                <a href="{{ route('guest.wedding.details', $invite->id) }}" class="btn-view">
+                <a href="{{ route('guest.wedding.details', $invite->uuid) }}" class="btn-view">
                     Open Invitation Dashboard
                 </a>
             </div>

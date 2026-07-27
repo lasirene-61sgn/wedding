@@ -78,8 +78,8 @@ Route::get('/test-whatsapp', function () {
 
     return "API execution triggered using Guest ID [{$guest->id}]: {$guest->guest_name}. Check your storage/logs/laravel.log now!";
 });
-Route::get('/rsvp/{id}', [GuestRSVPController::class, 'showPortal'])->name('guest.rsvp.portal');
-Route::post('/rsvp/{id}/update', [GuestRSVPController::class, 'updateStatus'])->name('guest.rsvp.update');
+Route::get('/rsvp/{uuid}', [GuestRSVPController::class, 'showPortal'])->name('guest.rsvp.portal');
+Route::post('/rsvp/{uuid}/update', [GuestRSVPController::class, 'updateStatus'])->name('guest.rsvp.update');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -222,22 +222,22 @@ Route::prefix('guest')->name('guest.')->group(function () {
     Route::post('/login', [GuestInvitationController::class, 'login'])->name('login.post');
     
     // Public invitation links
-    Route::get('/wedding/{id}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
+    Route::get('/wedding/{uuid}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
 
     // Routes requiring phone session
     Route::middleware(['guest.auth'])->group(function () {
         Route::get('/select-wedding', [GuestInvitationController::class, 'selectWedding'])->name('select');
         Route::get('/get-previous-data', [GuestInvitationController::class, 'getPreviousDetails'])
             ->name('profile.get_previous');
-        Route::get('/guest/profile/{id}', [GuestInvitationController::class, 'editProfile'])->name('profile.edit');
-        Route::put('/guest/profile/{id}', [GuestInvitationController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/guest/profile/{uuid}', [GuestInvitationController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/guest/profile/{uuid}', [GuestInvitationController::class, 'updateProfile'])->name('profile.update');
         // Save the Date Page (Shows Accept/Reject buttons)
-        Route::post('/wedding/{id}/status', [GuestInvitationController::class, 'updateStatus'])->name('update_status');
-        Route::post('/wedding/{id}/ceremony-status', [GuestInvitationController::class, 'updateCeremonyStatus'])->name('update_ceremony_status');
+        Route::post('/wedding/{uuid}/status', [GuestInvitationController::class, 'updateStatus'])->name('update_status');
+        Route::post('/wedding/{uuid}/ceremony-status', [GuestInvitationController::class, 'updateCeremonyStatus'])->name('update_ceremony_status');
 
         // Dashboard and Gallery routes (always accessible now)
-        Route::get('/wedding/{id}/ceremonies', [GuestInvitationController::class, 'showCeremonies'])->name('wedding.details');
-        Route::get('/wedding/{id}/gallery', [GuestInvitationController::class, 'showGallery'])->name('gallery');
+        Route::get('/wedding/{uuid}/ceremonies', [GuestInvitationController::class, 'showCeremonies'])->name('wedding.details');
+        Route::get('/wedding/{uuid}/gallery', [GuestInvitationController::class, 'showGallery'])->name('gallery');
     });
 });
 

@@ -306,9 +306,11 @@
         <div class="nav-bar">
             <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Back</a>
             <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('guest.save_the_date', $invite->id) }}"><i class="fas fa-calendar-check"></i> Save The Date</a>
-            <a href="{{ route('guest.profile.edit', $invite->id) }}"><i class="fas fa-user"></i> Profile</a>
-            <a href="{{ route('guest.gallery', $invite->id) }}"><i class="fas fa-images"></i> Gallery</a>
+            @if(isset($showSaveTheDate) && $showSaveTheDate)
+            <a href="{{ route('guest.save_the_date', $invite->uuid) }}"><i class="fas fa-calendar-check"></i> Save The Date</a>
+            @endif
+            <!-- Profile link removed per request -->
+            <a href="{{ route('guest.gallery', $invite->uuid) }}"><i class="fas fa-images"></i> Gallery</a>
         </div>
     </div>
 
@@ -317,7 +319,9 @@
             <!-- Left Panel Summary Card (Save The Date integration) -->
             <div class="welcome-pane">
                 <div class="welcome-badge-card">
+                    @if(isset($showSaveTheDate) && $showSaveTheDate)
                     <div class="std-highlight">Save the Date!</div>
+                    @endif
                     <h2>Welcome, {{ $invite->guest_name }}</h2>
                     <p style="color: var(--gray); margin-bottom: 25px; font-style: italic;">You are cordially invited to celebrate with us</p>
                     
@@ -354,7 +358,7 @@
 
                                         @if($cStatus === 'pending')
                                         <div style="display: flex; gap: 5px;">
-                                            <form action="{{ route('guest.update_ceremony_status', $invite->id) }}" method="POST" style="margin: 0;">
+                                            <form action="{{ route('guest.update_ceremony_status', $invite->uuid) }}" method="POST" style="margin: 0;">
                                                 @csrf
                                                 <input type="hidden" name="ceremony_name" value="{{ $ceremonyName }}">
                                                 <input type="hidden" name="status" value="accepted">
@@ -363,7 +367,7 @@
                                                 </button>
                                             </form>
 
-                                            <form action="{{ route('guest.update_ceremony_status', $invite->id) }}" method="POST" style="margin: 0;">
+                                            <form action="{{ route('guest.update_ceremony_status', $invite->uuid) }}" method="POST" style="margin: 0;">
                                                 @csrf
                                                 <input type="hidden" name="ceremony_name" value="{{ $ceremonyName }}">
                                                 <input type="hidden" name="status" value="rejected">
@@ -392,14 +396,14 @@
                         <hr style="border:0; height:1px; background:linear-gradient(to right, transparent, rgba(212, 175, 55, 0.5), transparent); margin: 25px 0;">
                         <h4 style="font-size: 0.95rem; color: var(--dark); margin-bottom: 15px;">Or respond to all at once:</h4>
                         <div class="bulk-rsvp-container" style="display: flex; gap: 10px;">
-                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1; margin: 0;">
+                            <form action="{{ route('guest.update_status', $invite->uuid) }}" method="POST" style="flex: 1; margin: 0;">
                                 @csrf
                                 <input type="hidden" name="status" value="accepted">
                                 <button type="submit" class="btn-primary-wedding" style="width: 100%; padding: 10px; font-size: 0.85rem;">
                                     <i class="fas fa-check-double"></i> Accept All
                                 </button>
                             </form>
-                            <form action="{{ route('guest.update_status', $invite->id) }}" method="POST" style="flex: 1; margin: 0;">
+                            <form action="{{ route('guest.update_status', $invite->uuid) }}" method="POST" style="flex: 1; margin: 0;">
                                 @csrf
                                 <input type="hidden" name="status" value="rejected">
                                 <button type="submit" class="btn-outline-wedding" style="width: 100%; padding: 10px; font-size: 0.85rem; border-color: #ef4444; color: #ef4444;">

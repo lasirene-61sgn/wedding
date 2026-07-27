@@ -75,7 +75,7 @@ class GuestInvitationController extends Controller
                 $calendarEvents[] = [
                     'title' => $ceremony->ceramony_name . ' (' . ($invite->host->bride_name ?? '') . ' & ' . ($invite->host->groom_name ?? '') . ')',
                     'start' => $ceremony->ceramony_date . 'T' . $ceremony->ceramony_time,
-                    'url' => route('guest.wedding.details', $invite->id),
+                    'url' => route('guest.wedding.details', $invite->uuid),
                     'color' => $color
                 ];
             }
@@ -84,9 +84,10 @@ class GuestInvitationController extends Controller
         return view('guest.selection', compact('invitations', 'calendarEvents'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $uuid)
     {
-        $invite = GuestList::where('id', $id)->where('guest_number', session('guest_phone'))->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->where('guest_number', session('guest_phone'))->firstOrFail();
         
         $assignedNames = explode(', ', $invite->assigned_ceremonies);
         $statuses = [];
@@ -100,14 +101,15 @@ class GuestInvitationController extends Controller
         ]);
 
         if ($request->status == 'accepted') {
-            return redirect()->route('guest.wedding.details', $id);
+            return redirect()->route('guest.wedding.details', $uuid);
         }
         return redirect()->route('guest.select')->with('info', 'invitation declined');
     }
 
-    public function updateCeremonyStatus(Request $request, $id)
+    public function updateCeremonyStatus(Request $request, $uuid)
     {
-        $invite = GuestList::where('id', $id)->where('guest_number', session('guest_phone'))->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->where('guest_number', session('guest_phone'))->firstOrFail();
         
         $statuses = $invite->ceremony_status ?? [];
         $statuses[$request->ceremony_name] = $request->status;
@@ -137,10 +139,11 @@ class GuestInvitationController extends Controller
         return redirect()->back()->with('success', 'RSVP updated for ' . $request->ceremony_name);
     }
 
-    public function saveTheDate($id)
+    public function saveTheDate($uuid)
     {
         // Allow access directly via link without needing to be logged in first
-        $invite = GuestList::where('id', $id)->with('host')->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->with('host')->firstOrFail();
 
         // Auto-login the guest for this session so they can navigate the dashboard later
         if (!session()->has('guest_phone')) {
@@ -157,10 +160,11 @@ class GuestInvitationController extends Controller
         return view('guest.save_the_date', compact('invite', 'saveDateData', 'weddingDate', 'invitation'));
     }
 
-    public function showCeremonies($id)
+    public function showCeremonies($uuid)
     {
         $phone = session('guest_phone');
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
 
         $guest = $invite;
         $assignedNames = explode(', ', $invite->assigned_ceremonies);
@@ -175,14 +179,21 @@ class GuestInvitationController extends Controller
         // 🔥 ADD THIS LINE RIGHT HERE: Fetch the family data for the dashboard view
         $hfamily = HostFamilyDetails::where('host_id', $invite->host_id)->with('background')->first();
 
-        // Pass $hfamily down to the view via compact()
-        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily'));
+        // Fetch Save Date and Invitation data to conditionally show elements
+        $saveDateData = \App\Models\SaveDate::where('host_id', $invite->host_id)->latest()->first();
+        $invitation = \App\Models\Invitation::where('host_id', $invite->host_id)->latest()->first();
+        
+        $showSaveTheDate = $saveDateData && $invitation && !empty($invitation->wedding_date) && !empty($invitation->wedding_time);
+
+        // Pass $hfamily, $saveDateData, $invitation, and $showSaveTheDate down to the view via compact()
+        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily', 'saveDateData', 'invitation', 'showSaveTheDate'));
     }
 
-    public function showGallery($id)
+    public function showGallery($uuid)
     {
         $phone = session('guest_phone');
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
         $host_id = $invite->host_id;
         $pictures = Pictures::where('host_id', $host_id)->get();
         $albums = Albums::where('host_id', $host_id)->get();
@@ -190,24 +201,27 @@ class GuestInvitationController extends Controller
         return view('guest.gallery', compact('invite', 'pictures', 'albums', 'videos'));
     }
 
-    public function showHostFamilyDetails($id)
+    public function showHostFamilyDetails($uuid)
     {
         $phone = session('guest_phone');
-        $invite = GuestList::where('id', $id)->where('guest_number', $phone)->with('host')->firstOrFail();
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
         $host_id = $invite->host_id;
         $hfamily = HostFamilyDetails::where('host_id', $host_id)->with('background')->first();
         return view('guest.hfamily', compact('invite', 'hfamily'));
     }
 
-    public function editProfile($id)
+    public function editProfile($uuid)
     {
-        $invite = GuestList::findOrFail($id);
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->firstOrFail();
         return view('guest.profile', compact('invite'));
     }
 
-    public function updateProfile(Request $request, $id)
+    public function updateProfile(Request $request, $uuid)
     {
-        $invite = GuestList::findOrFail($id);
+        $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
+        $invite = GuestList::where($column, $uuid)->firstOrFail();
         $validated = $request->validate([
             'guest_email' => 'nullable',
             'relation' => 'nullable|in:bride,groom',
@@ -228,7 +242,7 @@ class GuestInvitationController extends Controller
             'location_map' => 'nullable',
         ]);
         $invite->update($validated);
-        return redirect()->route('guest.wedding.details', $id)->with('success', 'Profile Updated');
+        return redirect()->route('guest.wedding.details', $uuid)->with('success', 'Profile Updated');
     }
     public function getPreviousDetails()
     {

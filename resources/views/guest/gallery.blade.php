@@ -108,8 +108,8 @@
     <div class="nav-bar-container">
         <div class="nav-bar">
             <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Selection</a>
-            <a href="{{ route('guest.wedding.details', $invite->id) }}"><i class="fas fa-home"></i> Home</a>
-            <a href="{{ route('guest.profile.edit', $invite->id) }}"><i class="fas fa-user"></i> Profile</a>
+            <a href="{{ route('guest.wedding.details', $invite->uuid) }}"><i class="fas fa-home"></i> Home</a>
+            <!-- Profile link removed per request -->
             <a href="#" class="active"><i class="fas fa-images"></i> Gallery</a>
         </div>
     </div>

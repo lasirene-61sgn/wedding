@@ -63,9 +63,9 @@
     <div class="nav-bar-container">
         <div class="nav-bar">
             <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Selection</a>
-            <a href="{{ route('guest.wedding.details', $invite->id) }}"><i class="fas fa-home"></i> Home</a>
-            <a href="#" class="active"><i class="fas fa-user"></i> Profile</a>
-            <a href="{{ route('guest.gallery', $invite->id) }}"><i class="fas fa-images"></i> Gallery</a>
+            <a href="{{ route('guest.wedding.details', $invite->uuid) }}"><i class="fas fa-home"></i> Home</a>
+            <!-- Profile link removed per request -->
+            <a href="{{ route('guest.gallery', $invite->uuid) }}"><i class="fas fa-images"></i> Gallery</a>
         </div>
     </div>
 @endsection
@@ -84,7 +84,7 @@
     </div>
 
     <div class="glass-panel profile-card">
-        <form action="{{ route('guest.profile.update', $invite->id) }}" method="POST">
+        <form action="{{ route('guest.profile.update', $invite->uuid) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -183,7 +183,7 @@
         </form>
 
         <div class="text-center mt-4">
-            <a href="{{ route('guest.wedding.details', $invite->id) }}" style="color: #777; text-decoration: none; font-size: 0.85rem; font-weight: 600;">← Back to My Invitation</a>
+            <a href="{{ route('guest.wedding.details', $invite->uuid) }}" style="color: #777; text-decoration: none; font-size: 0.85rem; font-weight: 600;">← Back to My Invitation</a>
         </div>
     </div>
 </div>

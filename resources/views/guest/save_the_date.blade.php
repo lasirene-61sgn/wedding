@@ -244,7 +244,7 @@
     <div class="nav-bar-container">
         <div class="nav-bar">
             <a href="{{ route('guest.select') }}"><i class="fas fa-arrow-left"></i> Back to Selections</a>
-            <a href="{{ route('guest.wedding.details', $invite->id) }}"><i class="fas fa-eye"></i> View Dashboard</a>
+            <a href="{{ route('guest.wedding.details', $invite->uuid) }}"><i class="fas fa-eye"></i> View Dashboard</a>
         </div>
     </div>
 @endsection

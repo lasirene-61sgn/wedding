@@ -291,7 +291,11 @@
     @yield('header')
 
     <!-- Global Floating Action for Login / Switch Account -->
-    <a href="{{ route('guest.login') }}" class="btn-outline-wedding" style="position: absolute; top: 20px; right: 20px; z-index: 2000; font-size: 0.75rem; padding: 6px 15px;">Login</a>
+    @if(!session()->has('guest_phone'))
+        <a href="{{ route('guest.login') }}" class="btn-outline-wedding" style="position: absolute; top: 20px; right: 20px; z-index: 2000; font-size: 0.75rem; padding: 6px 15px;">Login</a>
+    @elseif(isset($invite) && $invite->uuid)
+        <a href="{{ route('guest.profile.edit', $invite->uuid) }}" class="btn-outline-wedding" style="position: absolute; top: 20px; right: 20px; z-index: 2000; font-size: 0.75rem; padding: 6px 15px;"><i class="fas fa-user"></i> Profile</a>
+    @endif
 
     <main class="main-content">
         @yield('content')

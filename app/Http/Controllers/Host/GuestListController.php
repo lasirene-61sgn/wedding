@@ -302,19 +302,37 @@ class GuestListController extends Controller
                 $skipped++;
                 continue; // Skip guests with no category
             }
+            
+            if ($request->category_id) {
+                $category = GuestCategory::find($request->category_id);
+                $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
+                    return is_array($item) ? ($item['id'] ?? null) : $item;
+                })->filter()->toArray();
+        
+                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)
+                    ->pluck('ceramony_name')
+                    ->implode(', ');
+            } else {
+                $allCeremonyNames = $guest->assigned_ceremonies;
+                $ceremonyIds = [$guest->ceramony_id]; // Fallback
+            }
 
             if ($canSendInvitation && count($selectedChannels) > 0) {
                 $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
             }
 
-            $guest->update([
-                'category_id' => $request->category_id,
-                'assigned_ceremonies' => $allCeremonyNames,
+            $updateData = [
                 'send_via' => $channelsString,
                 'invitation_sent' => ($canSendInvitation && $request->has('channels')) ? true : $guest->invitation_sent,
-                // Optional: Store the first ceremony ID for relation consistency
-                'ceramony_id' => $ceremonyIds[0] ?? $guest->ceramony_id,
-            ]);
+            ];
+            
+            if ($request->category_id) {
+                 $updateData['category_id'] = $request->category_id;
+                 $updateData['assigned_ceremonies'] = $allCeremonyNames;
+                 $updateData['ceramony_id'] = $ceremonyIds[0] ?? $guest->ceramony_id;
+            }
+
+            $guest->update($updateData);
         }
 
         if ($skipped > 0) {
