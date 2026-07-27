@@ -79,17 +79,31 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery</label>
-                        <input type="text" name="gallery" value="{{ old('gallery') }}" placeholder="Enter gallery info"
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery (Text Display)</label>
+                        <input type="text" name="gallery" value="{{ old('gallery') }}" placeholder="Enter gallery text for display (e.g. 1.5 MB)"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
                         @error('gallery') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service</label>
-                        <textarea name="package_description" rows="3" placeholder="Enter package details..."
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery Limit (in MB)</label>
+                        <input type="number" name="storage_limit_mb" value="{{ old('storage_limit_mb') }}" placeholder="e.g. 500"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('storage_limit_mb') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service (Text Display)</label>
+                        <textarea name="package_description" rows="3" placeholder="Enter package details for display..."
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description') }}</textarea>
                         @error('package_description') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service Limit (Number of messages)</label>
+                        <input type="number" name="invite_limit" value="{{ old('invite_limit') }}" placeholder="e.g. 100"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('invite_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
                     <div>

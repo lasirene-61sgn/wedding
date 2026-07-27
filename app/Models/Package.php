@@ -10,7 +10,7 @@ class Package extends Model
 
     protected $fillable = [
         'package_name', 'price', 'guest_limit',  'validity', 'invitaion', 'rsvp', 'ceramonies', 'reports', 'gallery', 
-        'package_description', 'wishboard', 'dcgqrcode', 'vaf' ,'invite_limit',
+        'package_description', 'wishboard', 'dcgqrcode', 'vaf' ,'invite_limit', 'storage_limit_mb',
     ];
 
     public function hosts(){

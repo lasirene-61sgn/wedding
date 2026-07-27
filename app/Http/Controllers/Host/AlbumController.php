@@ -21,6 +21,13 @@ class AlbumController extends Controller
         ]);
         $imagePaths = [];
         if($request->hasFile('album_images')){
+            $newFileSize = 0;
+            foreach($request->file('album_images') as $file){
+                $newFileSize += $file->getSize();
+            }
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::guard('host')->id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more albums.');
+            }
             foreach($request->file('album_images') as $file){
                 $imagePaths[] = $file->store('albums', 'public');
             }
@@ -41,6 +48,13 @@ class AlbumController extends Controller
         ]);
         $currentImages = $album->album_images ?? [];
         if($request->hasFile('album_images')){
+            $newFileSize = 0;
+            foreach($request->file('album_images') as $file){
+                $newFileSize += $file->getSize();
+            }
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::guard('host')->id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more albums.');
+            }
             foreach($request->file('album_images') as $file){
                 $currentImages[] = $file->store('albums', 'public');
             }

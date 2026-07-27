@@ -290,6 +290,24 @@ class GuestListController extends Controller
             ->where('host_id', Auth::id())
             ->get();
 
+        $host = Auth::user();
+        $newSends = 0;
+        
+        if ($host->package && isset($host->package->invite_limit) && count($selectedChannels) > 0) {
+            $inviteLimit = (int) $host->package->invite_limit;
+            if ($inviteLimit > 0) {
+                foreach ($guests as $g) {
+                    if (!$g->invitation_sent) {
+                        $newSends++;
+                    }
+                }
+                $alreadySentCount = $host->messages_sent_count ?? 0;
+                if (($alreadySentCount + $newSends) > $inviteLimit) {
+                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
+                }
+            }
+        }
+
         $skipped = 0;
         foreach ($guests as $guest) {
 
@@ -335,6 +353,11 @@ class GuestListController extends Controller
             $guest->update($updateData);
         }
 
+        if ($newSends > 0) {
+            $host->messages_sent_count = ($host->messages_sent_count ?? 0) + $newSends;
+            $host->save();
+        }
+
         if ($skipped > 0) {
             return back()->with('success', 'Operation completed. Note: ' . $skipped . ' guest(s) were skipped because they have no category assigned.');
         }
@@ -358,6 +381,24 @@ class GuestListController extends Controller
             ->where('host_id', Auth::id())
             ->get();
 
+        $host = Auth::user();
+        $newSends = 0;
+        
+        if ($host->package && isset($host->package->invite_limit) && count($selectedChannels) > 0) {
+            $inviteLimit = (int) $host->package->invite_limit;
+            if ($inviteLimit > 0) {
+                foreach ($guests as $g) {
+                    if (!$g->save_date_sent) {
+                        $newSends++;
+                    }
+                }
+                $alreadySentCount = $host->messages_sent_count ?? 0;
+                if (($alreadySentCount + $newSends) > $inviteLimit) {
+                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
+                }
+            }
+        }
+
         $skipped = 0;
         foreach ($guests as $guest) {
             if (!$guest->category_id) {
@@ -372,6 +413,11 @@ class GuestListController extends Controller
             $guest->update([
                 'save_date_sent' => true
             ]);
+        }
+
+        if ($newSends > 0) {
+            $host->messages_sent_count = ($host->messages_sent_count ?? 0) + $newSends;
+            $host->save();
         }
 
         if ($skipped > 0) {
@@ -408,6 +454,23 @@ class GuestListController extends Controller
             ->where('reminder_sent', false)
             ->get();
 
+        $newSends = 0;
+        foreach ($guests as $g) {
+            if (!$g->reminder_sent) {
+                $newSends++;
+            }
+        }
+
+        if ($host->package && isset($host->package->invite_limit)) {
+            $inviteLimit = (int) $host->package->invite_limit;
+            if ($inviteLimit > 0) {
+                $alreadySentCount = $host->messages_sent_count ?? 0;
+                if (($alreadySentCount + $newSends) > $inviteLimit) {
+                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
+                }
+            }
+        }
+
         $skipped = 0;
         foreach ($guests as $guest) {
             if (!$guest->category_id) {
@@ -421,6 +484,11 @@ class GuestListController extends Controller
                 'reminder_sent' => true,
                 'reminder_scheduled' => true
             ]);
+        }
+
+        if ($newSends > 0) {
+            $host->messages_sent_count = ($host->messages_sent_count ?? 0) + $newSends;
+            $host->save();
         }
 
         if ($skipped > 0) {

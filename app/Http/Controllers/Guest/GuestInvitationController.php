@@ -53,11 +53,18 @@ class GuestInvitationController extends Controller
             return redirect()->route('guest.login');
         }
 
-        // 4. Safer query: Fall back to pulling invitations ignoring the 'invitation_sent' flag 
-        // to prevent administrative blockages during testing.
+        // Check if any invitations are valid
         $invitations = GuestList::where('guest_number', $phone)
             ->with('host')
             ->get();
+            
+        // Filter out expired hosts
+        $invitations = $invitations->filter(function($invite) {
+            if ($invite->host && $invite->host->package_expires_at) {
+                return \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isFuture();
+            }
+            return true;
+        });
 
         $calendarEvents = [];
         foreach ($invitations as $invite) {
@@ -145,6 +152,10 @@ class GuestInvitationController extends Controller
         $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
         $invite = GuestList::where($column, $uuid)->with('host')->firstOrFail();
 
+        if ($invite->host && $invite->host->package_expires_at && \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isPast()) {
+            return abort(403, 'This wedding invitation is no longer active.');
+        }
+
         // Auto-login the guest for this session so they can navigate the dashboard later
         if (!session()->has('guest_phone')) {
             session(['guest_phone' => $invite->guest_number]);
@@ -165,6 +176,10 @@ class GuestInvitationController extends Controller
         $phone = session('guest_phone');
         $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
         $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
+
+        if ($invite->host && $invite->host->package_expires_at && \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isPast()) {
+            return abort(403, 'This wedding invitation is no longer active.');
+        }
 
         $guest = $invite;
         $assignedNames = explode(', ', $invite->assigned_ceremonies);
@@ -194,6 +209,11 @@ class GuestInvitationController extends Controller
         $phone = session('guest_phone');
         $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
         $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
+
+        if ($invite->host && $invite->host->package_expires_at && \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isPast()) {
+            return abort(403, 'This wedding invitation is no longer active.');
+        }
+
         $host_id = $invite->host_id;
         $pictures = Pictures::where('host_id', $host_id)->get();
         $albums = Albums::where('host_id', $host_id)->get();
@@ -206,6 +226,11 @@ class GuestInvitationController extends Controller
         $phone = session('guest_phone');
         $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
         $invite = GuestList::where($column, $uuid)->where('guest_number', $phone)->with('host')->firstOrFail();
+
+        if ($invite->host && $invite->host->package_expires_at && \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isPast()) {
+            return abort(403, 'This wedding invitation is no longer active.');
+        }
+
         $host_id = $invite->host_id;
         $hfamily = HostFamilyDetails::where('host_id', $host_id)->with('background')->first();
         return view('guest.hfamily', compact('invite', 'hfamily'));
@@ -214,7 +239,12 @@ class GuestInvitationController extends Controller
     public function editProfile($uuid)
     {
         $column = \Illuminate\Support\Str::isUuid($uuid) ? 'uuid' : 'id';
-        $invite = GuestList::where($column, $uuid)->firstOrFail();
+        $invite = GuestList::where($column, $uuid)->with('host')->firstOrFail();
+
+        if ($invite->host && $invite->host->package_expires_at && \Carbon\Carbon::parse($invite->host->package_expires_at)->endOfDay()->isPast()) {
+            return abort(403, 'This wedding invitation is no longer active.');
+        }
+
         return view('guest.profile', compact('invite'));
     }
 

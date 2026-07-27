@@ -38,10 +38,16 @@ class PictureController extends Controller
             'picture' => 'required|mimes:jpeg,jpg,png,svg,gif,webp,avif|max:3048',
         ]);
 
+        $host_id = Auth::guard('host')->id();
+
         if($request->hasFile('picture')){
+            $newFileSize = $request->file('picture')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage($host_id, $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more pictures.');
+            }
             $validated['picture'] = $request->file('picture')->store('pictures', 'public');
         }
-        $validated['host_id'] = Auth::guard('host')->id();
+        $validated['host_id'] = $host_id;
         Pictures::create($validated);
         return redirect()->route('host.picture.index')->with('success', 'Picture added Successfully');
     }

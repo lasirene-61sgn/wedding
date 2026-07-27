@@ -16,6 +16,12 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4" style="background: #fee2e2; color: #991b1b;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> {{ session('error') }}
+        </div>
+    @endif
+
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
         <div class="card-header bg-white border-0 pt-4 px-4">
             <ul class="nav nav-pills nav-fill bg-light p-1 rounded-pill" id="galleryTab" role="tablist">

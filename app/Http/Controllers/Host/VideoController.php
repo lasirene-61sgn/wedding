@@ -19,10 +19,16 @@ class VideoController extends Controller
             'videos' => 'required|mimes:mp4,mov,ogg,qt|max:20000',
         ]);
 
+        $host_id = Auth::guard('host')->id();
+
         if($request->hasFile('videos')){
+            $newFileSize = $request->file('videos')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage($host_id, $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more videos.');
+            }
             $validated['videos'] = $request->file('videos')->store('videos', 'public');
         }
-        $validated['host_id'] = Auth::id();
+        $validated['host_id'] = $host_id;
         Videos::create($validated);
         return redirect()->route('host.picture.index')->with('success', 'videos added Successfully');
     }

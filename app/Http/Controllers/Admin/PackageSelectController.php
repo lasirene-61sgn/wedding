@@ -33,6 +33,7 @@ class PackageSelectController extends Controller
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
             'invite_limit' =>' nullable|integer',
+            'storage_limit_mb' => 'nullable|integer',
             'custom_fields' => 'nullable|array',
             
         ]);
@@ -78,6 +79,7 @@ class PackageSelectController extends Controller
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
             'invite_limit' =>' nullable|integer',
+            'storage_limit_mb' => 'nullable|integer',
             'custom_fields' => 'nullable|array',
         ]);
 
