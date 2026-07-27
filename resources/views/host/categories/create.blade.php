@@ -26,31 +26,26 @@
             </div>
 
             <div style="margin-bottom: 25px;">
-                <label style="display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 8px;">
-                    Group Type
-                </label>
-                <select name="group_type" required 
-                    style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; background: white; cursor: pointer;">
-                    <option value="single">Single</option>
-                    <option value="couple">Couple</option>
-                    <option value="family">Family</option>
-                </select>
-                @error('group_type')
-                    <span style="color: #ef4444; font-size: 12px; margin-top: 5px; display: block;">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div style="margin-bottom: 25px;">
                 <label style="display: block; font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px;">
-                    Select Ceremonies for this Category
+                    Select Ceremonies and Group Type
                 </label>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9;">
                     @forelse($ceramonies as $ceremony)
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; transition: border-color 0.2s;">
-                            <input type="checkbox" name="ceremony_ids[]" value="{{ $ceremony->id }}" 
-                                style="width: 18px; height: 18px; accent-color: #4f46e5; cursor: pointer;">
-                            <span style="font-size: 14px; color: #1e293b; font-weight: 500;">{{ $ceremony->ceramony_name }}</span>
+                        @if($ceremony->is_main && !$ceremony->venue && !$ceremony->ceramony_date && !$ceremony->ceramony_time)
+                            @continue
+                        @endif
+                        <label style="display: flex; flex-direction: column; gap: 8px; cursor: pointer; padding: 12px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; transition: border-color 0.2s;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" name="ceremony_ids[]" value="{{ $ceremony->id }}" 
+                                    style="width: 18px; height: 18px; accent-color: #4f46e5; cursor: pointer;">
+                                <span style="font-size: 14px; color: #1e293b; font-weight: 500;">{{ $ceremony->ceramony_name }}</span>
+                            </div>
+                            <select name="group_types[{{ $ceremony->id }}]" style="margin-left: 28px; width: calc(100% - 28px); padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; background: white; cursor: pointer;">
+                                <option value="single">Single</option>
+                                <option value="couple">Couple</option>
+                                <option value="family">Family</option>
+                            </select>
                         </label>
                     @empty
                         <p style="color: #94a3b8; font-size: 13px; grid-column: 1 / -1; text-align: center;">

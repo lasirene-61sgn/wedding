@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('host_id')->constrained('host')->onDelete('cascade');
             $table->foreignId('invitation_id')->constrained('invitations')->onDelete('cascade');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->text('message')->nullable();
             $table->timestamps();
         });

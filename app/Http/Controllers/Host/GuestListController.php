@@ -107,7 +107,9 @@ class GuestListController extends Controller
         if (!empty($validated['category_id'])) {
             $category = GuestCategory::find($validated['category_id']);
             if ($category) {
-                $ceremonyIds = $category->ceremony_ids ?? [];
+                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+                    return is_array($item) ? ($item['id'] ?? null) : $item;
+                })->filter()->toArray();
                 $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
                 $validated['assigned_ceremonies'] = $allCeremonyNames;
                 $validated['ceramony_id'] = $ceremonyIds[0] ?? null;
@@ -177,7 +179,9 @@ class GuestListController extends Controller
         if (!empty($validated['category_id'])) {
             $category = GuestCategory::find($validated['category_id']);
             if ($category) {
-                $ceremonyIds = $category->ceremony_ids ?? [];
+                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+                    return is_array($item) ? ($item['id'] ?? null) : $item;
+                })->filter()->toArray();
                 $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
                 $guestlist->assigned_ceremonies = $allCeremonyNames;
                 $guestlist->ceramony_id = $ceremonyIds[0] ?? null;
@@ -272,7 +276,9 @@ class GuestListController extends Controller
         $category = GuestCategory::find($request->category_id);
 
         // FIX: Remove json_decode. Laravel's $casts already made this an array.
-        $ceremonyIds = $category ? ($category->ceremony_ids ?? []) : [];
+        $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
+            return is_array($item) ? ($item['id'] ?? null) : $item;
+        })->filter()->toArray();
 
         $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)
             ->pluck('ceramony_name')

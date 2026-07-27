@@ -32,6 +32,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-20">ID</th>
                         <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category Name</th>
+                        <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Default Ceremonies</th>
                         <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40">Actions</th>
                     </tr>
                 </thead>
@@ -43,6 +44,19 @@
                             </td>
                             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700 font-medium">
                                 {{ $category->category_name }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-700">
+                                @if(is_array($category->ceremonies) && count($category->ceremonies) > 0)
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($category->ceremonies as $ceremony)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ $ceremony }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-gray-400 italic">None</span>
+                                @endif
                             </td>
                             <td class="whitespace-nowrap px-6 py-4 text-sm space-x-2">
                                 <!-- Edit Button -->
@@ -67,7 +81,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-10 text-center text-sm text-gray-400 italic">
+                            <td colspan="4" class="px-6 py-10 text-center text-sm text-gray-400 italic">
                                 No ceremony categories found.
                             </td>
                         </tr>

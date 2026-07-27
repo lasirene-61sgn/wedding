@@ -185,7 +185,7 @@
                             </span>
                         </td>
                         <td class="text-muted small" style="max-width: 250px;">
-                            {{ $guest->assigned_ceremonies }}
+                            {!! $guest->detailed_assigned_ceremonies !!}
                         </td>
                     </tr>
                     @empty

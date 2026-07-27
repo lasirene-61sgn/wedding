@@ -58,7 +58,7 @@ class ReportController extends Controller
         });
 
         // Eager load 'ceramony' to avoid N+1 memory issues
-        $query = GuestList::with('ceramony')->where('host_id', $hostId);
+        $query = GuestList::with(['ceramony', 'category'])->where('host_id', $hostId);
 
         // Search Filter
         if ($request->filled('search')) {

@@ -18,11 +18,16 @@ class CategoryVenueController extends Controller
     }
 
     public function store(Request $request){
-        $validated =$request->validate([
-            'category_name' => 'required|unique:category_venues,category_name'
+        $validated = $request->validate([
+            'category_name' => 'required|unique:category_venues,category_name',
+            'ceremonies' => 'nullable|array',
+            'ceremonies.*' => 'string'
         ]);
-        $validated['category_name'] = $request->category_name;
-        CategoryVenue::create($validated);
+        
+        CategoryVenue::create([
+            'category_name' => $request->category_name,
+            'ceremonies' => array_filter($request->ceremonies ?? [])
+        ]);
         return redirect()->route('admin.categoryvenue.index')->with('success', 'category venue created');
     }
 
@@ -35,9 +40,14 @@ class CategoryVenueController extends Controller
         $category = CategoryVenue::findOrFail($id);
         $validated = $request->validate([
             'category_name' => 'nullable|unique:category_venues,category_name,' . $id,
+            'ceremonies' => 'nullable|array',
+            'ceremonies.*' => 'string'
         ]);
         
-        $category->update($validated);
+        $category->update([
+            'category_name' => $request->category_name ?? $category->category_name,
+            'ceremonies' => array_filter($request->ceremonies ?? [])
+        ]);
         return redirect()->route('admin.categoryvenue.index')->with('success', 'caetgory venue updated');
     }
 

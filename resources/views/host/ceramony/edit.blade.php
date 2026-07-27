@@ -17,60 +17,70 @@
                         @method('PUT')
 
                         <div class="row mb-4">
-                            <div class="col-md-6">
+                            <div class="col-md-12 mb-4">
                                 <label class="form-label fw-bold">Category</label>
-                                <select name="category_id" class="form-select" required>
+                                <select name="category_id" id="category_select" class="form-select" required onchange="handleCategoryChange()">
                                     @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
+                                    <option value="{{ $cat->id }}" data-ceremonies="{{ json_encode(is_array($cat->ceremonies) ? $cat->ceremonies : []) }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
                                         {{ $cat->category_name }}
                                     </option>
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Venue Location</label>
-                                <div class="input-group">
-                                    <select name="venue_id" id="venue_select" class="form-select">
-                                        <option value="" data-name="Venue to be announced">-- Select Venue --</option>
-                                        @foreach($venues as $v)
-                                        <option value="{{ $v->id }}"
-                                            data-name="{{ $v->venue_name }}"
-                                            data-address="{{ $v->venue_address }}"
-                                            data-pin="{{ $v->pincode }}"
-                                            data-area="{{ $v->area_name }}"
-                                            data-district="{{ $v->district }}"
-                                            data-state="{{ $v->state }}"
-                                            data-country="{{ $v->country }}"
-                                            data-circle="{{ $v->circle }}"
-                                            data-landmark="{{ $v->wedding_location }}"
-                                            data-map="{{ $v->location_map }}"
-                                            {{ $ceramony->venue_id == $v->id ? 'selected' : '' }}>
-                                            {{ $v->venue_name }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                    <button type="button" class="btn btn-warning text-white" id="edit_venue_btn">Edit</button>
-                                    <button type="button" class="btn btn-primary" id="new_venue_btn">+ New</button>
+                        <!-- Dynamic Ceremonies Box -->
+                        <div class="mb-4" id="ceremonies_box_container" style="display: none;">
+                            <label class="form-label fw-bold text-primary">Select Ceremony</label>
+                            <div id="ceremonies_badges" class="d-flex flex-wrap gap-2">
+                                <!-- Badges injected via JS -->
+                            </div>
+                        </div>
+
+                        <div id="ceremony_details_container">
+                            <div class="mb-4" id="ceramony_name_container">
+                                <label class="form-label fw-bold">Ceremony Name</label>
+                                <input type="text" name="ceramony_name" id="ceramony_name" class="form-control" value="{{ $ceramony->ceramony_name }}" required>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Venue Location</label>
+                                    <div class="input-group">
+                                        <select name="venue_id" id="venue_select" class="form-select">
+                                            <option value="" data-name="Venue to be announced">-- Select Venue --</option>
+                                            @foreach($venues as $v)
+                                            <option value="{{ $v->id }}"
+                                                data-name="{{ $v->venue_name }}"
+                                                data-address="{{ $v->venue_address }}"
+                                                data-pin="{{ $v->pincode }}"
+                                                data-area="{{ $v->area_name }}"
+                                                data-district="{{ $v->district }}"
+                                                data-state="{{ $v->state }}"
+                                                data-country="{{ $v->country }}"
+                                                data-circle="{{ $v->circle }}"
+                                                data-landmark="{{ $v->wedding_location }}"
+                                                data-map="{{ $v->location_map }}"
+                                                {{ $ceramony->venue_id == $v->id ? 'selected' : '' }}>
+                                                {{ $v->venue_name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn btn-warning text-white" id="edit_venue_btn">Edit</button>
+                                        <button type="button" class="btn btn-primary" id="new_venue_btn">+ New</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
 
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Ceremony Name</label>
-                            <input type="text" name="ceramony_name" id="ceramony_name" class="form-control" value="{{ $ceramony->ceramony_name }}" required>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Date</label>
-                                <input type="date" name="ceramony_date" id="ceramony_date" class="form-control" value="{{ $ceramony->ceramony_date }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Time</label>
-                                <input type="time" name="ceramony_time" id="ceramony_time" class="form-control" value="{{ $ceramony->ceramony_time }}">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Date</label>
+                                    <input type="date" name="ceramony_date" id="ceramony_date" class="form-control" value="{{ $ceramony->ceramony_date }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Time</label>
+                                    <input type="time" name="ceramony_time" id="ceramony_time" class="form-control" value="{{ $ceramony->ceramony_time }}">
+                                </div>
                             </div>
                         </div>
 
@@ -232,5 +242,105 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script src="{{ asset('js/hostceramonyedit.js') }}"></script>
+<script>
+    // Initial loaded ceremony name
+    const initialCeremonyName = "{{ $ceramony->ceramony_name }}";
+    
+    function handleCategoryChange(isInitialLoad = false) {
+        const select = document.getElementById('category_select');
+        const option = select.options[select.selectedIndex];
+        const ceremoniesBox = document.getElementById('ceremonies_box_container');
+        const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const detailsContainer = document.getElementById('ceremony_details_container');
+        const nameInput = document.getElementById('ceramony_name');
+        
+        // Reset and hide
+        ceremoniesBadges.innerHTML = '';
+        if (!isInitialLoad) {
+            nameInput.value = '';
+        }
+
+        if (!option || !option.value) {
+            ceremoniesBox.style.display = 'none';
+            return;
+        }
+
+        const ceremonies = JSON.parse(option.getAttribute('data-ceremonies') || '[]');
+        let matchedInitial = false;
+
+        ceremonies.forEach(ceremony => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-primary ceremony-badge';
+            btn.innerText = ceremony;
+            
+            if (isInitialLoad && ceremony === initialCeremonyName) {
+                btn.className = 'btn btn-primary text-white ceremony-badge';
+                matchedInitial = true;
+            }
+
+            btn.onclick = function() {
+                selectCeremonyBadge(this, ceremony);
+            };
+            ceremoniesBadges.appendChild(btn);
+        });
+
+        // Add "Others" button
+        const othersBtn = document.createElement('button');
+        othersBtn.type = 'button';
+        othersBtn.innerText = 'Others';
+        
+        if (isInitialLoad && !matchedInitial) {
+            othersBtn.className = 'btn btn-secondary text-white ceremony-badge';
+        } else {
+            othersBtn.className = 'btn btn-outline-secondary ceremony-badge';
+        }
+
+        othersBtn.onclick = function() {
+            selectCeremonyBadge(this, '');
+        };
+        ceremoniesBadges.appendChild(othersBtn);
+
+        ceremoniesBox.style.display = 'block';
+    }
+
+    function selectCeremonyBadge(clickedBtn, ceremonyName) {
+        // Highlight active button
+        document.querySelectorAll('.ceremony-badge').forEach(btn => {
+            btn.classList.remove('btn-primary', 'text-white');
+            if (btn.classList.contains('btn-outline-secondary') || btn.classList.contains('btn-secondary')) {
+                // Others button
+                btn.classList.remove('btn-secondary', 'text-white');
+                btn.classList.add('btn-outline-secondary');
+            } else {
+                btn.classList.add('btn-outline-primary');
+            }
+        });
+
+        if (clickedBtn.innerText === 'Others') {
+            clickedBtn.classList.add('btn-secondary', 'text-white');
+            clickedBtn.classList.remove('btn-outline-secondary');
+        } else {
+            clickedBtn.classList.add('btn-primary', 'text-white');
+            clickedBtn.classList.remove('btn-outline-primary');
+        }
+        
+        // Set name
+        const nameInput = document.getElementById('ceramony_name');
+        
+        // If clicking others, don't clear it completely if we just switched to others in edit mode, 
+        // but normally we clear it. Since it's edit, if they click others intentionally, they want a new name.
+        nameInput.value = ceremonyName;
+        
+        if (ceremonyName === '') {
+            nameInput.focus();
+        }
+    }
+
+    // Run on load
+    document.addEventListener('DOMContentLoaded', function() {
+        handleCategoryChange(true);
+    });
+</script>
 
 @endsection

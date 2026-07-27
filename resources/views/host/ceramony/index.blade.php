@@ -23,6 +23,9 @@
 
     <div class="row g-4">
         @forelse($ceramonies as $item)
+        @if($item->is_main && !$item->venue && !$item->ceramony_date && !$item->ceramony_time)
+            @continue
+        @endif
         <div class="col-md-6 col-xl-4">
             <div class="card ceremony-card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
                 <div class="position-relative">
@@ -66,29 +69,33 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-dark mb-3">{{ $item->ceramony_name }}</h5>
 
+                    @if($item->venue)
                     <div class="d-flex align-items-start mb-4">
                         <i class="bi bi-geo-alt-fill text-danger me-2 mt-1"></i>
                         <div class="small">
-                            @if($item->venue)
                             <strong class="text-primary">{{ $item->venue->venue_name }}</strong><br>
                             <p class="text-muted mb-0">{{ $item->venue->venue_address }}</p>
                             <p class="text-muted mb-0 small">{{ $item->venue->district }}, {{ $item->venue->state }}</p>
-                            @else
-                            <span class="text-danger fw-bold">No Venue Assigned</span>
-                            @endif
                         </div>
                     </div>
+                    @endif
 
+                    @if($item->ceramony_date || $item->ceramony_time)
                     <div class="row g-0 border-top pt-3">
-                        <div class="col-6">
+                        @if($item->ceramony_date)
+                        <div class="{{ $item->ceramony_time ? 'col-6' : 'col-12' }}">
                             <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Date</small>
-                            <span class="small fw-bold"><i class="bi bi-calendar-event text-primary me-1"></i> {{ $item->ceramony_date ?? 'TBD' }}</span>
+                            <span class="small fw-bold"><i class="bi bi-calendar-event text-primary me-1"></i> {{ $item->ceramony_date }}</span>
                         </div>
-                        <div class="col-6 border-start ps-3">
+                        @endif
+                        @if($item->ceramony_time)
+                        <div class="{{ $item->ceramony_date ? 'col-6 border-start ps-3' : 'col-12' }}">
                             <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Time</small>
-                            <span class="small fw-bold"><i class="bi bi-clock text-primary me-1"></i> {{ $item->ceramony_time ?? 'TBD' }}</span>
+                            <span class="small fw-bold"><i class="bi bi-clock text-primary me-1"></i> {{ $item->ceramony_time }}</span>
                         </div>
+                        @endif
                     </div>
+                    @endif
                 </div>
 
                 @if($item->is_main)

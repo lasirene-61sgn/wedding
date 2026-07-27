@@ -6,10 +6,13 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use App\Models\GuestCategory;
 use App\Models\Ceramonies;
 
-class GuestCategoryLookupSheet implements FromCollection, WithHeadings, WithTitle, WithMapping
+class GuestCategoryLookupSheet implements FromCollection, WithHeadings, WithTitle, WithMapping, WithEvents
 {
     protected $hostId;
 
@@ -25,11 +28,14 @@ class GuestCategoryLookupSheet implements FromCollection, WithHeadings, WithTitl
 
     public function map($category): array
     {
-        $names = Ceramonies::whereIn("id", $category->ceremony_ids ?? [])
+        $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+            return is_array($item) ? ($item['id'] ?? null) : $item;
+        })->filter()->toArray();
+        $names = Ceramonies::whereIn("id", $ceremonyIds)
             ->pluck("ceramony_name")
             ->implode(", ");
 
-        $count = count($category->ceremony_ids ?? []);
+        $count = count($ceremonyIds);
 
         return [
             $category->category_name,
@@ -52,5 +58,15 @@ class GuestCategoryLookupSheet implements FromCollection, WithHeadings, WithTitl
     public function title(): string
     {
         return "Categories";
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function(AfterSheet $event) {
+                // Hide this sheet so the user only sees the Guests sheet
+                $event->sheet->getDelegate()->setSheetState(Worksheet::SHEETSTATE_HIDDEN);
+            }
+        ];
     }
 }

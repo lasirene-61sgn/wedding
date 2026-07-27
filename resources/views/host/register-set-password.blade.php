@@ -43,7 +43,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
                         <span class="block text-gray-500 mb-1">Name</span>
-                        <span class="font-medium text-gray-900">{{ $sessionData['first_name'] ?? '' }} {{ $sessionData['last_name'] ?? '' }}</span>
+                        <span class="font-medium text-gray-900">{{ $sessionData['name'] ?? '' }} {{ $sessionData['last_name'] ?? '' }}</span>
                     </div>
                     <div>
                         <span class="block text-gray-500 mb-1">Email</span>

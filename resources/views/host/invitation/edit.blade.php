@@ -161,7 +161,7 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label fw-bold">Invitation Sent By</label>
-                                <select name="invite" id="invite_dropdown" class="form-select watch-input" required>
+                                <select name="invite" id="invite_dropdown" class="form-select watch-input">
                                     @foreach(['brideparents' => "Bride's Parents", 'groomparents' => "Groom's Parents", 'bride' => 'Bride', 'groom' => 'Groom', 'weddingcouple' => 'Wedding Couple'] as $key => $label)
                                     <option value="{{ $key }}" {{ $invitation->invite == $key ? 'selected' : '' }}>{{ $label }}</option>
                                     @endforeach
@@ -170,7 +170,7 @@
                             <div class="col-md-5 mb-3">
                                 <label class="form-label fw-bold">Select Venue</label>
                                 <div class="input-group">
-                                    <select name="venue_id" id="venue_dropdown" class="form-select watch-input" required>
+                                    <select name="venue_id" id="venue_dropdown" class="form-select watch-input">
                                         <option value="">-- Select Venue --</option>
                                         @foreach($venues as $venue)
                                         <option value="{{ $venue->id }}"
@@ -209,7 +209,7 @@
                             <div class="card-body">
                                 <div class="mb-2"><label>Full Name</label><input type="text" name="bride_name" value="{{ $invitation->bride_name }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Mobile Number</label><input type="text" name="bride_number" value="{{ $invitation->bride_number }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Email Address</label><input type="email" name="bride_email" value="{{ $invitation->bride_email }}" class="form-control watch-input" required></div>
+                                <div class="mb-2"><label>Email Address</label><input type="email" name="bride_email" value="{{ $invitation->bride_email }}" class="form-control watch-input"></div>
                                 <div class="mb-2"><label>Father's Name</label><input type="text" name="bride_father_name" value="{{ $invitation->bride_father_name }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Mother's Name</label><input type="text" name="bride_mother_name" value="{{ $invitation->bride_mother_name }}" class="form-control watch-input" required></div>
 
@@ -223,7 +223,7 @@
                             <div class="card-body">
                                 <div class="mb-2"><label>Full Name</label><input type="text" name="groom_name" value="{{ $invitation->groom_name }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Mobile Number</label><input type="text" name="groom_number" value="{{ $invitation->groom_number }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Email Address</label><input type="email" name="groom_email" value="{{ $invitation->groom_email }}" class="form-control watch-input" required></div>
+                                <div class="mb-2"><label>Email Address</label><input type="email" name="groom_email" value="{{ $invitation->groom_email }}" class="form-control watch-input"></div>
                                 <div class="mb-2"><label>Father's Name</label><input type="text" name="groom_father_name" value="{{ $invitation->groom_father_name }}" class="form-control watch-input" required></div>
                                 <div class="mb-2"><label>Mother's Name</label><input type="text" name="groom_mother_name" value="{{ $invitation->groom_mother_name }}" class="form-control watch-input" required></div>
                             </div>
@@ -235,8 +235,8 @@
                     <div class="card-header bg-dark text-white fw-bold">Event Timing & Location</div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" id="wedding_date" name="wedding_date" value="{{ $invitation->wedding_date }}" class="form-control watch-input" required></div>
-                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" id="wedding_time" name="wedding_time" value="{{ $invitation->wedding_time }}" class="form-control watch-input" required></div>
+                            <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" id="wedding_date" name="wedding_date" value="{{ $invitation->wedding_date }}" class="form-control watch-input"></div>
+                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" id="wedding_time" name="wedding_time" value="{{ $invitation->wedding_time }}" class="form-control watch-input"></div>
                             <div class="mb-3">
                                 <label class="form-label d-block"><strong>Select Guest Panel Background Theme</strong></label>
                                 <div class="row g-3">

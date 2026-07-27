@@ -180,14 +180,32 @@
                             <span style="background: #1e293b; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-block; margin-right: 4px;">
                                 {{ $guest->category->category_name }}
                             </span>
-                            <span style="background: #e2e8f0; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; display: inline-block;">
-                                {{ ucfirst($guest->category->group_type) }}
-                            </span>
                         </div>
-                        @endif
-
-                        @if($guest->assigned_ceremonies)
-                        <span style="background: #eef2ff; color: #4f46e5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid #c7d2fe; display: inline-block; max-width: 200px; white-space: normal;">
+                            @php
+                                $ceremonyIdsList = collect($guest->category->ceremony_ids ?? [])->map(function($item) {
+                                    return is_array($item) ? ($item['id'] ?? null) : $item;
+                                })->filter()->toArray();
+                                
+                                $ceremoniesData = \App\Models\Ceramonies::whereIn('id', $ceremonyIdsList)->get();
+                                $formattedNames = [];
+                                
+                                foreach($ceremoniesData as $ceremony) {
+                                    $groupType = '';
+                                    foreach($guest->category->ceremony_ids ?? [] as $cid) {
+                                        if(is_array($cid) && isset($cid['id']) && $cid['id'] == $ceremony->id) {
+                                            $groupType = ucfirst($cid['group_type'] ?? 'single');
+                                            break;
+                                        }
+                                    }
+                                    $formattedNames[] = $ceremony->ceramony_name . ($groupType ? ' (' . $groupType . ')' : '');
+                                }
+                                $namesStr = implode(', ', $formattedNames);
+                            @endphp
+                            <span style="background: #eef2ff; color: #4f46e5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid #c7d2fe; display: inline-block; max-width: 250px; white-space: normal;">
+                                {{ $namesStr ?: 'No ceremonies selected' }}
+                            </span>
+                        @elseif($guest->assigned_ceremonies)
+                        <span style="background: #eef2ff; color: #4f46e5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid #c7d2fe; display: inline-block; max-width: 250px; white-space: normal;">
                             {{ $guest->assigned_ceremonies }}
                         </span>
                         @elseif($guest->ceramony)

@@ -36,4 +36,36 @@ class GuestList extends Model
     public function familyMembers(){
         return $this->hasMany(GuestFamilyMember::class, 'guest_list_id');
     }
+
+    public function getDetailedAssignedCeremoniesAttribute()
+    {
+        if (!$this->category || empty($this->category->ceremony_ids)) {
+            return $this->assigned_ceremonies;
+        }
+
+        $details = [];
+        $ceremonyIds = collect($this->category->ceremony_ids)->pluck('id')->filter()->toArray();
+        $ceremonies = \App\Models\Ceramonies::whereIn('id', $ceremonyIds)->get()->keyBy('id');
+
+        foreach ($this->category->ceremony_ids as $c) {
+            $id = $c['id'] ?? null;
+            $type = $c['group_type'] ?? null;
+            
+            if ($id && isset($ceremonies[$id])) {
+                $name = $ceremonies[$id]->ceramony_name;
+                $count = 1;
+                if ($type === 'family') $count = 4;
+                elseif ($type === 'couple') $count = 2;
+                
+                $typeLabel = ucfirst($type ?? 'Single');
+                $details[] = "<div class='mb-1'><strong>{$name}</strong> <span class='badge bg-light text-dark border'>{$typeLabel} - {$count} Guests</span></div>";
+            }
+        }
+        
+        if (empty($details)) {
+            return $this->assigned_ceremonies;
+        }
+        
+        return implode('', $details);
+    }
 }

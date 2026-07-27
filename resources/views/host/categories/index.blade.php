@@ -29,8 +29,7 @@
                 <thead class="bg-light">
                     <tr>
                         <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Category Name</th>
-                        <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Group Type</th>
-                        <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Included Ceremonies</th>
+                        <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Included Ceremonies (Group Type)</th>
                         <th class="px-4 py-3 text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">Actions</th>
                     </tr>
                 </thead>
@@ -41,14 +40,28 @@
                                 <h6 class="mb-0 fw-bold">{{ $category->category_name }}</h6>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="badge bg-secondary rounded-pill px-3 py-1">{{ ucfirst($category->group_type) }}</span>
-                            </td>
-                            <td class="px-4 py-3">
                                 @php
-                                    $names = \App\Models\Ceramonies::whereIn('id', $category->ceremony_ids)->pluck('ceramony_name')->implode(', ');
+                                    $ceremonyIdsList = collect($category->ceremony_ids ?? [])->map(function($item) {
+                                        return is_array($item) ? ($item['id'] ?? null) : $item;
+                                    })->filter()->toArray();
+                                    
+                                    $ceremoniesData = \App\Models\Ceramonies::whereIn('id', $ceremonyIdsList)->get();
+                                    $formattedNames = [];
+                                    
+                                    foreach($ceremoniesData as $ceremony) {
+                                        $groupType = '';
+                                        foreach($category->ceremony_ids ?? [] as $cid) {
+                                            if(is_array($cid) && isset($cid['id']) && $cid['id'] == $ceremony->id) {
+                                                $groupType = ucfirst($cid['group_type'] ?? 'single');
+                                                break;
+                                            }
+                                        }
+                                        $formattedNames[] = $ceremony->ceramony_name . ($groupType ? ' <span class="badge bg-secondary opacity-75 ms-1" style="font-size: 0.6rem;">' . $groupType . '</span>' : '');
+                                    }
+                                    $namesHtml = implode('<br>', $formattedNames);
                                 @endphp
                                 <span class="text-primary small fw-semibold">
-                                    {{ $names ?: 'No ceremonies selected' }}
+                                    {!! $namesHtml ?: 'No ceremonies selected' !!}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-end">

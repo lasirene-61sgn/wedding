@@ -24,7 +24,10 @@ class GuestCategoryExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($category): array
     {
-        $names = Ceramonies::whereIn('id', $category->ceremony_ids ?? [])
+        $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+            return is_array($item) ? ($item['id'] ?? null) : $item;
+        })->filter()->toArray();
+        $names = Ceramonies::whereIn('id', $ceremonyIds)
             ->pluck('ceramony_name')
             ->implode(', ');
 

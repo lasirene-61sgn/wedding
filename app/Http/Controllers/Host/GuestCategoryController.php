@@ -31,22 +31,29 @@ class GuestCategoryController extends Controller
     }
 
     public function store(Request $request)
-    { {
-            $request->validate([
-                'category_name' => 'required|string|max:255',
-                'ceremony_ids' => 'required|array|min:1',
-                'group_type' => 'required|string|in:single,couple,family',
-            ]);
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+            'ceremony_ids' => 'required|array|min:1',
+            'group_types' => 'required|array',
+        ]);
 
-            GuestCategory::create([
-                'host_id' => Auth::id(),
-                'category_name' => $request->category_name,
-                'ceremony_ids' => $request->ceremony_ids, // Saved as JSON via Model casting
-                'group_type' => $request->group_type,
-            ]);
-
-            return redirect()->route('host.categories.index')->with('success', 'Category Created!');
+        $ceremoniesData = [];
+        foreach ($request->ceremony_ids as $id) {
+            $ceremoniesData[] = [
+                'id' => $id,
+                'group_type' => $request->group_types[$id] ?? 'single',
+            ];
         }
+
+        GuestCategory::create([
+            'host_id' => Auth::id(),
+            'category_name' => $request->category_name,
+            'ceremony_ids' => $ceremoniesData, // Saved as JSON via Model casting
+            'group_type' => 'mixed', // Legacy column
+        ]);
+
+        return redirect()->route('host.categories.index')->with('success', 'Category Created!');
     }
 
     public function exportExcel()

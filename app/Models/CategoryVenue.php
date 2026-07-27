@@ -9,6 +9,11 @@ class CategoryVenue extends Model
     protected $table = 'category_venues';
 
     protected $fillable = [
-        'category_name'
+        'category_name',
+        'ceremonies'
+    ];
+
+    protected $casts = [
+        'ceremonies' => 'array'
     ];
 }

@@ -26,6 +26,32 @@
                     @enderror
                 </div>
 
+                <!-- Ceremonies Input Section -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-bold text-gray-700">Default Ceremonies</label>
+                        <button type="button" onclick="addCeremonyField()" class="text-xs font-semibold text-amber-600 hover:text-amber-700">
+                            + Add Ceremony
+                        </button>
+                    </div>
+                    <div id="ceremonies-container" class="space-y-3">
+                        @php
+                            $ceremonies = old('ceremonies', is_array($category->ceremonies) ? $category->ceremonies : []);
+                        @endphp
+                        @forelse($ceremonies as $index => $ceremony)
+                            <div class="flex items-center gap-2">
+                                <input type="text" name="ceremonies[]" value="{{ $ceremony }}" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500" placeholder="e.g. Reception">
+                                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 font-bold px-2">&times;</button>
+                            </div>
+                        @empty
+                            <div class="flex items-center gap-2">
+                                <input type="text" name="ceremonies[]" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500" placeholder="e.g. Reception">
+                                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 font-bold px-2">&times;</button>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
                 <!-- Form Controls -->
                 <div class="flex items-center justify-between pt-4 border-t border-gray-50">
                     <a href="{{ route('admin.categoryvenue.index') }}" 
@@ -41,4 +67,16 @@
         </div>
     </div>
 </div>
+<script>
+    function addCeremonyField() {
+        const container = document.getElementById('ceremonies-container');
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2';
+        div.innerHTML = `
+            <input type="text" name="ceremonies[]" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500" placeholder="e.g. Sangeet">
+            <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 font-bold px-2">&times;</button>
+        `;
+        container.appendChild(div);
+    }
+</script>
 @endsection

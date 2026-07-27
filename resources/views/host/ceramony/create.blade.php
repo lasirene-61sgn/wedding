@@ -16,46 +16,54 @@
                         @csrf
 
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-12 mb-3">
                                 <label class="form-label">Category</label>
-                                <select name="category_id" class="form-select" required>
+                                <select name="category_id" id="category_select" class="form-select" required onchange="handleCategoryChange()">
                                     <option value="">-- Select Type --</option>
                                     @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
+                                    <option value="{{ $cat->id }}" data-ceremonies="{{ json_encode(is_array($cat->ceremonies) ? $cat->ceremonies : []) }}">{{ $cat->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Select Venue</label>
-                                <div class="input-group">
-                                    <select name="venue_id" id="venue_select" class="form-select">
-                                        <option value="" data-name="Venue to be announced">-- Choose My Venue --</option>
-                                        @foreach($venues as $v)
-                                        <option value="{{ $v->id }}" data-name="{{ $v->venue_name }}">{{ $v->venue_name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addVenueModal">
-                                        + New
-                                    </button>
+                        </div>
+
+                        <!-- Dynamic Ceremonies Box -->
+                        <div class="mb-4" id="ceremonies_box_container" style="display: none;">
+                            <label class="form-label fw-bold text-primary">Select Ceremony</label>
+                            <div id="ceremonies_badges" class="d-flex flex-wrap gap-2">
+                                <!-- Badges injected via JS -->
+                            </div>
+                        </div>
+
+                        <div id="ceremony_details_container" style="display: none;">
+                            <div class="mb-3" id="ceramony_name_container">
+                                <label class="form-label">Ceremony Name</label>
+                                <input type="text" name="ceramony_name" id="ceramony_name" class="form-control" required>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Select Venue</label>
+                                    <div class="input-group">
+                                        <select name="venue_id" id="venue_select" class="form-select">
+                                            <option value="" data-name="Venue to be announced">-- Choose My Venue --</option>
+                                            @foreach($venues as $v)
+                                            <option value="{{ $v->id }}" data-name="{{ $v->venue_name }}">{{ $v->venue_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addVenueModal">
+                                            + New
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-
-
-
-                        <div class="mb-3">
-                            <label class="form-label">Ceremony Name</label>
-                            <input type="text" name="ceramony_name" id="ceramony_name" class="form-control" required>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Date</label>
-                                <input type="date" name="ceramony_date" id="ceramony_date" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Time</label>
-                                <input type="time" name="ceramony_time" id="ceramony_time" class="form-control">
+                                <div class="col-md-4">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" name="ceramony_date" id="ceramony_date" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Time</label>
+                                    <input type="time" name="ceramony_time" id="ceramony_time" class="form-control">
+                                </div>
                             </div>
                         </div>
 
@@ -234,5 +242,79 @@
 </div>
 <script src="{{ asset('js/hostceramonycreate.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<script>
+    function handleCategoryChange() {
+        const select = document.getElementById('category_select');
+        const option = select.options[select.selectedIndex];
+        const ceremoniesBox = document.getElementById('ceremonies_box_container');
+        const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const detailsContainer = document.getElementById('ceremony_details_container');
+        
+        // Reset and hide
+        ceremoniesBadges.innerHTML = '';
+        detailsContainer.style.display = 'none';
+        document.getElementById('ceramony_name').value = '';
+
+        if (!option || !option.value) {
+            ceremoniesBox.style.display = 'none';
+            return;
+        }
+
+        const ceremonies = JSON.parse(option.getAttribute('data-ceremonies') || '[]');
+        
+        ceremonies.forEach(ceremony => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-outline-primary ceremony-badge';
+            btn.innerText = ceremony;
+            btn.onclick = function() {
+                selectCeremonyBadge(this, ceremony);
+            };
+            ceremoniesBadges.appendChild(btn);
+        });
+
+        // Add "Others" button
+        const othersBtn = document.createElement('button');
+        othersBtn.type = 'button';
+        othersBtn.className = 'btn btn-outline-secondary ceremony-badge';
+        othersBtn.innerText = 'Others';
+        othersBtn.onclick = function() {
+            selectCeremonyBadge(this, '');
+        };
+        ceremoniesBadges.appendChild(othersBtn);
+
+        ceremoniesBox.style.display = 'block';
+    }
+
+    function selectCeremonyBadge(clickedBtn, ceremonyName) {
+        // Highlight active button
+        document.querySelectorAll('.ceremony-badge').forEach(btn => {
+            btn.classList.remove('btn-primary', 'text-white');
+            if (btn.classList.contains('btn-outline-secondary')) {
+                // Others button
+                btn.classList.remove('btn-secondary', 'text-white');
+            }
+        });
+
+        if (clickedBtn.innerText === 'Others') {
+            clickedBtn.classList.add('btn-secondary', 'text-white');
+            clickedBtn.classList.remove('btn-outline-secondary');
+        } else {
+            clickedBtn.classList.add('btn-primary', 'text-white');
+            clickedBtn.classList.remove('btn-outline-primary');
+        }
+
+        // Show details container
+        document.getElementById('ceremony_details_container').style.display = 'block';
+        
+        // Set name
+        const nameInput = document.getElementById('ceramony_name');
+        nameInput.value = ceremonyName;
+        
+        if (ceremonyName === '') {
+            nameInput.focus();
+        }
+    }
+</script>
 
 @endsection
