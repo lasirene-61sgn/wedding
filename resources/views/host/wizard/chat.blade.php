@@ -89,6 +89,8 @@
             groom_name: ''
         };
 
+        const ceremonyCategories = @json($categories ?? []);
+
         let temporaryCeremonies = [];
 
         function scrollToBottom() {
@@ -167,23 +169,32 @@
                     
                     <div class="bg-white p-3 border border-stone-200 rounded-xl">
                         <h3 class="text-sm font-semibold text-wedding-dark mb-3">Venue Details</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <input type="text" name="venue_name" placeholder="Venue Name (e.g., The Taj Palace)" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="pincode" id="v_pincode" placeholder="Pincode (6 digits)" maxlength="6" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                        <div class="mb-4">
+                            <label class="text-xs text-stone-500 font-medium block mb-1">Select Venue (Optional)</label>
+                            <select name="existing_venue_id" id="existing_venue_id" onchange="toggleNewVenueForm()" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                <option value="">-- Add New Venue --</option>
+                                @foreach($venues as $v)
+                                    <option value="{{ $v->id }}">{{ $v->venue_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div id="new_venue_fields" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <input type="text" name="venue_name" placeholder="Venue Name (e.g., The Taj Palace)" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="pincode" id="v_pincode" placeholder="Pincode (6 digits)" maxlength="6" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             
-                            <select name="area_name" id="v_area_name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <select name="area_name" id="v_area_name" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                                 <option value="">Select Area</option>
                             </select>
                             
-                            <input type="text" name="district" id="v_district" placeholder="District" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="state" id="v_state" placeholder="State" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="circle" id="v_circle" placeholder="Circle" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="country" id="v_country" placeholder="Country" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="district" id="v_district" placeholder="District" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="state" id="v_state" placeholder="State" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="circle" id="v_circle" placeholder="Circle" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="country" id="v_country" placeholder="Country" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             
                             <input type="text" name="wedding_location" placeholder="Wedding Location (City/Town)" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             <input type="text" name="location_map" placeholder="Google Maps Link" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50 md:col-span-2">
                             
-                            <input type="text" name="venue_address" placeholder="Full Postal Address Details" required class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-3 focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="venue_address" placeholder="Full Postal Address Details" class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-3 focus:outline-none focus:border-wedding-gold bg-stone-50">
                         </div>
                     </div>
 
@@ -200,27 +211,27 @@
                                     <option value="groomparents">Groom's Parents</option>
                                 </select>
                             </div>
-                            <input type="text" name="bride_name" placeholder="Bride's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="groom_name" placeholder="Groom's Name" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="bride_number" placeholder="Bride's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="email" name="bride_email" placeholder="Bride's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="groom_number" placeholder="Groom's Contact Number" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="email" name="groom_email" placeholder="Groom's Email Address" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="bride_father_name" placeholder="Bride's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="bride_mother_name" placeholder="Bride's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="groom_father_name" placeholder="Groom's Father" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                            <input type="text" name="groom_mother_name" placeholder="Groom's Mother" required class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_name" placeholder="Bride's Name" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_name" placeholder="Groom's Name" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_number" placeholder="Bride's Contact Number" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="email" name="bride_email" placeholder="Bride's Email Address" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_number" placeholder="Groom's Contact Number" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="email" name="groom_email" placeholder="Groom's Email Address" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_father_name" placeholder="Bride's Father" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="bride_mother_name" placeholder="Bride's Mother" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_father_name" placeholder="Groom's Father" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            <input type="text" name="groom_mother_name" placeholder="Groom's Mother" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             <div>
                                 <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Date</label>
-                                <input type="date" name="wedding_date" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                <input type="date" name="wedding_date" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             </div>
                             <div>
                                 <label class="text-xs text-stone-500 font-medium block mb-1">Wedding Muhurtham / Time</label>
-                                <input type="time" name="wedding_time" required class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                <input type="time" name="wedding_time" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
                             </div>
                             <div class="md:col-span-2">
                                 <label class="text-xs text-stone-400 font-medium block mb-1">Main Wedding Banner Image Cover</label>
-                                <input type="file" name="wedding_image" accept="image/*" required class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
+                                <input type="file" name="wedding_image" accept="image/*" class="w-full p-2 border border-dashed border-stone-300 rounded-xl text-sm bg-stone-50 text-stone-500">
                             </div>
                         </div>
                     </div>
@@ -229,6 +240,17 @@
                 </form>
             `;
             scrollToBottom();
+            
+            window.toggleNewVenueForm = function() {
+                const select = document.getElementById('existing_venue_id');
+                const newForm = document.getElementById('new_venue_fields');
+                if (select && select.value) {
+                    newForm.style.display = 'none';
+                } else {
+                    newForm.style.display = 'grid';
+                }
+            };
+
 
             // Handle Pincode Auto-fetch
             const pincodeInput = document.getElementById('v_pincode');
@@ -272,26 +294,35 @@
                 submitBtn.disabled = true;
 
                 try {
-                    // 1. Create Venue
-                    let venueResponse = await fetch("{{ route('host.wizard.storeVenue') }}", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json'
-                        }
-                    });
+                    let existingVenueId = document.getElementById('existing_venue_id') ? document.getElementById('existing_venue_id').value : null;
 
-                    let venueData = await venueResponse.json();
-                    if (!venueResponse.ok || !venueData.success) {
-                        alert("Venue Error: " + (venueData.message || "Please check inputs."));
-                        submitBtn.innerText = 'Save Details →';
-                        submitBtn.disabled = false;
-                        return;
+                    if (!existingVenueId) {
+                        // 1. Create Venue
+                        let venueResponse = await fetch("{{ route('host.wizard.storeVenue') }}", {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        let venueData = await venueResponse.json();
+                        if (!venueResponse.ok || !venueData.success) {
+                            alert("Venue Error: " + (venueData.message || "Please check inputs."));
+                            submitBtn.innerText = 'Save Details →';
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                        
+                        state.venue_id = venueData.venue_id;
+                    } else {
+                        state.venue_id = existingVenueId;
                     }
-                    
-                    state.venue_id = venueData.venue_id;
-                    formData.append('venue_id', state.venue_id);
+
+                    if (state.venue_id) {
+                        formData.append('venue_id', state.venue_id);
+                    }
 
                     // 2. Create Invitation
                     let invResponse = await fetch("{{ route('host.wizard.storeInvitation') }}", {
@@ -448,26 +479,59 @@
                 listHtml += `</div>`;
             }
 
+            let catOptions = '<option value="">-- Select Category --</option>';
+            ceremonyCategories.forEach(cat => {
+                catOptions += `<option value="${cat.id}" data-ceremonies='${JSON.stringify(cat.ceremonies || [])}'>${cat.category_name}</option>`;
+            });
+
+            let venueOptions = '<option value="">-- Select Venue (Optional) --</option><option value="new">-- Add New Venue --</option>';
+            @foreach($venues as $v)
+                venueOptions += `<option value="{{ $v->id }}">{{ $v->venue_name }}</option>`;
+            @endforeach
+
             inputZone.innerHTML = `
                 ${listHtml}
-                <form id="ceremony-form" class="space-y-3 max-h-[40vh] overflow-y-auto custom-scrollbar pr-1">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div class="md:col-span-2">
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Category Group</label>
-                            <select id="c_category_id" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                                <option value="1">Pre-Wedding Event</option>
-                                <option value="2">Main Wedding Ceremony</option>
-                                <option value="3">Reception Party</option>
-                            </select>
-                        </div>
-                        <input type="text" id="c_name" placeholder="Ceremony Name (e.g., Haldi, Sangeet)" required class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-2 focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        <div>
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Date</label>
-                            <input type="date" id="c_date" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
-                        </div>
-                        <div>
-                            <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Time</label>
-                            <input type="time" id="c_time" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                <form id="ceremony-form" class="space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar pr-1">
+                    <div class="bg-white p-3 border border-stone-200 rounded-xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div class="md:col-span-2">
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Category Group</label>
+                                <select id="c_category_id" onchange="window.handleCeremonyCategoryChange()" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                    ${catOptions}
+                                </select>
+                            </div>
+                            <div id="c_badges_container" class="md:col-span-2 flex-wrap gap-2 hidden" style="display: none;"></div>
+                            
+                            <input type="text" id="c_name" placeholder="Ceremony Name (e.g., Haldi, Sangeet)" class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-2 focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            
+                            <div class="md:col-span-2">
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Select Venue (Optional)</label>
+                                <select id="c_existing_venue_id" onchange="window.toggleCeremonyNewVenueForm()" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                                    ${venueOptions}
+                                </select>
+                            </div>
+                            
+                            <div id="c_new_venue_fields" class="md:col-span-2 grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200 hidden" style="display: none;">
+                                <input type="text" id="c_v_name" placeholder="Venue Name" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white md:col-span-2">
+                                <input type="text" id="c_v_pincode" placeholder="Pincode (6 digits)" maxlength="6" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <select id="c_v_area_name" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white"><option value="">Area</option></select>
+                                <input type="text" id="c_v_district" placeholder="District" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <input type="text" id="c_v_state" placeholder="State" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <input type="text" id="c_v_circle" placeholder="Circle" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <input type="text" id="c_v_country" placeholder="Country" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <input type="text" id="c_v_wedding_location" placeholder="Wedding Location (City/Town)" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white">
+                                <input type="text" id="c_v_location_map" placeholder="Google Maps Link" class="p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-white md:col-span-2">
+                                <input type="text" id="c_v_venue_address" placeholder="Full Postal Address Details" class="p-3 border border-stone-200 rounded-xl text-sm md:col-span-2 focus:outline-none focus:border-wedding-gold bg-white">
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Date</label>
+                                <input type="date" id="c_date" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            </div>
+                            <div>
+                                <label class="text-xs text-stone-500 font-medium block mb-1">Ceremony Time</label>
+                                <input type="time" id="c_time" class="w-full p-3 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-wedding-gold bg-stone-50">
+                            </div>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row gap-2 pt-2">
@@ -481,6 +545,87 @@
                 </form>
             `;
             scrollToBottom();
+
+            window.toggleCeremonyNewVenueForm = function() {
+                const select = document.getElementById('c_existing_venue_id');
+                const newForm = document.getElementById('c_new_venue_fields');
+                if (select && select.value === 'new') {
+                    newForm.style.display = 'grid';
+                    newForm.classList.remove('hidden');
+                } else {
+                    newForm.style.display = 'none';
+                    newForm.classList.add('hidden');
+                }
+            };
+
+            window.handleCeremonyCategoryChange = function() {
+                const select = document.getElementById('c_category_id');
+                const option = select.options[select.selectedIndex];
+                const badgesContainer = document.getElementById('c_badges_container');
+                const nameInput = document.getElementById('c_name');
+
+                badgesContainer.innerHTML = '';
+                badgesContainer.style.display = 'none';
+                badgesContainer.classList.add('hidden');
+                nameInput.value = '';
+
+                if (!option || !option.value) return;
+
+                let ceremoniesRaw = option.getAttribute('data-ceremonies');
+                let ceremonies = ceremoniesRaw ? JSON.parse(ceremoniesRaw) : [];
+
+                if (ceremonies.length > 0) {
+                    badgesContainer.style.display = 'flex';
+                    badgesContainer.classList.remove('hidden');
+                    
+                    ceremonies.forEach(ceremony => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'px-3 py-1 text-xs border border-wedding-primary text-wedding-primary rounded-full hover:bg-wedding-primary hover:text-white transition c-badge';
+                        btn.innerText = ceremony;
+                        btn.onclick = function() {
+                            document.querySelectorAll('.c-badge').forEach(b => {
+                                b.classList.remove('bg-wedding-primary', 'text-white');
+                                b.classList.add('text-wedding-primary');
+                            });
+                            this.classList.add('bg-wedding-primary', 'text-white');
+                            this.classList.remove('text-wedding-primary');
+                            nameInput.value = ceremony;
+                        };
+                        badgesContainer.appendChild(btn);
+                    });
+                }
+            };
+
+            // Pincode fetch for new venue in ceremony
+            const pincodeInput = document.getElementById('c_v_pincode');
+            if (pincodeInput) {
+                pincodeInput.addEventListener('input', async function() {
+                    if(this.value.length === 6) {
+                        try {
+                            const response = await fetch(`https://api.postalpincode.in/pincode/${this.value}`);
+                            const data = await response.json();
+                            
+                            if(data && data[0].Status === 'Success') {
+                                const postOffices = data[0].PostOffice;
+                                document.getElementById('c_v_district').value = postOffices[0].District;
+                                document.getElementById('c_v_state').value = postOffices[0].State;
+                                document.getElementById('c_v_circle').value = postOffices[0].Circle;
+                                document.getElementById('c_v_country').value = postOffices[0].Country;
+                                
+                                const areaSelect = document.getElementById('c_v_area_name');
+                                areaSelect.innerHTML = '<option value="">Select Area</option>';
+                                postOffices.forEach(po => {
+                                    areaSelect.innerHTML += `<option value="${po.Name}">${po.Name}</option>`;
+                                });
+                                if(postOffices.length === 1) {
+                                    areaSelect.value = postOffices[0].Name;
+                                }
+                            }
+                        } catch (err) { console.error('Failed to fetch pincode', err); }
+                    }
+                });
+            }
         }
 
         function addCeremonyToList() {
@@ -488,6 +633,24 @@
             const name = document.getElementById('c_name').value.trim();
             const date = document.getElementById('c_date').value;
             const time = document.getElementById('c_time').value;
+
+            const existingVenueId = document.getElementById('c_existing_venue_id').value;
+            let newVenueData = null;
+            
+            if (existingVenueId === 'new') {
+                newVenueData = {
+                    venue_name: document.getElementById('c_v_name').value,
+                    pincode: document.getElementById('c_v_pincode').value,
+                    area_name: document.getElementById('c_v_area_name').value,
+                    district: document.getElementById('c_v_district').value,
+                    state: document.getElementById('c_v_state').value,
+                    circle: document.getElementById('c_v_circle').value,
+                    country: document.getElementById('c_v_country').value,
+                    wedding_location: document.getElementById('c_v_wedding_location').value,
+                    location_map: document.getElementById('c_v_location_map').value,
+                    venue_address: document.getElementById('c_v_venue_address').value,
+                };
+            }
 
             if (!name) {
                 alert("Please write a ceremony name before attempting to append it.");
@@ -501,7 +664,9 @@
                 ceramony_time: time ? time : null,
                 name: name,
                 date: date,
-                time: time
+                time: time,
+                existing_venue_id: existingVenueId,
+                new_venue_data: newVenueData
             });
 
             renderCeremonyZone();
@@ -524,9 +689,30 @@
                 for (let i = 0; i < temporaryCeremonies.length; i++) {
                     let item = temporaryCeremonies[i];
                     
+                    let finalVenueId = null;
+                    if (item.existing_venue_id === 'new' && item.new_venue_data && item.new_venue_data.venue_name) {
+                        let vFormData = new FormData();
+                        for (const key in item.new_venue_data) {
+                            vFormData.append(key, item.new_venue_data[key]);
+                        }
+                        let vRes = await fetch("{{ route('host.wizard.storeVenue') }}", {
+                            method: "POST",
+                            body: vFormData,
+                            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+                        });
+                        let vData = await vRes.json();
+                        if (vRes.ok && vData.success) {
+                            finalVenueId = vData.venue_id;
+                        }
+                    } else if (item.existing_venue_id && item.existing_venue_id !== 'new') {
+                        finalVenueId = item.existing_venue_id;
+                    } else if (state.venue_id) {
+                        finalVenueId = state.venue_id;
+                    }
+                    
                     let formData = new FormData();
                     formData.append('category_id', item.category_id);
-                    if(state.venue_id) formData.append('venue_id', state.venue_id);
+                    if(finalVenueId) formData.append('venue_id', finalVenueId);
                     formData.append('ceramony_name', item.ceramony_name);
                     if(item.ceramony_date) formData.append('ceramony_date', item.ceramony_date);
                     if(item.ceramony_time) formData.append('ceramony_time', item.ceramony_time);
@@ -554,6 +740,7 @@
                 alert("An error occurred while saving your ceremonies list: " + error.message);
                 renderCeremonyZone(); 
             }
+
         }
 
 

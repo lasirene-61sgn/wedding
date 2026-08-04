@@ -45,17 +45,17 @@
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
-            <a href="{{ route('host.google.login') }}" 
+            <!-- <a href="{{ route('host.google.login') }}" 
                class="w-full flex items-center justify-center gap-3 bg-white border border-stone-300 py-3 rounded-lg hover:bg-stone-50 transition-all shadow-sm">
                 <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5" alt="Google">
                 <span class="text-sm font-semibold text-stone-700">Sign up with Google</span>
-            </a>
+            </a> -->
             
-            <div class="relative flex items-center my-6">
+            <!-- <div class="relative flex items-center my-6">
                 <div class="flex-grow border-t border-stone-200"></div>
                 <span class="text-stone-400 text-[10px] uppercase tracking-[0.2em] px-3">Using Email</span>
                 <div class="flex-grow border-t border-stone-200"></div>
-            </div>
+            </div> -->
 
             <form action="{{ route('host.register.submit') }}" method="POST" class="space-y-4">
                 @csrf

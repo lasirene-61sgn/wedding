@@ -71,10 +71,34 @@ class HostLoginController extends Controller
 
     public function register(Request $request)
     {
+        // First validate basic formatting without unique constraint for CRM tracking
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:host,email',
-            'mobile' => 'required|numeric|unique:host,mobile',
+            'email' => 'required|email',
+            'mobile' => 'required|numeric',
+        ]);
+
+        // CRM Logic: Track registration attempts
+        $crm = \App\Models\Crm::where('mobile', $request->mobile)->first();
+        $welcomeBack = false;
+
+        if ($crm) {
+            $crm->increment('attempts_count');
+            $welcomeBack = true;
+        } else {
+            \App\Models\Crm::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'mobile' => $request->mobile,
+                'attempts_count' => 1
+            ]);
+        }
+
+        // Now validate uniqueness for actual host creation
+        // If they are already a fully registered host, this will throw an error and redirect back
+        $request->validate([
+            'email' => 'unique:host,email',
+            'mobile' => 'unique:host,mobile',
         ]);
 
         $otp = rand(100000, 999999);
@@ -87,11 +111,14 @@ class HostLoginController extends Controller
             'otp_verified' => false,
         ]);
 
-        // FIX: Match case structure precisely (sendWhatsAppOtp)
         $smsSent = $this->sendWhatsAppOtp($request->mobile, $otp);
 
         if (!$smsSent) {
             return redirect()->back()->withInput()->with('error', 'Failed to send otp to your mobile number');
+        }
+
+        if ($welcomeBack) {
+            return redirect()->route('host.verify.form')->with('success', 'Welcome back! You are logging in again for the packages. Code Sent successful!');
         }
 
         return redirect()->route('host.verify.form')->with('success', 'Code Sent successful!');
@@ -184,6 +211,7 @@ class HostLoginController extends Controller
             return false;
         }
     }
+
 
     public function showRegisterPackagesForm()
     {

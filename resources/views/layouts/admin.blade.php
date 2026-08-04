@@ -78,7 +78,7 @@
                 </a>
 
                 <!-- Business Relations -->
-                <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                <a href="{{ route('admin.crm.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.crm.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-person-vcard-fill mr-4 text-lg"></i> CRM
                 </a>
 

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PlannerLoginController;
 use App\Http\Controllers\Admin\VendorLoginController;
 use App\Http\Controllers\Admin\VenueLoginController;
 use App\Http\Controllers\Admin\AdminVenueController;
+use App\Http\Controllers\Admin\AdminCrmController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Guest\GuestInvitationController;
 use App\Http\Controllers\Host\AlbumController;
@@ -105,6 +106,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('/guestlist/{id}/delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.destroy');
         Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
         Route::resource('venues', AdminVenueController::class);
+        Route::get('/crm', [AdminCrmController::class, 'index'])->name('crm.index');
         
     });
 

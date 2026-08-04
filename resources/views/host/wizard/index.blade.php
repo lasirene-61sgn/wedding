@@ -11,7 +11,7 @@
         <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
             ✓
         </div>
-        <h2 class="text-3xl font-serif text-stone-800 mb-2">Welcome to your Setup Wizard!</h2>
+        <h2 class="text-3xl font-serif text-stone-800 mb-2">Welcome to your Quick Setup </h2>
         <p class="text-stone-600 mb-6">Your package has been successfully activated. Let's start setting up your wedding details.</p>
         
         <div class="p-4 bg-amber-50 text-amber-800 rounded-xl text-sm inline-block">
