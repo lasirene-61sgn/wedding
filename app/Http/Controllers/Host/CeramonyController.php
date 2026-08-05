@@ -123,7 +123,7 @@ class CeramonyController extends Controller
     public function create()
     {
         $categories = CategoryVenue::all();
-        $venues = VenueName::where('host_id', Auth::id())->get();
+        $venues = VenueName::where('host_id', Auth::id())->orWhereNull('host_id')->get();
         $backgrounds = CeramonyBackground::all();
         return view('host.ceramony.create', compact('categories', 'venues', 'backgrounds'));
     }
@@ -148,9 +148,12 @@ class CeramonyController extends Controller
         ]);
 
         if ($request->venue_id) {
-            $checkVenue = VenueName::where('id', $request->venue_id)->where('host_id', Auth::id())->first();
+            $checkVenue = VenueName::where('id', $request->venue_id)
+                ->where(function($q) {
+                    $q->where('host_id', Auth::id())->orWhereNull('host_id');
+                })->first();
             if (!$checkVenue) {
-                return redirect()->route('host.ceramony.create')->with('error', 'venue nto found');
+                return redirect()->route('host.ceramony.create')->with('error', 'venue not found');
             }
         }
         
@@ -206,7 +209,7 @@ class CeramonyController extends Controller
             return redirect()->back()->with('error', 'YOu cannot edit');
         }
         $categories = CategoryVenue::all();
-        $venues = VenueName::where('host_id', Auth::id())->get();
+        $venues = VenueName::where('host_id', Auth::id())->orWhereNull('host_id')->get();
         $backgrounds = CeramonyBackground::all();
         return view('host.ceramony.edit', compact('categories', 'ceramony', 'venues', 'backgrounds'));
     }

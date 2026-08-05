@@ -101,4 +101,29 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const pincodeInput = document.querySelector('input[name="pincode"]');
+    
+    pincodeInput.addEventListener('input', function() {
+        let pincode = this.value;
+        if(pincode.length === 6 && !isNaN(pincode)) {
+            fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data && data[0].Status === 'Success') {
+                    let postOffice = data[0].PostOffice[0];
+                    document.querySelector('input[name="area_name"]').value = postOffice.Name || '';
+                    document.querySelector('input[name="district"]').value = postOffice.District || '';
+                    document.querySelector('input[name="state"]').value = postOffice.State || '';
+                    document.querySelector('input[name="circle"]').value = postOffice.Circle || '';
+                    document.querySelector('input[name="country"]').value = postOffice.Country || 'India';
+                }
+            })
+            .catch(error => console.error('Error fetching pincode details:', error));
+        }
+    });
+});
+</script>
 @endsection

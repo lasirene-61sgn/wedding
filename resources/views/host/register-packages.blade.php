@@ -122,7 +122,7 @@
 
                         <!-- 9. Gallery Data -->
                         <li class="pl-4 leading-tight">
-                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->gallery)) !!}
+                            {!! e($package->gallery) !!} <span class="font-bold">({{ e($package->storage_limit_mb) }} MB)</span>
                         </li>
 
                         <!-- 10. Package Description Data -->
@@ -143,6 +143,23 @@
                             {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->dcgqrcode)) !!}
                         </li>
                         @endif
+
+                         @php
+                        $limits = [
+                        'sms_limit' => 'SMS Limit',
+                        'email_limit' => 'Email Limit',
+                        'whatsapp_limit' => 'WhatsApp Limit',
+                        ];
+                        @endphp
+
+                        @foreach($limits as $field => $title)
+                        @if(!empty($package->$field))
+                        <li class="pl-4 leading-tight text-gray-900 border-t border-gray-100 pt-1">
+                            <span class="font-medium text-gray-700">{{ $title }}:</span>
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e((string) $package->$field)) !!}
+                        </li>
+                        @endif
+                        @endforeach
 
                         <!-- 13. VAF Data -->
                         <li class="pl-4 leading-tight text-xs text-gray-600 border-t border-gray-100 pt-2 font-normal">

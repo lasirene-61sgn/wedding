@@ -74,4 +74,10 @@ class AdminVenueController extends Controller
         $venue->delete();
         return redirect()->route('admin.venues.index')->with('success', 'venue Deleted success');
     }
+
+    public function approve(VenueName $venue)
+    {
+        $venue->update(['host_id' => null]);
+        return redirect()->route('admin.venues.index')->with('success', 'Venue approved and is now global.');
+    }
 }

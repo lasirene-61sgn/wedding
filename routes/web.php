@@ -108,6 +108,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('/guestlist/{id}/delete', [AdminGuestListController::class, 'destroy'])->name('guestlist.destroy');
         Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
         Route::resource('venues', AdminVenueController::class);
+        Route::post('/venues/{venue}/approve', [AdminVenueController::class, 'approve'])->name('venues.approve');
         Route::get('/crm', [AdminCrmController::class, 'index'])->name('crm.index');
         Route::resource('addons', ChannelAddonController::class);
         

@@ -60,6 +60,15 @@
                                     <i class="bi bi-pencil-square mr-1"></i> Edit
                                 </a>
                                 
+                                @if(!is_null($venue->host_id))
+                                <form action="{{ route('admin.venues.approve', $venue->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to approve this venue and make it global?')">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 text-emerald-600 font-semibold text-xs rounded-xl transition-colors cursor-pointer">
+                                        <i class="bi bi-check-circle mr-1"></i> Approve
+                                    </button>
+                                </form>
+                                @endif
+
                                 <form action="{{ route('admin.venues.destroy', $venue->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you completely sure you want to delete this venue?')">
                                     @csrf
                                     @method('DELETE')

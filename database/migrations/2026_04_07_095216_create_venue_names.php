@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('venue_names', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('host_id')->constrained('host')->onDelete('cascade');
+            $table->foreignId('host_id')->nullable()->constrained('host')->onDelete('cascade');
             $table->string('venue_name');
             $table->string('pincode', 10);
             $table->string('area_name');
