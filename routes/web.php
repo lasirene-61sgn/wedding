@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\VendorLoginController;
 use App\Http\Controllers\Admin\VenueLoginController;
 use App\Http\Controllers\Admin\AdminVenueController;
 use App\Http\Controllers\Admin\AdminCrmController;
+use App\Http\Controllers\Admin\ChannelAddonController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Guest\GuestInvitationController;
 use App\Http\Controllers\Host\AlbumController;
@@ -48,6 +49,7 @@ use App\Http\Controllers\Host\MenuController;
 use App\Http\Controllers\Host\MessagingController;
 use App\Http\Controllers\Host\MoodBoardController;
 use App\Http\Controllers\Host\NotificationController;
+use App\Http\Controllers\Host\AddonController;
 use App\Http\Controllers\Host\SetupController;
 use App\Http\Controllers\Host\TaskController;
 use App\Http\Controllers\Host\TimelineController;
@@ -107,6 +109,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::delete('/guestlist/{id}/force-delete', [AdminGuestListController::class, 'forceDelete'])->name('guestlist.forceDelete');
         Route::resource('venues', AdminVenueController::class);
         Route::get('/crm', [AdminCrmController::class, 'index'])->name('crm.index');
+        Route::resource('addons', ChannelAddonController::class);
         
     });
 
@@ -153,6 +156,11 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::get('/dashboard', [HostLoginController::class, 'dashboard'])->name('dashboard');
         Route::get('/logout', [HostLoginController::class, 'logout'])->name('host.login');
         Route::post('/logout', [HostLoginController::class, 'logout'])->name('logout');
+
+        // Add-ons
+        Route::get('/addons', [AddonController::class, 'index'])->name('addons.index');
+        Route::post('/addons/init-payment', [AddonController::class, 'initPayment'])->name('addons.initPayment');
+        Route::post('/addons/purchase', [AddonController::class, 'purchase'])->name('addons.purchase');
 
         // ==========================================
         // PLUGGED IN: CHAT SETUP FORM WIZARD ROUTES

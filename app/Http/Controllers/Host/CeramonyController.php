@@ -164,7 +164,11 @@ class CeramonyController extends Controller
             $validated['custom_canvas_texts'] = json_decode($validated['custom_canvas_texts'], true);
         }
 
-        if ($request->ceramony_image) {
+        if($request->hasFile('ceramony_image')){
+            $newFileSize = $request->file('ceramony_image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
+            }
             $validated['ceramony_image'] = $request->file('ceramony_image')->store('ceramonies', 'public');
         }
 
@@ -238,8 +242,12 @@ class CeramonyController extends Controller
         }
 
         if ($request->hasFile('ceramony_image')) {
-            if ($ceramony->ceramony_image) {
+            if($ceramony->ceramony_image){
                 Storage::disk('public')->delete($ceramony->ceramony_image);
+            }
+            $newFileSize = $request->file('ceramony_image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
             }
             $validated['ceramony_image'] = $request->file('ceramony_image')->store('ceramonies', 'public');
         }

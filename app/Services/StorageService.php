@@ -6,6 +6,9 @@ use App\Models\Host;
 use App\Models\Pictures;
 use App\Models\Videos;
 use App\Models\Albums;
+use App\Models\Invitation;
+use App\Models\SaveDate;
+use App\Models\Ceramonies;
 use Illuminate\Support\Facades\Storage;
 
 class StorageService
@@ -52,6 +55,35 @@ class StorageService
                     }
                 }
             }
+        }
+
+        // Calculate Invitation images
+        $invitations = Invitation::where('host_id', $hostId)->get();
+        foreach ($invitations as $inv) {
+            if ($inv->wedding_image && Storage::disk('public')->exists($inv->wedding_image)) {
+                $totalBytesUsed += Storage::disk('public')->size($inv->wedding_image);
+            }
+        }
+
+        // Calculate SaveDate images
+        $savedates = SaveDate::where('host_id', $hostId)->get();
+        foreach ($savedates as $sd) {
+            if ($sd->image && Storage::disk('public')->exists($sd->image)) {
+                $totalBytesUsed += Storage::disk('public')->size($sd->image);
+            }
+        }
+
+        // Calculate Ceramonies images
+        $ceramonies = Ceramonies::where('host_id', $hostId)->get();
+        foreach ($ceramonies as $cer) {
+            if ($cer->ceramony_image && Storage::disk('public')->exists($cer->ceramony_image)) {
+                $totalBytesUsed += Storage::disk('public')->size($cer->ceramony_image);
+            }
+        }
+
+        // Calculate Host's reminder image
+        if ($host->reminder_image && Storage::disk('public')->exists($host->reminder_image)) {
+            $totalBytesUsed += Storage::disk('public')->size($host->reminder_image);
         }
 
         return ($totalBytesUsed + $newFileSizeInBytes) <= $limitBytes;

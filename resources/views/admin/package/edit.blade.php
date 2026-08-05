@@ -106,10 +106,24 @@
                         @error('package_description') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service Limit (Number of messages)</label>
-                        <input type="number" name="invite_limit" value="{{ old('invite_limit', $package->invite_limit) }}"
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">SMS Limit (Number of messages)</label>
+                        <input type="number" name="sms_limit" value="{{ old('sms_limit', $package->sms_limit) }}"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('invite_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
+                        @error('sms_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">EMIAL Limit (Number of messages)</label>
+                        <input type="number" name="email_limit" value="{{ old('email_limit', $package->email_limit) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('email_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">WHATSAPP Limit (Number of messages)</label>
+                        <input type="number" name="whatsapp_limit" value="{{ old('whatsapp_limit', $package->whatsapp_limit) }}"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('whatsapp_limit') <span class="block mt-1 text-xs text-red-600 font-medium">{{ $message }}</span> @enderror
                     </div>
 
                     <div>

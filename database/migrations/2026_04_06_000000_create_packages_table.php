@@ -26,8 +26,10 @@ return new class extends Migration
             $table->string('wishboard')->nullable();
             $table->string('dcgqrcode')->nullable();
             $table->text('vaf');
-            $table->integer('invite_limit')->nullable();
+            $table->integer('sms_limit')->nullable();
             $table->string('actual_amount');
+            $table->string('email_limit')->nullable();
+            $table->string('whatsapp_limit')->nullable();
             $table->timestamps();
         });
     }

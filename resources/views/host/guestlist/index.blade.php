@@ -39,6 +39,100 @@
         </div>
     </div>
 
+    {{-- ═══════ Permanent Per-Channel Quota Bar ═══════ --}}
+    @php
+        $_qHost    = Auth::user();
+        $_waLimit  = $_qHost->effectiveWhatsappLimit();
+        $_smsLimit = $_qHost->effectiveSmsLimit();
+        $_emLimit  = $_qHost->effectiveEmailLimit();
+        $_waSent   = (int)($_qHost->whatsapp_sent_count ?? 0);
+        $_smsSent  = (int)($_qHost->sms_sent_count     ?? 0);
+        $_emSent   = (int)($_qHost->email_sent_count   ?? 0);
+        $_waPct    = $_waLimit  > 0 ? min(100, round($_waSent  / $_waLimit  * 100)) : 0;
+        $_smsPct   = $_smsLimit > 0 ? min(100, round($_smsSent / $_smsLimit * 100)) : 0;
+        $_emPct    = $_emLimit  > 0 ? min(100, round($_emSent  / $_emLimit  * 100)) : 0;
+    @endphp
+    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+        <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+            📊 Message Quota
+            <div style="font-size: 10px; font-weight: 500; color: #94a3b8; text-transform: none; margin-top: 2px;">Save the Date + Invitations</div>
+        </div>
+
+        {{-- WhatsApp --}}
+        <div style="flex: 1; min-width: 150px; max-width: 220px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 12px; font-weight: 700; color: #15803d;">📲 WhatsApp</span>
+                    <a href="{{ route('host.addons.index') }}" style="font-size: 9px; font-weight: 700; color: #16a34a; text-decoration: none; background: #dcfce7; padding: 2px 5px; border-radius: 4px;">+ Add</a>
+                </div>
+                @if($_waLimit > 0)
+                    <span style="font-size: 12px; font-weight: 700; color: {{ $_waSent >= $_waLimit ? '#ef4444' : '#1e293b' }};">{{ $_waSent }} / {{ $_waLimit }}</span>
+                @else
+                    <span style="font-size: 11px; font-weight: 600; color: #64748b;">Unlimited</span>
+                @endif
+            </div>
+            @if($_waLimit > 0)
+                <div style="background: #f1f5f9; border-radius: 99px; height: 7px; overflow: hidden;">
+                    <div style="background: {{ $_waPct >= 100 ? '#ef4444' : ($_waPct >= 80 ? '#f59e0b' : '#22c55e') }}; width: {{ $_waPct }}%; height: 100%; border-radius: 99px; transition: width 0.4s;"></div>
+                </div>
+                @if($_waSent >= $_waLimit)
+                    <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">⚠ Limit reached</div>
+                @endif
+            @endif
+        </div>
+
+        <div style="width: 1px; height: 40px; background: #e2e8f0;"></div>
+
+        {{-- SMS --}}
+        <div style="flex: 1; min-width: 150px; max-width: 220px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 12px; font-weight: 700; color: #a16207;">💬 SMS</span>
+                    <a href="{{ route('host.addons.index') }}" style="font-size: 9px; font-weight: 700; color: #ca8a04; text-decoration: none; background: #fef9c3; padding: 2px 5px; border-radius: 4px;">+ Add</a>
+                </div>
+                @if($_smsLimit > 0)
+                    <span style="font-size: 12px; font-weight: 700; color: {{ $_smsSent >= $_smsLimit ? '#ef4444' : '#1e293b' }};">{{ $_smsSent }} / {{ $_smsLimit }}</span>
+                @else
+                    <span style="font-size: 11px; font-weight: 600; color: #64748b;">Unlimited</span>
+                @endif
+            </div>
+            @if($_smsLimit > 0)
+                <div style="background: #f1f5f9; border-radius: 99px; height: 7px; overflow: hidden;">
+                    <div style="background: {{ $_smsPct >= 100 ? '#ef4444' : ($_smsPct >= 80 ? '#f59e0b' : '#eab308') }}; width: {{ $_smsPct }}%; height: 100%; border-radius: 99px; transition: width 0.4s;"></div>
+                </div>
+                @if($_smsSent >= $_smsLimit)
+                    <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">⚠ Limit reached</div>
+                @endif
+            @endif
+        </div>
+
+        <div style="width: 1px; height: 40px; background: #e2e8f0;"></div>
+
+        {{-- Email --}}
+        <div style="flex: 1; min-width: 150px; max-width: 220px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 12px; font-weight: 700; color: #1d4ed8;">✉️ Email</span>
+                    <a href="{{ route('host.addons.index') }}" style="font-size: 9px; font-weight: 700; color: #2563eb; text-decoration: none; background: #dbeafe; padding: 2px 5px; border-radius: 4px;">+ Add</a>
+                </div>
+                @if($_emLimit > 0)
+                    <span style="font-size: 12px; font-weight: 700; color: {{ $_emSent >= $_emLimit ? '#ef4444' : '#1e293b' }};">{{ $_emSent }} / {{ $_emLimit }}</span>
+                @else
+                    <span style="font-size: 11px; font-weight: 600; color: #64748b;">Unlimited</span>
+                @endif
+            </div>
+            @if($_emLimit > 0)
+                <div style="background: #f1f5f9; border-radius: 99px; height: 7px; overflow: hidden;">
+                    <div style="background: {{ $_emPct >= 100 ? '#ef4444' : ($_emPct >= 80 ? '#f59e0b' : '#3b82f6') }}; width: {{ $_emPct }}%; height: 100%; border-radius: 99px; transition: width 0.4s;"></div>
+                </div>
+                @if($_emSent >= $_emLimit)
+                    <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">⚠ Limit reached</div>
+                @endif
+            @endif
+        </div>
+    </div>
+    {{-- ═══════════════════════════════════════════════ --}}
+
     @if(session('success'))
     <div style="background-color: #dcfce7; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-weight: 500; font-size: 14px;">
         {{ session('success') }}
@@ -83,14 +177,86 @@
         style="display: none; background: #ffffff; border: 2px solid #4f46e5; padding: 20px; border-radius: 16px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); animation: slideDown 0.3s ease-out;">
         <form action="{{ route('host.guestlist.bulkSend') }}" method="POST" id="bulk-send-form">
             @csrf
+            @php
+                $host      = Auth::user();
+                $waLimit   = $host->effectiveWhatsappLimit();
+                $smsLimit  = $host->effectiveSmsLimit();
+                $emLimit   = $host->effectiveEmailLimit();
+                $waSent    = (int)($host->whatsapp_sent_count ?? 0);
+                $smsSent   = (int)($host->sms_sent_count     ?? 0);
+                $emSent    = (int)($host->email_sent_count   ?? 0);
+                $waPct     = $waLimit  > 0 ? min(100, round($waSent  / $waLimit  * 100)) : 0;
+                $smsPct    = $smsLimit > 0 ? min(100, round($smsSent / $smsLimit * 100)) : 0;
+                $emPct     = $emLimit  > 0 ? min(100, round($emSent  / $emLimit  * 100)) : 0;
+            @endphp
             <div style="display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start;">
                 <div>
                     <span id="count-text" style="display: block; font-weight: 800; color: #4f46e5; font-size: 18px;">0
                         Guests Selected</span>
-                    <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Update ceremonies & invites</p>
+                    <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Update ceremonies &amp; invites</p>
                 </div>
 
-                <!-- <div style="flex: 1; min-width: 220px;">
+                {{-- Per-channel quota display --}}
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    {{-- WhatsApp --}}
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; min-width: 140px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #15803d; text-transform: uppercase;">📲 WhatsApp</div>
+                            <a href="{{ route('host.addons.index') }}" style="font-size: 10px; font-weight: 700; color: #16a34a; text-decoration: none; background: #dcfce7; padding: 2px 6px; border-radius: 4px;">+ Add</a>
+                        </div>
+                        @if($waLimit > 0)
+                            <div style="font-size: 13px; font-weight: 700; color: #1e293b;">{{ $waSent }} / {{ $waLimit }}</div>
+                            <div style="background: #dcfce7; border-radius: 99px; height: 6px; margin-top: 5px; overflow: hidden;">
+                                <div style="background: {{ $waPct >= 100 ? '#ef4444' : '#22c55e' }}; width: {{ $waPct }}%; height: 100%; border-radius: 99px;"></div>
+                            </div>
+                            @if($waSent >= $waLimit)
+                                <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">Limit reached</div>
+                            @endif
+                        @else
+                            <div style="font-size: 12px; font-weight: 600; color: #64748b;">Unlimited</div>
+                        @endif
+                    </div>
+
+                    {{-- SMS --}}
+                    <div style="background: #fefce8; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 14px; min-width: 140px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #a16207; text-transform: uppercase;">💬 SMS</div>
+                            <a href="{{ route('host.addons.index') }}" style="font-size: 10px; font-weight: 700; color: #ca8a04; text-decoration: none; background: #fef9c3; padding: 2px 6px; border-radius: 4px;">+ Add</a>
+                        </div>
+                        @if($smsLimit > 0)
+                            <div style="font-size: 13px; font-weight: 700; color: #1e293b;">{{ $smsSent }} / {{ $smsLimit }}</div>
+                            <div style="background: #fef9c3; border-radius: 99px; height: 6px; margin-top: 5px; overflow: hidden;">
+                                <div style="background: {{ $smsPct >= 100 ? '#ef4444' : '#eab308' }}; width: {{ $smsPct }}%; height: 100%; border-radius: 99px;"></div>
+                            </div>
+                            @if($smsSent >= $smsLimit)
+                                <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">Limit reached</div>
+                            @endif
+                        @else
+                            <div style="font-size: 12px; font-weight: 600; color: #64748b;">Unlimited</div>
+                        @endif
+                    </div>
+
+                    {{-- Email --}}
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 10px 14px; min-width: 140px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">✉️ Email</div>
+                            <a href="{{ route('host.addons.index') }}" style="font-size: 10px; font-weight: 700; color: #2563eb; text-decoration: none; background: #dbeafe; padding: 2px 6px; border-radius: 4px;">+ Add</a>
+                        </div>
+                        @if($emLimit > 0)
+                            <div style="font-size: 13px; font-weight: 700; color: #1e293b;">{{ $emSent }} / {{ $emLimit }}</div>
+                            <div style="background: #dbeafe; border-radius: 99px; height: 6px; margin-top: 5px; overflow: hidden;">
+                                <div style="background: {{ $emPct >= 100 ? '#ef4444' : '#3b82f6' }}; width: {{ $emPct }}%; height: 100%; border-radius: 99px;"></div>
+                            </div>
+                            @if($emSent >= $emLimit)
+                                <div style="font-size: 10px; color: #ef4444; margin-top: 3px; font-weight: 600;">Limit reached</div>
+                            @endif
+                        @else
+                            <div style="font-size: 12px; font-weight: 600; color: #64748b;">Unlimited</div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- <div style="flex: 1; min-width: 220px;">
                     <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">
                         Assign Category:
                     </label>
@@ -101,23 +267,47 @@
                         @endforeach
                     </select>
                     <p style="font-size: 11px; color: #64748b; mt-2">This will auto-assign all ceremonies linked to this category.</p>
-                </div> -->
+                </div> --}}
 
                 <div style="flex: 1; min-width: 220px;">
                     <label
                         style="display: block; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Send
-                        Invitation Via:</label>
+                        Via:</label>
                     <div
-                        style="display: flex; flex-direction: column; gap: 8px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                        <label
-                            style="font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><input
-                                type="checkbox" name="channels[]" value="whatsapp"> WhatsApp</label>
-                        <label
-                            style="font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><input
-                                type="checkbox" name="channels[]" value="sms"> SMS</label>
-                        <label
-                            style="font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px;"><input
-                                type="checkbox" name="channels[]" value="email"> Email</label>
+                        style="display: flex; flex-direction: column; gap: 6px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+
+                        {{-- WhatsApp --}}
+                        @php $waFull = $waLimit > 0 && $waSent >= $waLimit; @endphp
+                        <label style="font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: {{ $waFull ? 'not-allowed' : 'pointer' }}; opacity: {{ $waFull ? '0.5' : '1' }};">
+                            <input type="checkbox" name="channels[]" value="whatsapp" {{ $waFull ? 'disabled' : '' }}
+                                style="width:15px;height:15px; cursor: {{ $waFull ? 'not-allowed' : 'pointer' }};">
+                            <span style="color: {{ $waFull ? '#94a3b8' : '#1e293b' }};">📲 WhatsApp</span>
+                            @if($waFull)
+                                <span style="font-size: 10px; background: #fee2e2; color: #ef4444; border-radius: 4px; padding: 1px 6px; font-weight: 700;">Limit reached</span>
+                            @endif
+                        </label>
+
+                        {{-- SMS --}}
+                        @php $smsFull = $smsLimit > 0 && $smsSent >= $smsLimit; @endphp
+                        <label style="font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: {{ $smsFull ? 'not-allowed' : 'pointer' }}; opacity: {{ $smsFull ? '0.5' : '1' }};">
+                            <input type="checkbox" name="channels[]" value="sms" {{ $smsFull ? 'disabled' : '' }}
+                                style="width:15px;height:15px; cursor: {{ $smsFull ? 'not-allowed' : 'pointer' }};">
+                            <span style="color: {{ $smsFull ? '#94a3b8' : '#1e293b' }};">💬 SMS</span>
+                            @if($smsFull)
+                                <span style="font-size: 10px; background: #fee2e2; color: #ef4444; border-radius: 4px; padding: 1px 6px; font-weight: 700;">Limit reached</span>
+                            @endif
+                        </label>
+
+                        {{-- Email --}}
+                        @php $emFull = $emLimit > 0 && $emSent >= $emLimit; @endphp
+                        <label style="font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: {{ $emFull ? 'not-allowed' : 'pointer' }}; opacity: {{ $emFull ? '0.5' : '1' }};">
+                            <input type="checkbox" name="channels[]" value="email" {{ $emFull ? 'disabled' : '' }}
+                                style="width:15px;height:15px; cursor: {{ $emFull ? 'not-allowed' : 'pointer' }};">
+                            <span style="color: {{ $emFull ? '#94a3b8' : '#1e293b' }};">✉️ Email</span>
+                            @if($emFull)
+                                <span style="font-size: 10px; background: #fee2e2; color: #ef4444; border-radius: 4px; padding: 1px 6px; font-weight: 700;">Limit reached</span>
+                            @endif
+                        </label>
                     </div>
                 </div>
 

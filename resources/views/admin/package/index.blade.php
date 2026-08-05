@@ -45,8 +45,8 @@
                         <span class="text-gray-800 font-semibold">{{ $package->guest_limit }}</span>
                     </div>
                     <div>
-                        <span class="block text-gray-400 font-medium">Invite Limit</span>
-                        <span class="text-gray-800 font-semibold">{{ $package->invite_limit }}</span>
+                        <span class="block text-gray-400 font-medium">SMS Limit</span>
+                        <span class="text-gray-800 font-semibold">{{ $package->sms_limit }}</span>
                     </div>
                 </div>
 
@@ -95,8 +95,10 @@
                         <th scope="col" class="w-[25%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Package Name</th>
                         <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Price</th>
                         <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Guest Limit</th>
-                        <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Invite Limit</th>
-                        <th scope="col" class="w-[20%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Dynamic Custom Fields</th>
+                        <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">SMS Limit</th>
+                        <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">EMAIL Limit</th>
+                        <th scope="col" class="w-[15%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Whatsapp Limit</th>
+                        <!-- <th scope="col" class="w-[20%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs">Dynamic Custom Fields</th> -->
                         <th scope="col" class="w-[10%] px-6 py-4 font-semibold text-gray-700 uppercase tracking-wider text-xs text-right">Actions</th>
                     </tr>
                 </thead>
@@ -121,11 +123,18 @@
                             
                             <!-- Invite Limit -->
                             <td class="px-6 py-4 text-gray-600 font-medium truncate">
-                                {{ $package->invite_limit }} Limit
+                                {{ $package->sms_limit }} Limit
+                            </td>
+
+                            <td class="px-6 py-4 text-gray-600 font-medium truncate">
+                                {{ $package->email_limit }} Limit
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 font-medium truncate">
+                                {{ $package->whatsapp_limit }} Limit
                             </td>
 
                             <!-- Dynamic Custom Fields Badges -->
-                            <td class="px-6 py-4">
+                            <!-- <td class="px-6 py-4">
                                 <div class="flex flex-wrap gap-1 max-w-full">
                                     @if($package->customFeatures && $package->customFeatures->count() > 0)
                                         @foreach($package->customFeatures as $feature)
@@ -137,7 +146,7 @@
                                         <span class="text-xs text-gray-400 italic">None</span>
                                     @endif
                                 </div>
-                            </td>
+                            </td> -->
                             
                             <!-- Actions -->
                             <td class="px-6 py-4 text-sm text-right space-x-1 whitespace-nowrap">

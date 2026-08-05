@@ -35,6 +35,10 @@
                     <i class="bi bi-box-seam-fill mr-4 text-lg"></i>Host Packages
                 </a>
 
+                <a href="{{ route('admin.addons.index') }}" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('admin.addons.*') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
+                    <i class="bi bi-plus-circle-fill mr-4 text-lg"></i>Channel Add-ons
+                </a>
+
                 <a href="#" class="flex items-center px-4 py-3 rounded-xl font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors {{ request()->routeIs('#') ? 'bg-blue-50 text-blue-600 hover:bg-blue-50 hover:text-blue-600' : '' }}">
                     <i class="bi bi-box-seam-fill mr-4 text-lg"></i>Planner Packages
                 </a>

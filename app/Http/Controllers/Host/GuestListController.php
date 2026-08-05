@@ -273,88 +273,101 @@ class GuestListController extends Controller
             return back()->with('error', 'Please configure your Invitation Details first before sending messages.');
         }
 
-        $category = GuestCategory::find($request->category_id);
+        $selectedChannels = $request->channels ?? [];
+        $host = Auth::user();
+        $package = $host->package;
 
-        // FIX: Remove json_decode. Laravel's $casts already made this an array.
+        // --- Per-channel effective limit check ---
+        if (count($selectedChannels) > 0) {
+            $channelLimitMap = [
+                'whatsapp' => ['limit' => $host->effectiveWhatsappLimit(), 'sent_field' => 'whatsapp_sent_count'],
+                'sms'      => ['limit' => $host->effectiveSmsLimit(),      'sent_field' => 'sms_sent_count'],
+                'email'    => ['limit' => $host->effectiveEmailLimit(),    'sent_field' => 'email_sent_count'],
+            ];
+
+            // Count ALL selected guests that will receive an invitation (as long as they have save_date_sent)
+            $newSendCount = GuestList::whereIn('id', $request->ids)
+                ->where('host_id', Auth::id())
+                ->where('save_date_sent', true)   // invitation requires save_date sent
+                ->count();
+
+            foreach ($selectedChannels as $channel) {
+                if (!isset($channelLimitMap[$channel])) continue;
+                
+                $limit = $channelLimitMap[$channel]['limit'];
+                if ($limit <= 0) continue; // 0 means unlimited for this channel
+
+                $sentField = $channelLimitMap[$channel]['sent_field'];
+                $alreadySent = (int) ($host->$sentField ?? 0);
+                if (($alreadySent + $newSendCount) > $limit) {
+                    return back()->with('error',
+                        ucfirst($channel) . ' limit reached! Your combined limit is ' . $limit .
+                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.');
+                }
+            }
+        }
+
+        $category = GuestCategory::find($request->category_id);
         $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
             return is_array($item) ? ($item['id'] ?? null) : $item;
         })->filter()->toArray();
+        $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
 
-        $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)
-            ->pluck('ceramony_name')
-            ->implode(', ');
-
-        $selectedChannels = $request->channels ?? [];
         $channelsString = implode(', ', $selectedChannels);
         $guests = GuestList::whereIn('id', $request->ids)
             ->where('host_id', Auth::id())
             ->get();
 
-        $host = Auth::user();
-        $newSends = 0;
-        
-        if ($host->package && isset($host->package->invite_limit) && count($selectedChannels) > 0) {
-            $inviteLimit = (int) $host->package->invite_limit;
-            if ($inviteLimit > 0) {
-                foreach ($guests as $g) {
-                    if (!$g->invitation_sent) {
-                        $newSends++;
-                    }
-                }
-                $alreadySentCount = $host->messages_sent_count ?? 0;
-                if (($alreadySentCount + $newSends) > $inviteLimit) {
-                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
-                }
-            }
-        }
-
         $skipped = 0;
-        foreach ($guests as $guest) {
+        $actualSendCount = 0;
 
-            // Enforce logic: Invitation can only be sent if Save the Date has been sent
+        foreach ($guests as $guest) {
+            // Invitation can only be sent if Save the Date has been sent
             $canSendInvitation = $guest->save_date_sent == 1;
-            
+
             $catId = $request->category_id ?? $guest->category_id;
-            
             if (!$catId) {
                 $skipped++;
-                continue; // Skip guests with no category
+                continue;
             }
-            
+
             if ($request->category_id) {
                 $category = GuestCategory::find($request->category_id);
                 $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-        
-                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)
-                    ->pluck('ceramony_name')
-                    ->implode(', ');
+                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
             } else {
                 $allCeremonyNames = $guest->assigned_ceremonies;
-                $ceremonyIds = [$guest->ceramony_id]; // Fallback
+                $ceremonyIds = [$guest->ceramony_id];
             }
 
             if ($canSendInvitation && count($selectedChannels) > 0) {
                 $invitationService->sendBulkInvitations($guest, $selectedChannels, $allCeremonyNames);
+                $actualSendCount++;
             }
 
             $updateData = [
-                'send_via' => $channelsString,
+                'send_via'        => $channelsString,
                 'invitation_sent' => ($canSendInvitation && $request->has('channels')) ? true : $guest->invitation_sent,
             ];
-            
+
             if ($request->category_id) {
-                 $updateData['category_id'] = $request->category_id;
-                 $updateData['assigned_ceremonies'] = $allCeremonyNames;
-                 $updateData['ceramony_id'] = $ceremonyIds[0] ?? $guest->ceramony_id;
+                $updateData['category_id']           = $request->category_id;
+                $updateData['assigned_ceremonies']   = $allCeremonyNames;
+                $updateData['ceramony_id']           = $ceremonyIds[0] ?? $guest->ceramony_id;
             }
 
             $guest->update($updateData);
         }
 
-        if ($newSends > 0) {
-            $host->messages_sent_count = ($host->messages_sent_count ?? 0) + $newSends;
+        // Update per-channel sent counts
+        if ($actualSendCount > 0) {
+            foreach ($selectedChannels as $channel) {
+                if ($channel === 'whatsapp') $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'sms')      $host->sms_sent_count      = ($host->sms_sent_count      ?? 0) + $actualSendCount;
+                if ($channel === 'email')    $host->email_sent_count    = ($host->email_sent_count    ?? 0) + $actualSendCount;
+            }
             $host->save();
         }
 
@@ -362,7 +375,7 @@ class GuestListController extends Controller
             return back()->with('success', 'Operation completed. Note: ' . $skipped . ' guest(s) were skipped because they have no category assigned.');
         }
 
-        return back()->with('success', 'Category assigned and guests updated!');
+        return back()->with('success', 'Invitations sent successfully!');
     }
     public function bulkSaveDate(Request $request, InvitationService $invitationService)
     {
@@ -377,29 +390,46 @@ class GuestListController extends Controller
         }
 
         $selectedChannels = $request->channels ?? [];
-        $guests = GuestList::whereIn('id', $request->ids)
-            ->where('host_id', Auth::id())
-            ->get();
-
         $host = Auth::user();
-        $newSends = 0;
-        
-        if ($host->package && isset($host->package->invite_limit) && count($selectedChannels) > 0) {
-            $inviteLimit = (int) $host->package->invite_limit;
-            if ($inviteLimit > 0) {
-                foreach ($guests as $g) {
-                    if (!$g->save_date_sent) {
-                        $newSends++;
-                    }
-                }
-                $alreadySentCount = $host->messages_sent_count ?? 0;
-                if (($alreadySentCount + $newSends) > $inviteLimit) {
-                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
+        $package = $host->package;
+
+        // --- Per-channel effective limit check ---
+        if (count($selectedChannels) > 0) {
+            $channelLimitMap = [
+                'whatsapp' => ['limit' => $host->effectiveWhatsappLimit(), 'sent_field' => 'whatsapp_sent_count'],
+                'sms'      => ['limit' => $host->effectiveSmsLimit(),      'sent_field' => 'sms_sent_count'],
+                'email'    => ['limit' => $host->effectiveEmailLimit(),    'sent_field' => 'email_sent_count'],
+            ];
+
+            // Count ALL selected guests that will receive a Save the Date (must have a category)
+            $newSendCount = GuestList::whereIn('id', $request->ids)
+                ->where('host_id', Auth::id())
+                ->whereNotNull('category_id')
+                ->count();
+
+            foreach ($selectedChannels as $channel) {
+                if (!isset($channelLimitMap[$channel])) continue;
+                
+                $limit = $channelLimitMap[$channel]['limit'];
+                if ($limit <= 0) continue; // 0 means unlimited for this channel
+
+                $sentField = $channelLimitMap[$channel]['sent_field'];
+                $alreadySent = (int) ($host->$sentField ?? 0);
+                if (($alreadySent + $newSendCount) > $limit) {
+                    return back()->with('error',
+                        ucfirst($channel) . ' limit reached! Your combined limit is ' . $limit .
+                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.');
                 }
             }
         }
 
+        $guests = GuestList::whereIn('id', $request->ids)
+            ->where('host_id', Auth::id())
+            ->get();
+
         $skipped = 0;
+        $actualSendCount = 0;
+
         foreach ($guests as $guest) {
             if (!$guest->category_id) {
                 $skipped++;
@@ -408,15 +438,19 @@ class GuestListController extends Controller
 
             if (count($selectedChannels) > 0) {
                 $invitationService->sendBulkSaveDate($guest, $selectedChannels);
+                $actualSendCount++;
             }
-            
-            $guest->update([
-                'save_date_sent' => true
-            ]);
+
+            $guest->update(['save_date_sent' => true]);
         }
 
-        if ($newSends > 0) {
-            $host->messages_sent_count = ($host->messages_sent_count ?? 0) + $newSends;
+        // Update per-channel sent counts
+        if ($actualSendCount > 0) {
+            foreach ($selectedChannels as $channel) {
+                if ($channel === 'whatsapp') $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'sms')      $host->sms_sent_count      = ($host->sms_sent_count      ?? 0) + $actualSendCount;
+                if ($channel === 'email')    $host->email_sent_count    = ($host->email_sent_count    ?? 0) + $actualSendCount;
+            }
             $host->save();
         }
 
@@ -442,6 +476,10 @@ class GuestListController extends Controller
         }
 
         if ($request->hasFile('reminder_image')) {
+            $newFileSize = $request->file('reminder_image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
+            }
             $imagePath = $request->file('reminder_image')->store('reminders', 'public');
             $host->reminder_image = $imagePath;
         }
@@ -461,14 +499,20 @@ class GuestListController extends Controller
             }
         }
 
-        if ($host->package && isset($host->package->invite_limit)) {
-            $inviteLimit = (int) $host->package->invite_limit;
-            if ($inviteLimit > 0) {
-                $alreadySentCount = $host->messages_sent_count ?? 0;
-                if (($alreadySentCount + $newSends) > $inviteLimit) {
-                    return back()->with('error', 'Message limit reached! Your package allows sending messages to up to ' . $inviteLimit . ' guests. You have already sent ' . $alreadySentCount . ' messages.');
-                }
-            }
+        // Use effective limits (package + addons)
+        $waLimit  = $host->effectiveWhatsappLimit();
+        $smsLimit = $host->effectiveSmsLimit();
+        $emLimit  = $host->effectiveEmailLimit();
+
+        // 3. Current Usage
+        $waSent  = (int)($host->whatsapp_sent_count ?? 0);
+        $smsSent = (int)($host->sms_sent_count ?? 0);
+        $emSent  = (int)($host->email_sent_count ?? 0);
+
+        if (($waLimit > 0 && ($waSent + $newSends) > $waLimit) || 
+            ($smsLimit > 0 && ($smsSent + $newSends) > $smsLimit) ||
+            ($emLimit > 0 && ($emSent + $newSends) > $emLimit)) {
+            return back()->with('error', 'Message limit reached! Please check your remaining quotas.');
         }
 
         $skipped = 0;

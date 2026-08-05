@@ -32,7 +32,9 @@ class PackageSelectController extends Controller
             'wishboard' => 'nullable',
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
-            'invite_limit' =>' nullable|integer',
+            'sms_limit' =>' nullable|integer',
+            'email_limit' =>' nullable|integer',
+            'whatsapp_limit' =>' nullable|integer',
             'storage_limit_mb' => 'nullable|integer',
             'custom_fields' => 'nullable|array',
             
@@ -78,7 +80,9 @@ class PackageSelectController extends Controller
             'wishboard' => 'nullable',
             'dcgqrcode' => 'nullable',
             'vaf' => 'nullable',
-            'invite_limit' =>' nullable|integer',
+            'sms_limit' =>' nullable|integer',
+            'email_limit' => 'nullable|integer',
+            'whatsapp_limit' => 'nullable|integer',
             'storage_limit_mb' => 'nullable|integer',
             'custom_fields' => 'nullable|array',
         ]);

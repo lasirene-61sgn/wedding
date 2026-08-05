@@ -38,7 +38,13 @@ class Host extends Authenticatable
         'country',
         'location_map',
         'permissions',
-        'package_expires_at'
+        'package_expires_at',
+        'whatsapp_sent_count',
+        'sms_sent_count',
+        'email_sent_count',
+        'whatsapp_addon_limit',
+        'sms_addon_limit',
+        'email_addon_limit',
     ];
 
     protected $casts = [
@@ -54,9 +60,37 @@ class Host extends Authenticatable
     {
         return $this->belongsTo(Package::class);
     }
+
     public function creator()
     {
         return $this->belongsTo(Admin::class, 'created_by');
+    }
+
+    public function addonPurchases()
+    {
+        return $this->hasMany(\App\Models\HostAddonPurchase::class, 'host_id');
+    }
+
+    /**
+     * Effective limits = package base limit + purchased add-on credits.
+     * If no package or limit is 0, returns 0 (unlimited).
+     */
+    public function effectiveWhatsappLimit(): int
+    {
+        $base = $this->package ? (int)($this->package->whatsapp_limit ?? 0) : 0;
+        return $base + (int)($this->whatsapp_addon_limit ?? 0);
+    }
+
+    public function effectiveSmsLimit(): int
+    {
+        $base = $this->package ? (int)($this->package->sms_limit ?? 0) : 0;
+        return $base + (int)($this->sms_addon_limit ?? 0);
+    }
+
+    public function effectiveEmailLimit(): int
+    {
+        $base = $this->package ? (int)($this->package->email_limit ?? 0) : 0;
+        return $base + (int)($this->email_addon_limit ?? 0);
     }
 
     protected static function booted()

@@ -100,10 +100,24 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service Limit (Number of messages)</label>
-                        <input type="number" name="invite_limit" value="{{ old('invite_limit') }}" placeholder="e.g. 100"
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">SMS Limit </label>
+                        <input type="number" name="sms_limit" value="{{ old('sms_limit') }}" placeholder="e.g. 100"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('invite_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                        @error('sms_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">EMIAL Limit </label>
+                        <input type="number" name="email_limit" value="{{ old('email_limit') }}" placeholder="e.g. 100"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('email_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1.5">WHATSAPP Limit </label>
+                        <input type="number" name="whatsapp_limit" value="{{ old('whatsapp_limit') }}" placeholder="e.g. 100"
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
+                        @error('whatsapp_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
                     <div>

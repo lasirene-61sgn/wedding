@@ -92,6 +92,10 @@ class ChatWizardController extends Controller
         $validated['is_main'] = false;
 
         if ($request->hasFile('wedding_image')) {
+            $newFileSize = $request->file('wedding_image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
+            }
             $validated['wedding_image'] = $request->file('wedding_image')->store('wedding_images', 'public');
         }
 
@@ -163,6 +167,10 @@ class ChatWizardController extends Controller
         $validated['host_id'] = Auth::id();
 
         if ($request->hasFile('ceramony_image')) {
+            $newFileSize = $request->file('ceramony_image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
+            }
             $validated['ceramony_image'] = $request->file('ceramony_image')->store('ceramonies', 'public');
         }
 

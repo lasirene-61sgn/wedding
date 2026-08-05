@@ -27,6 +27,10 @@ class SaveDateController extends Controller
             'image' => 'required|mimes:jpg,jpeg,webp,gis,avif,svg|max:4048',
             'message' => 'nullable|string|max:100',
         ]);
+        $newFileSize = $request->file('image')->getSize();
+        if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+            return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
+        }
         $data = [
             'host_id' => Auth::id(),
             'invitation_id' => $request->invitation_id,
@@ -52,6 +56,10 @@ class SaveDateController extends Controller
         if($request->hasFile('image')){
             if($savedate->image && Storage::disk('public')->exists($savedate->image)){
                 Storage::disk('public')->delete($savedate->image);
+            }
+            $newFileSize = $request->file('image')->getSize();
+            if (!\App\Services\StorageService::hasSufficientStorage(Auth::id(), $newFileSize)) {
+                return redirect()->back()->with('error', 'Storage limit reached. Please upgrade your package to upload more files.');
             }
             $validated['image'] = $request->file('image')->store('savedates', 'public');
         }else {

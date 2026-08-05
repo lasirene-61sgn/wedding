@@ -122,9 +122,8 @@
 
                         <!-- 9. Gallery Data -->
                         <li class="pl-4 leading-tight">
-                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->gallery)) !!}
+                            {!! e($package->gallery) !!} <span class="font-bold">({{ e($package->storage_limit_mb) }} MB)</span>
                         </li>
-
                         <!-- 10. Package Description Data -->
                         <li class="pl-4 leading-normal text-xs text-gray-800 border-t border-gray-100 pt-2 font-normal">
                             {!! preg_replace('/(\d+|Upto|Free|Rs\.\/Per Msg\.)/i', '<span class="font-bold">$1</span>', e($package->package_description)) !!}
@@ -143,6 +142,23 @@
                             {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e($package->dcgqrcode)) !!}
                         </li>
                         @endif
+
+                        @php
+                        $limits = [
+                        'sms_limit' => 'SMS Limit',
+                        'email_limit' => 'Email Limit',
+                        'whatsapp_limit' => 'WhatsApp Limit',
+                        ];
+                        @endphp
+
+                        @foreach($limits as $field => $title)
+                        @if(!empty($package->$field))
+                        <li class="pl-4 leading-tight text-gray-900 border-t border-gray-100 pt-1">
+                            <span class="font-medium text-gray-700">{{ $title }}:</span>
+                            {!! preg_replace('/\((.*?)\)/', '<span class="font-bold">($1)</span>', e((string) $package->$field)) !!}
+                        </li>
+                        @endif
+                        @endforeach
 
                         <!-- 13. VAF Data -->
                         <li class="pl-4 leading-tight text-xs text-gray-600 border-t border-gray-100 pt-2 font-normal">
@@ -183,7 +199,7 @@
             @endforeach
         </div>
     </div>
-    
+
     <script>
         document.querySelectorAll('.package-form').forEach(form => {
             form.addEventListener('submit', async function(e) {
@@ -191,7 +207,7 @@
                 const packageId = this.dataset.packageId;
                 const submitBtn = this.querySelector('.select-plan-btn');
                 const originalText = submitBtn.innerText;
-                
+
                 submitBtn.innerText = 'Processing...';
                 submitBtn.disabled = true;
 
@@ -202,7 +218,9 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
-                        body: JSON.stringify({ package_id: packageId })
+                        body: JSON.stringify({
+                            package_id: packageId
+                        })
                     });
 
                     const data = await response.json();
@@ -226,7 +244,7 @@
                         "name": "Happywed",
                         "description": "Payment for " + data.package_name,
                         "order_id": data.order_id,
-                        "handler": function (response){
+                        "handler": function(response) {
                             form.querySelector('.rzp_payment_id').value = response.razorpay_payment_id;
                             form.querySelector('.rzp_order_id').value = response.razorpay_order_id;
                             form.querySelector('.rzp_signature').value = response.razorpay_signature;
@@ -242,13 +260,13 @@
                     };
 
                     const rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (response){
+                    rzp.on('payment.failed', function(response) {
                         alert(response.error.description);
                         submitBtn.innerText = originalText;
                         submitBtn.disabled = false;
                     });
                     rzp.open();
-                    
+
                 } catch (error) {
                     console.error("Payment error: ", error);
                     alert("Error initiating payment.");
