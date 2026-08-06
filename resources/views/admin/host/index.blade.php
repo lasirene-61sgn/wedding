@@ -25,6 +25,7 @@
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Package</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Created By</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500">Quick Setup</th>
                         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-500 text-right">Actions</th>
                     </tr>
                 </thead>
@@ -69,9 +70,28 @@
                             @endif
                         </td>
                         
+                        <!-- Quick Setup Badge -->
+                        <td class="px-6 py-4.5">
+                            @if($host->quick_setup_status == 'completed')
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                    Completed
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                    Pending
+                                </span>
+                            @endif
+                        </td>
+                        
                         <!-- Actions Row -->
                         <td class="px-6 py-4.5 text-right">
                             <div class="inline-flex items-center gap-2">
+                                <a href="{{ route('admin.host.show', $host->id) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors cursor-pointer">
+                                    <i class="bi bi-eye mr-1"></i> View
+                                </a>
+                                
                                 <a href="{{ route('admin.host.edit', $host->id) }}" class="inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold rounded-lg hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-colors cursor-pointer">
                                     <i class="bi bi-pencil-square mr-1"></i> Edit
                                 </a>

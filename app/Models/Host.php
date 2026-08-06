@@ -45,6 +45,7 @@ class Host extends Authenticatable
         'whatsapp_addon_limit',
         'sms_addon_limit',
         'email_addon_limit',
+        'quick_setup_status',
     ];
 
     protected $casts = [
@@ -54,6 +55,11 @@ class Host extends Authenticatable
 
     public static function getDefaultPermissions(){
         return ['ceremonies', 'gallery', 'invitation', 'save-the-date', 'guest-list', 'reports', 'categories'];
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'host_id');
     }
 
     public function package()

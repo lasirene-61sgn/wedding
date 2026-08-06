@@ -172,6 +172,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
             Route::post('/store-invitation', [ChatWizardController::class, 'storeInvitation'])->name('storeInvitation');
             Route::post('/store-savedate', [ChatWizardController::class, 'storeSaveDate'])->name('storeSaveDate');
             Route::post('/store-ceremony', [ChatWizardController::class, 'storeCeremony'])->name('storeCeremony');
+            Route::post('/store-quicksetup', [ChatWizardController::class, 'storeQuickSetup'])->name('storeQuickSetup');
         });
 
         // Your existing Resource Routes

@@ -63,6 +63,15 @@ class HostController extends Controller
         return redirect()->route('admin.host.index')->with('success', 'Host Created Successfully');
     }
 
+    public function show($id)
+    {
+        $host = Host::with(['package', 'creator', 'invitations' => function($q) {
+            $q->where('is_main', true)->latest();
+        }])->findOrFail($id);
+        
+        return view('admin.host.show', compact('host'));
+    }
+
     public function edit($id)
     {
         $host = Host::findOrFail($id);

@@ -38,7 +38,20 @@ class Invitation extends Model
         'text_color',
         'details_color',
         'text_positions',
-        'custom_canvas_texts'
+        'custom_canvas_texts',
+        'setup_role',
+        'creator_relationship',
+        'wedding_category_id',
+        'custom_wedding_category',
+        'is_engagement_completed',
+        'is_date_finalized',
+        'is_venue_finalized',
+        'venue_name',
+        'current_city',
+        'wedding_city',
+        'wedding_state',
+        'bride_display_name',
+        'groom_display_name'
     ];
 
     protected $casts = [

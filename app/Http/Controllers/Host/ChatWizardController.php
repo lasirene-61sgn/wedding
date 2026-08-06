@@ -181,4 +181,58 @@ class ChatWizardController extends Controller
             'message' => 'Additional ceremony added successfully!'
         ]);
     }
+
+    // 5. Store Quick Setup
+    public function storeQuickSetup(Request $request)
+    {
+        $validated = $request->validate([
+            'setup_role' => 'required|string|max:50',
+            'creator_relationship' => 'nullable|string|max:100',
+            'bride_name' => 'required|string|max:150',
+            'bride_number' => 'required|string|max:20',
+            'bride_email' => 'nullable|email|max:150',
+            'bride_display_name' => 'nullable|string|max:150',
+            'groom_name' => 'required|string|max:150',
+            'groom_number' => 'required|string|max:20',
+            'groom_email' => 'nullable|email|max:150',
+            'groom_display_name' => 'nullable|string|max:150',
+            'wedding_category_id' => 'nullable|exists:category_venues,id',
+            'custom_wedding_category' => 'nullable|string|max:100',
+            'is_engagement_completed' => 'nullable|boolean',
+            'is_date_finalized' => 'nullable|boolean',
+            'wedding_date' => 'nullable|date',
+            'is_venue_finalized' => 'nullable|boolean',
+            'venue_name' => 'nullable|string|max:255',
+            'current_city' => 'nullable|string|max:100', // API dropdown or other
+            'wedding_city' => 'nullable|string|max:100', // API dropdown or other
+            'wedding_state' => 'nullable|string|max:100', // API dropdown or other
+        ]);
+
+        $validated['host_id'] = Auth::id();
+        $validated['is_main'] = true; // this is the main invitation logic essentially
+        // Use default invite role based on setup_role or just weddingcouple
+        $validated['invite'] = 'weddingcouple';
+
+        $invitation = Invitation::create($validated);
+
+        // Automatically create a SaveTheDate record since we collected basic info
+        \App\Models\SaveDate::create([
+            'host_id' => $validated['host_id'],
+            'invitation_id' => $invitation->id,
+            'message' => 'Save the date for our wedding!'
+        ]);
+
+        // Update host status
+        $host = \App\Models\Host::find(Auth::id());
+        if ($host) {
+            $host->quick_setup_status = 'completed';
+            $host->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quick setup completed successfully!',
+            'invitation_id' => $invitation->id
+        ]);
+    }
 }
