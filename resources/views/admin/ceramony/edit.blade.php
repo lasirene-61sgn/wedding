@@ -1,110 +1,273 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
-        <!-- Header -->
-        <div class="px-6 py-4 bg-sky-600">
-            <h5 class="text-lg font-semibold text-white">Edit Ceremony: {{ $ceramony->ceramony_name }}</h5>
+<div class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+
+    <!-- Breadcrumb Navigation -->
+    <div class="flex items-center space-x-2 text-sm text-slate-500">
+        <a href="{{ route('admin.ceramony.index') }}" class="hover:text-indigo-600 font-medium transition-colors">Ceremonies</a>
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="text-slate-800 font-semibold">Edit Ceremony</span>
+    </div>
+
+    <!-- Alert Notifications -->
+    @if(session('error'))
+        <div class="p-4 bg-rose-50 border-l-4 border-rose-500 text-rose-800 rounded-r-xl shadow-sm flex items-start gap-3" role="alert">
+            <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ session('error') }}</span>
         </div>
+    @endif
+
+    @if(session('success'))
+        <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 rounded-r-xl shadow-sm flex items-start gap-3" role="alert">
+            <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm font-medium">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="p-4 bg-rose-50 border-l-4 border-rose-500 text-rose-800 rounded-r-xl shadow-sm" role="alert">
+            <div class="flex items-center gap-2 mb-2 font-semibold text-sm">
+                <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <span>Please fix the following issues:</span>
+            </div>
+            <ul class="list-disc list-inside text-sm space-y-1 font-medium pl-1 text-rose-700">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Form Card Container -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         
+        <!-- Card Header -->
+        <div class="px-6 py-5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-800 flex items-center justify-between text-white">
+            <div>
+                <h2 class="text-xl font-bold tracking-tight">Edit Ceremony: {{ $ceramony->ceramony_name }}</h2>
+                <p class="text-xs text-indigo-100 mt-0.5">Update schedules, venue details, or ceremony assets.</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-white backdrop-blur-sm border border-white/20">
+                ID: #{{ $ceramony->id }}
+            </span>
+        </div>
+
         <!-- Form Body -->
-        <div class="p-6">
-            <form action="{{ route('admin.ceramony.update', $ceramony->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div class="p-6 sm:p-8">
+            <form id="editCeremonyForm" action="{{ route('admin.ceramony.update', $ceramony->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
-                <!-- Relationship Dropdowns -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Host Selection -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Host</label>
-                        <select name="host_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm" required>
-                            @foreach($hosts as $host)
-                                <option value="{{ $host->id }}" {{ $ceramony->host_id == $host->id ? 'selected' : '' }}>
-                                    {{ $host->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                <!-- Section 1: Event Association -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">1. Event Association</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        
+                        <!-- Host Selection -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Select Host <span class="text-rose-500">*</span></label>
+                            <select name="host_id" 
+                                    class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3 transition @error('host_id') border-rose-400 bg-rose-50/20 @enderror" required>
+                                <option value="">-- Choose Host --</option>
+                                @foreach($hosts as $host)
+                                    <option value="{{ $host->id }}" {{ old('host_id', $ceramony->host_id) == $host->id ? 'selected' : '' }}>
+                                        {{ $host->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('host_id') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
 
-                    <!-- Category Selection -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select name="category_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm" required>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
-                                    {{ $cat->category_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <!-- Category Selection -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Ceremony Category <span class="text-rose-500">*</span></label>
+                            <select name="category_id" 
+                                    class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3 transition @error('category_id') border-rose-400 bg-rose-50/20 @enderror" required>
+                                <option value="">-- Choose Category --</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" {{ old('category_id', $ceramony->category_id) == $cat->id ? 'selected' : '' }}>
+                                        {{ $cat->category_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('category_id') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
 
-                    <!-- Venue Selection -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Venue</label>
-                        <select name="venue_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm">
-                            <option value="">-- No Venue --</option>
-                            @foreach($venues as $venue)
-                                <option value="{{ $venue->id }}" {{ $ceramony->venue_id == $venue->id ? 'selected' : '' }}>
-                                    {{ $venue->venue_name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <!-- Venue Selection -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Select Venue <span class="text-slate-400 font-normal">(Optional)</span></label>
+                            <select name="venue_id" 
+                                    class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3 transition @error('venue_id') border-rose-400 bg-rose-50/20 @enderror">
+                                <option value="">-- No Venue --</option>
+                                @foreach($venues as $venue)
+                                    <option value="{{ $venue->id }}" {{ old('venue_id', $ceramony->venue_id) == $venue->id ? 'selected' : '' }}>
+                                        {{ $venue->venue_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('venue_id') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
                     </div>
                 </div>
 
-                <!-- Text Info & Datetime Row -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <!-- Ceremony Name -->
-                    <div class="md:col-span-6">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Ceremony Name</label>
-                        <input type="text" name="ceramony_name" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm" value="{{ $ceramony->ceramony_name }}">
-                    </div>
-                    
-                    <!-- Date -->
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                        <input type="date" name="ceramony_date" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm" value="{{ $ceramony->ceramony_date }}">
-                    </div>
-                    
-                    <!-- Time -->
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                        <input type="time" name="ceramony_time" class="w-full rounded-md border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 text-sm" value="{{ $ceramony->ceramony_time }}">
+                <hr class="border-slate-100">
+
+                <!-- Section 2: Details & Schedule -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">2. Ceremony Details & Timing</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                        
+                        <!-- Ceremony Name -->
+                        <div class="md:col-span-6">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Ceremony Name <span class="text-rose-500">*</span></label>
+                            <input type="text" 
+                                   name="ceramony_name" 
+                                   value="{{ old('ceramony_name', $ceramony->ceramony_name) }}"
+                                   placeholder="e.g. Sangeet Celebration"
+                                   class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3.5 transition @error('ceramony_name') border-rose-400 bg-rose-50/20 @enderror" 
+                                   required>
+                            @error('ceramony_name') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Date -->
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Ceremony Date <span class="text-rose-500">*</span></label>
+                            <input type="date" 
+                                   name="ceramony_date" 
+                                   value="{{ old('ceramony_date', $ceramony->ceramony_date) }}"
+                                   class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3.5 transition @error('ceramony_date') border-rose-400 bg-rose-50/20 @enderror"
+                                   required>
+                            @error('ceramony_date') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Time -->
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Ceremony Time <span class="text-rose-500">*</span></label>
+                            <input type="time" 
+                                   name="ceramony_time" 
+                                   value="{{ old('ceramony_time', $ceramony->ceramony_time) }}"
+                                   class="w-full rounded-xl border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm py-2.5 px-3.5 transition @error('ceramony_time') border-rose-400 bg-rose-50/20 @enderror"
+                                   required>
+                            @error('ceramony_time') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
                     </div>
                 </div>
 
-                <!-- Media Handling Section -->
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Current Ceremony Image</label>
-                        @if($ceramony->ceramony_image)
-                            <img src="{{ asset('storage/' . $ceramony->ceramony_image) }}" alt="Current ceremony image" class="h-36 w-auto object-cover rounded-md border border-gray-300 shadow-sm bg-white p-1">
-                        @else
-                            <p class="text-xs text-gray-400 italic">No image uploaded.</p>
-                        @endif
-                    </div>
+                <hr class="border-slate-100">
+
+                <!-- Section 3: Media Management -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">3. Ceremony Banner / Cover Photo</h3>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload New Image <span class="text-xs font-normal text-gray-400">(Leave blank to keep current)</span></label>
-                        <input type="file" name="ceramony_image" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 bg-white">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <!-- Current Image Display -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60">
+                            <label class="block text-xs font-semibold text-slate-700 mb-2">Current Image</label>
+                            @if($ceramony->ceramony_image)
+                                <div class="relative w-full h-36 rounded-lg overflow-hidden border border-slate-200 shadow-sm bg-white">
+                                    <img src="{{ asset('storage/' . $ceramony->ceramony_image) }}" 
+                                         alt="{{ $ceramony->ceramony_name }}" 
+                                         class="w-full h-full object-cover">
+                                </div>
+                            @else
+                                <div class="w-full h-36 rounded-lg border border-dashed border-slate-300 bg-white flex flex-col items-center justify-center text-slate-400">
+                                    <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span class="text-xs">No image currently uploaded</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Upload / Replace Image -->
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex flex-col justify-between h-full">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                    Replace Image <span class="text-slate-400 font-normal">(Leave blank to retain)</span>
+                                </label>
+                                
+                                <div class="mt-2 flex justify-center px-4 py-4 border-2 border-dashed border-slate-300 rounded-xl hover:border-indigo-400 transition-colors bg-white">
+                                    <div class="text-center flex flex-col items-center">
+                                        <!-- Live Replacement Preview -->
+                                        <img id="newImagePreview" src="#" alt="New Preview" class="hidden w-28 h-20 object-cover rounded-lg border border-slate-200 shadow-sm mb-2">
+
+                                        <svg id="uploadIcon" class="h-8 w-8 text-slate-400 mb-1" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+
+                                        <label for="ceramony_image" class="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                                            <span>Select replacement file</span>
+                                            <input id="ceramony_image" name="ceramony_image" type="file" accept="image/*" class="sr-only" onchange="previewNewCeremonyImage(this)">
+                                        </label>
+                                        <p class="text-[10px] text-slate-400 mt-1">PNG, JPG, JPEG up to 5MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @error('ceramony_image') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
+                        </div>
                     </div>
                 </div>
 
-                <!-- Form Footer Controls -->
-                <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+                <!-- Form Controls & Actions -->
+                <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
                     <a href="{{ route('admin.ceramony.index') }}" 
-                       class="px-5 py-2 bg-white text-gray-700 font-medium rounded-md border border-gray-300 hover:bg-gray-50 text-sm transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1">
+                       class="px-5 py-2.5 bg-white text-slate-700 font-semibold rounded-xl border border-slate-300 hover:bg-slate-50 text-sm transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300">
                         Back to List
                     </a>
+                    
                     <button type="submit" 
-                            class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-md shadow-sm hover:bg-sky-700 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
-                        Update Ceremony
+                            id="submitEditCeremonyBtn"
+                            class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-75 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-sm text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        
+                        <!-- Spinner Icon (hidden by default) -->
+                        <svg id="editCeremonySpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+
+                        <span id="editCeremonyBtnText">Update Ceremony</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    // 1. Live Preview for New Upload Image
+    function previewNewCeremonyImage(input) {
+        const preview = document.getElementById('newImagePreview');
+        const icon = document.getElementById('uploadIcon');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                icon.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 2. Form Loading State on Submit
+    document.getElementById('editCeremonyForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitEditCeremonyBtn');
+        const btnText = document.getElementById('editCeremonyBtnText');
+        const spinner = document.getElementById('editCeremonySpinner');
+
+        submitBtn.disabled = true;
+        btnText.textContent = 'Updating Ceremony...';
+        spinner.classList.remove('hidden');
+    });
+</script>
 @endsection

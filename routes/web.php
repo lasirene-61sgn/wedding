@@ -190,6 +190,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::resource('invitation', InvitationController::class);
         Route::resource('savedate', SaveDateController::class);
         Route::get('guestlist/sample', [GuestListController::class, 'downloadSample'])->name('guestlist.downloadSample');
+        Route::get('guestlist/preview', [GuestListController::class, 'previewTemplate'])->name('guestlist.previewTemplate');
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');

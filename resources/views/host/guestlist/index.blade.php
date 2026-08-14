@@ -316,7 +316,7 @@
                         style="background: #10b981; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
                         Send Save the Date
                     </button>
-                    <button type="submit"
+                    <button type="button" onclick="openPreviewModal()"
                         style="background: #4f46e5; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);">
                         Send Invitations
                     </button>
@@ -546,6 +546,26 @@
     </div>
 </div>
 
+<!-- Preview Modal -->
+<div id="previewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; padding: 20px;">
+    <div style="background: white; width: 100%; max-width: 900px; height: 90vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+            <h3 style="margin: 0; font-size: 18px; color: #1e293b;">Invitation Preview</h3>
+            <button onclick="closePreviewModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">&times;</button>
+        </div>
+        <div style="flex: 1; padding: 0; background: #f1f5f9; position: relative;">
+            <iframe id="previewFrame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            <div id="previewLoader" style="position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.8);">
+                <span>Loading preview...</span>
+            </div>
+        </div>
+        <div style="padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc;">
+            <button type="button" onclick="closePreviewModal()" style="padding: 10px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; color: #475569; cursor: pointer; font-weight: 600;">Cancel</button>
+            <button type="button" onclick="confirmSend()" style="padding: 10px 16px; border-radius: 8px; border: none; background: #4f46e5; color: white; cursor: pointer; font-weight: 600;">Confirm & Send</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const master = document.getElementById('master-checkbox');
     const items = document.querySelectorAll('.guest-item');
@@ -586,6 +606,37 @@
     function submitSaveDate() {
         const form = document.getElementById('bulk-send-form');
         form.action = "{{ route('host.guestlist.bulkSaveDate') }}";
+        form.submit();
+    }
+
+    function openPreviewModal() {
+        const checked = document.querySelectorAll('.guest-item:checked').length;
+        if (checked === 0) {
+            alert('Please select at least one guest to send invitations.');
+            return;
+        }
+        
+        document.getElementById('previewModal').style.display = 'flex';
+        document.getElementById('previewLoader').style.display = 'flex';
+        const frame = document.getElementById('previewFrame');
+        
+        frame.onload = function() {
+            document.getElementById('previewLoader').style.display = 'none';
+        };
+        
+        // Use the new preview route
+        frame.src = "{{ route('host.guestlist.previewTemplate') }}";
+    }
+
+    function closePreviewModal() {
+        document.getElementById('previewModal').style.display = 'none';
+        document.getElementById('previewFrame').src = "";
+    }
+
+    function confirmSend() {
+        const form = document.getElementById('bulk-send-form');
+        // Ensure action is set to the default bulkSend route
+        form.action = "{{ route('host.guestlist.bulkSend') }}";
         form.submit();
     }
 </script>

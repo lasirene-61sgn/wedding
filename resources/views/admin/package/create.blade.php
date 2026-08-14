@@ -1,199 +1,225 @@
 @extends('layouts.admin')
 
 @section('content')
-<!-- Increased max-width to 5xl for a better widescreen balance -->
-<div class="container mx-auto px-4 py-6 max-w-5xl">
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <h4 class="text-xl font-bold text-gray-800 tracking-tight">Create Package</h4>
-            <a href="{{ route('admin.package.index') }}"
-                class="inline-flex items-center px-3 py-1.5 bg-gray-500 hover:bg-gray-600 border border-transparent rounded-md text-xs font-semibold text-white shadow-sm transition-colors">
-                Back
-            </a>
+<div class="w-full">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Create Package</h1>
+            <p class="text-sm text-gray-500 mt-1">Add a new hosting or subscription package to the system.</p>
         </div>
+        <a href="{{ route('admin.package.index') }}" 
+           class="inline-flex items-center px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium rounded-xl transition-colors shadow-xs">
+            <i class="bi bi-arrow-left mr-2"></i> Back
+        </a>
+    </div>
 
-        <div class="p-6">
-            <form action="{{ route('admin.package.store') }}" method="POST" class="space-y-5">
-                @csrf
+    <!-- Alert Messages -->
+    @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl w-full">
+            <div class="flex items-center text-red-700 font-semibold mb-2">
+                <i class="bi bi-exclamation-triangle-fill mr-2"></i> Please fix the errors below:
+            </div>
+            <ul class="list-disc list-inside text-sm text-red-600 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-                <!-- Top section converted to a responsive grid to fill out space -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Plan Name</label>
-                        <input type="text" name="package_name" value="{{ old('package_name') }}" placeholder="e.g. Gold Plan"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('package_name') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
+    <!-- Package Form Card (Full Width Span) -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-xs p-6 md:p-8 w-full">
+        <form action="{{ route('admin.package.store') }}" method="POST" class="space-y-6 w-full">
+            @csrf
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Price</label>
-                        <input type="text" name="price" value="{{ old('price') }}" placeholder="e.g. 1500+GST"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('price') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
+            <!-- Form Grid (2 Columns across full width) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Guest Count</label>
-                        <input type="number" name="guest_limit" value="{{ old('guest_limit') }}" placeholder="e.g. 100"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('guest_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Validity</label>
-                        <input type="text" name="validity" value="{{ old('validity') }}"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('validity') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <hr class="border-gray-200 my-5">
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Invitation</label>
-                        <input type="text" name="invitaion" value="{{ old('invitaion') }}" placeholder="Enter invitation info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('invitaion') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">RSVP</label>
-                        <input type="text" name="rsvp" value="{{ old('rsvp') }}" placeholder="Enter RSVP info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('rsvp') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Ceremonies</label>
-                        <input type="text" name="ceramonies" value="{{ old('ceramonies') }}" placeholder="Enter ceremonies info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('ceramonies') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Reports</label>
-                        <input type="text" name="reports" value="{{ old('reports') }}" placeholder="Enter reports info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('reports') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery (Text Display)</label>
-                        <input type="text" name="gallery" value="{{ old('gallery') }}" placeholder="Enter gallery text for display (e.g. 1.5 MB)"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>
-                        @error('gallery') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Gallery Limit (in MB)</label>
-                        <input type="number" name="storage_limit_mb" value="{{ old('storage_limit_mb') }}" placeholder="e.g. 500"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('storage_limit_mb') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Message Service (Text Display)</label>
-                        <textarea name="package_description" rows="3" placeholder="Enter package details for display..."
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('package_description') }}</textarea>
-                        @error('package_description') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">SMS Limit </label>
-                        <input type="number" name="sms_limit" value="{{ old('sms_limit') }}" placeholder="e.g. 100"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('sms_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">EMIAL Limit </label>
-                        <input type="number" name="email_limit" value="{{ old('email_limit') }}" placeholder="e.g. 100"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('email_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">WHATSAPP Limit </label>
-                        <input type="number" name="whatsapp_limit" value="{{ old('whatsapp_limit') }}" placeholder="e.g. 100"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('whatsapp_limit') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">Wishboard <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" name="wishboard" value="{{ old('wishboard') }}" placeholder="Enter wishboard info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('wishboard') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1.5">DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span></label>
-                        <input type="text" name="dcgqrcode" value="{{ old('dcgqrcode') }}" placeholder="Enter QR code info"
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3">
-                        @error('dcgqrcode') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
+                <!-- Plan Name -->
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1.5">VAF</label>
-                    <textarea name="vaf" rows="2" placeholder="Enter VAF information..."
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3" required>{{ old('vaf') }}</textarea>
-                    @error('vaf') <span class="text-xs text-red-600 font-medium mt-1 block">{{ $message }}</span> @enderror
+                    <label for="plan_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Plan Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="plan_name" id="plan_name" value="{{ old('plan_name') }}"
+                        placeholder="e.g. Gold Plan"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
 
-                <!-- Dynamic Fields Section -->
-                <hr class="border-gray-200 my-6">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h5 class="text-sm font-bold text-gray-700">Dynamic Custom Fields</h5>
-                        <button type="button" id="add-custom-field" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-xs font-semibold shadow-sm transition-colors">
-                            + Add Field
-                        </button>
-                    </div>
-                    <div id="custom-fields-container" class="space-y-3"></div>
+                <!-- Price -->
+                <div>
+                    <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Price <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="price" id="price" value="{{ old('price') }}"
+                        placeholder="e.g. 1500+GST"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
 
-                <div class="pt-4">
-                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm rounded-md shadow-md transition-colors">
-                        Save Package
-                    </button>
+                <!-- Guest Count -->
+                <div>
+                    <label for="guest_count" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Guest Count <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="guest_count" id="guest_count" value="{{ old('guest_count') }}"
+                        placeholder="e.g. 100"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
-            </form>
-        </div>
+
+                <!-- Validity -->
+                <div>
+                    <label for="validity" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Validity <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="validity" id="validity" value="{{ old('validity') }}"
+                        placeholder="e.g. 1 Year"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- Invitation -->
+                <div>
+                    <label for="invitation" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Invitation <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="invitation" id="invitation" value="{{ old('invitation') }}"
+                        placeholder="Enter invitation info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- RSVP -->
+                <div>
+                    <label for="rsvp" class="block text-sm font-semibold text-gray-700 mb-2">
+                        RSVP <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="rsvp" id="rsvp" value="{{ old('rsvp') }}"
+                        placeholder="Enter RSVP info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- Ceremonies -->
+                <div>
+                    <label for="ceremonies" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Ceremonies <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="ceremonies" id="ceremonies" value="{{ old('ceremonies') }}"
+                        placeholder="Enter ceremonies info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- Reports -->
+                <div>
+                    <label for="reports" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Reports <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="reports" id="reports" value="{{ old('reports') }}"
+                        placeholder="Enter reports info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- Gallery Text Display -->
+                <div>
+                    <label for="gallery_display" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Gallery (Text Display) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="gallery_display" id="gallery_display" value="{{ old('gallery_display') }}"
+                        placeholder="Enter gallery text for display (e.g. 1.5 MB)"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+                <!-- Gallery Limit (in MB) -->
+                <div>
+                    <label for="gallery_limit" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Gallery Limit (in MB)
+                    </label>
+                    <input type="number" name="gallery_limit" id="gallery_limit" value="{{ old('gallery_limit') }}"
+                        placeholder="e.g. 500"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- Message Service (Text Display) -->
+                <div>
+                    <label for="message_service_display" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Message Service (Text Display) <span class="text-red-500">*</span>
+                    </label>
+                    <textarea name="message_service_display" id="message_service_display" rows="3"
+                        placeholder="Enter package details for display..."
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>{{ old('message_service_display') }}</textarea>
+                </div>
+
+                <!-- SMS Limit -->
+                <div>
+                    <label for="sms_limit" class="block text-sm font-semibold text-gray-700 mb-2">
+                        SMS Limit
+                    </label>
+                    <input type="number" name="sms_limit" id="sms_limit" value="{{ old('sms_limit') }}"
+                        placeholder="e.g. 100"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- Email Limit -->
+                <div>
+                    <label for="email_limit" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Limit
+                    </label>
+                    <input type="number" name="email_limit" id="email_limit" value="{{ old('email_limit') }}"
+                        placeholder="e.g. 100"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- WhatsApp Limit -->
+                <div>
+                    <label for="whatsapp_limit" class="block text-sm font-semibold text-gray-700 mb-2">
+                        WhatsApp Limit
+                    </label>
+                    <input type="number" name="whatsapp_limit" id="whatsapp_limit" value="{{ old('whatsapp_limit') }}"
+                        placeholder="e.g. 100"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- Wishboard (Optional) -->
+                <div>
+                    <label for="wishboard" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Wishboard <span class="text-xs text-gray-400 font-normal">(Optional)</span>
+                    </label>
+                    <input type="text" name="wishboard" id="wishboard" value="{{ old('wishboard') }}"
+                        placeholder="Enter wishboard info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- DCG QR Code (Optional) -->
+                <div>
+                    <label for="dcg_qr_code" class="block text-sm font-semibold text-gray-700 mb-2">
+                        DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span>
+                    </label>
+                    <input type="text" name="dcg_qr_code" id="dcg_qr_code" value="{{ old('dcg_qr_code') }}"
+                        placeholder="Enter QR code info"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
+                </div>
+
+                <!-- VAF (Full Row Span) -->
+                <div class="md:col-span-2">
+                    <label for="vaf" class="block text-sm font-semibold text-gray-700 mb-2">
+                        VAF <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="vaf" id="vaf" value="{{ old('vaf') }}"
+                        placeholder="Enter VAF information..."
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
+                </div>
+
+            </div>
+
+            <!-- Form Action Buttons -->
+            <div class="pt-4 border-t border-gray-100 flex items-center justify-end space-x-3 w-full">
+                <a href="{{ route('admin.package.index') }}" 
+                   class="px-5 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm focus:ring-4 focus:ring-blue-200">
+                    <i class="bi bi-check-lg mr-1.5"></i> Save Package
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-
-<script>
-    document.getElementById('add-custom-field').addEventListener('click', function() {
-        const container = document.getElementById('custom-fields-container');
-        const index = container.children.length;
-        const row = document.createElement('div');
-        row.className = "flex flex-wrap md:flex-nowrap gap-3 items-center bg-gray-50 p-3 rounded-lg border border-gray-200";
-        row.innerHTML = `
-            <div class="w-full md:w-1/3"><input type="text" name="custom_fields[${index}][label]" placeholder="Field Label" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required></div>
-            <div class="w-full md:w-1/4">
-                <select name="custom_fields[${index}][type]" class="field-type-selector w-full rounded-md border-gray-300 shadow-sm text-sm p-2">
-                    <option value="text">Text / String</option>
-                    <option value="number">Number</option>
-                    <option value="date">Date</option>
-                    <option value="price">Price (₹)</option>
-                </select>
-            </div>
-            <div class="w-full flex-1 value-container"><input type="text" name="custom_fields[${index}][value]" placeholder="Enter Value" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required></div>
-            <button type="button" class="remove-field px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-md text-xs font-semibold">Remove</button>
-        `;
-        container.appendChild(row);
-
-        row.querySelector('.field-type-selector').addEventListener('change', function(e) {
-            const type = e.target.value;
-            const valueContainer = row.querySelector('.value-container');
-            if (type === 'text') valueContainer.innerHTML = `<input type="text" name="custom_fields[${index}][value]" placeholder="Enter text description" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
-            else if (type === 'number') valueContainer.innerHTML = `<input type="number" name="custom_fields[${index}][value]" placeholder="0" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
-            else if (type === 'date') valueContainer.innerHTML = `<input type="date" name="custom_fields[${index}][value]" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
-            else if (type === 'price') valueContainer.innerHTML = `<input type="number" step="0.01" name="custom_fields[${index}][value]" placeholder="0.00" class="w-full rounded-md border-gray-300 shadow-sm text-sm p-2" required>`;
-        });
-        row.querySelector('.remove-field').addEventListener('click', () => row.remove());
-    });
-</script>
 @endsection

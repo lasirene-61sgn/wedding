@@ -27,7 +27,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.venues.store') }}" method="POST" class="space-y-5">
+            <form id="createVenueForm" action="{{ route('admin.venues.store') }}" method="POST" class="space-y-5">
                 @csrf
 
                 <!-- Venue Name -->
@@ -93,8 +93,17 @@
                     <a href="{{ route('admin.venues.index') }}" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
                         Cancel
                     </a>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer shadow-blue-100">
-                        Save Global Venue
+                    <button type="submit" 
+                            id="submitVenueBtn"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-75 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer shadow-blue-100">
+                        
+                        <!-- Spinner Icon (hidden by default) -->
+                        <svg id="venueLoadingSpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+
+                        <span id="venueBtnText">Save Global Venue</span>
                     </button>
                 </div>
             </form>
@@ -104,6 +113,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Pincode API lookup
     const pincodeInput = document.querySelector('input[name="pincode"]');
     
     pincodeInput.addEventListener('input', function() {
@@ -123,6 +133,17 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error fetching pincode details:', error));
         }
+    });
+
+    // 2. Submit Button Loading State
+    document.getElementById('createVenueForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitVenueBtn');
+        const btnText = document.getElementById('venueBtnText');
+        const spinner = document.getElementById('venueLoadingSpinner');
+
+        submitBtn.disabled = true;
+        btnText.textContent = 'Saving Venue...';
+        spinner.classList.remove('hidden');
     });
 });
 </script>

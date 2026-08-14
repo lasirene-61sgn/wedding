@@ -200,8 +200,32 @@ class GuestInvitationController extends Controller
         
         $showSaveTheDate = $saveDateData && $invitation && !empty($invitation->wedding_date) && !empty($invitation->wedding_time);
 
-        // Pass $hfamily, $saveDateData, $invitation, and $showSaveTheDate down to the view via compact()
-        return view('guest.dashboard', compact('invite', 'guest', 'detailedCeremonies', 'hfamily', 'saveDateData', 'invitation', 'showSaveTheDate'));
+        // Determine which template the host selected
+        $template = $invite->host->template_id ?? 'template_1';
+        $templatePath = "guest_templates.{$template}";
+
+        if (!view()->exists($templatePath)) {
+            $templatePath = 'guest_templates.template_1';
+        }
+
+        $ceremonies = $detailedCeremonies;
+        $familyDetails = $hfamily;
+        $saveDate = $saveDateData;
+        $albums = \App\Models\Albums::where('host_id', $invite->host_id)->get();
+        $pictures = \App\Models\Pictures::where('host_id', $invite->host_id)->get();
+
+        // Pass variables to the selected template
+        return view($templatePath, compact(
+            'invite', 
+            'guest', 
+            'ceremonies', 
+            'familyDetails', 
+            'saveDate', 
+            'invitation', 
+            'albums', 
+            'pictures',
+            'showSaveTheDate'
+        ));
     }
 
     public function showGallery($uuid)

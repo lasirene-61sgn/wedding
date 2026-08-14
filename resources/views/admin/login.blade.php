@@ -106,7 +106,7 @@
                 @endif
 
                 <!-- Login Form -->
-                <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-4 sm:space-y-5">
+                <form id="adminLoginForm" action="{{ route('admin.login.submit') }}" method="POST" class="space-y-4 sm:space-y-5">
                     @csrf
                     
                     <!-- Email Field -->
@@ -139,7 +139,7 @@
                         @enderror
                     </div>
 
-                    <!-- Password Field -->
+                    <!-- Password Field with Visibility Toggle -->
                     <div>
                         <label for="password" class="block text-sm font-medium text-brand-charcoal mb-2">
                             Password
@@ -154,11 +154,28 @@
                                 type="password" 
                                 name="password" 
                                 id="password"
-                                class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl text-brand-charcoal placeholder-brand-gray/50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:shadow-inner-glow transition-all duration-300"
+                                class="w-full pl-11 pr-11 py-3 border border-gray-200 rounded-xl text-brand-charcoal placeholder-brand-gray/50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:shadow-inner-glow transition-all duration-300"
                                 placeholder="••••••••" 
                                 required
                                 autocomplete="current-password"
                             >
+                            <!-- Password Toggle Button -->
+                            <button 
+                                type="button" 
+                                id="togglePasswordBtn" 
+                                onclick="togglePasswordVisibility()" 
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-brand-gray/60 hover:text-brand-orange focus:outline-none transition-colors"
+                                aria-label="Toggle password visibility">
+                                <!-- Eye Open Icon -->
+                                <svg id="eyeOpenIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <!-- Eye Closed Icon -->
+                                <svg id="eyeClosedIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
@@ -173,17 +190,24 @@
                         </a>
                     </div>
 
-                    <!-- 🎯 3D Submit Button with Depth -->
+                    <!-- 🎯 3D Submit Button with Loading State -->
                     <button 
                         type="submit" 
-                        class="w-full bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orange-light hover:to-brand-gold-light text-white font-semibold py-3 px-6 rounded-xl shadow-3d hover:shadow-3d-hover transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-orange focus:ring-offset-white"
+                        id="submitBtn"
+                        class="w-full bg-gradient-to-r from-brand-orange to-brand-gold hover:from-brand-orange-light hover:to-brand-gold-light disabled:opacity-75 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl shadow-3d hover:shadow-3d-hover transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-orange focus:ring-offset-white flex items-center justify-center gap-2"
                     >
-                        <span class="flex items-center justify-center gap-2">
-                            Sign In to Dashboard
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                        </span>
+                        <!-- Spinner (hidden by default) -->
+                        <svg id="loadingSpinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+
+                        <span id="btnText">Sign In to Dashboard</span>
+
+                        <!-- Arrow Icon -->
+                        <svg id="btnArrow" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
                     </button>
                 </form>
 
@@ -212,5 +236,38 @@
         </p>
     </div>
 
+    <!-- JavaScript for Interactions -->
+    <script>
+        // 1. Password Visibility Toggle
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const eyeOpen = document.getElementById('eyeOpenIcon');
+            const eyeClosed = document.getElementById('eyeClosedIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            } else {
+                passwordInput.type = 'password';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            }
+        }
+
+        // 2. Form Loading State on Submit
+        document.getElementById('adminLoginForm').addEventListener('submit', function () {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnArrow = document.getElementById('btnArrow');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            // Disable button & show spinner
+            submitBtn.disabled = true;
+            btnText.textContent = 'Signing in...';
+            btnArrow.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>

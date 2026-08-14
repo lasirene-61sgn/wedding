@@ -40,7 +40,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.venues.update', $venue->id) }}" method="POST" class="space-y-5">
+            <form id="editVenueForm" action="{{ route('admin.venues.update', $venue->id) }}" method="POST" class="space-y-5">
                 @csrf
                 @method('PUT')
 
@@ -107,8 +107,17 @@
                     <a href="{{ route('admin.venues.index') }}" class="px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
                         Back to List
                     </a>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer shadow-blue-100">
-                        Update Venue Info
+                    <button type="submit" 
+                            id="submitEditVenueBtn"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-75 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors shadow-sm cursor-pointer shadow-blue-100">
+                        
+                        <!-- Spinner Icon (hidden by default) -->
+                        <svg id="editVenueSpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+
+                        <span id="editVenueBtnText">Update Venue Info</span>
                     </button>
                 </div>
             </form>
@@ -118,6 +127,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Pincode lookup integration
     const pincodeInput = document.querySelector('input[name="pincode"]');
     
     pincodeInput.addEventListener('input', function() {
@@ -137,6 +147,17 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => console.error('Error fetching pincode details:', error));
         }
+    });
+
+    // 2. Submit Button Loading State
+    document.getElementById('editVenueForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitEditVenueBtn');
+        const btnText = document.getElementById('editVenueBtnText');
+        const spinner = document.getElementById('editVenueSpinner');
+
+        submitBtn.disabled = true;
+        btnText.textContent = 'Updating Venue...';
+        spinner.classList.remove('hidden');
     });
 });
 </script>
