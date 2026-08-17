@@ -16,15 +16,28 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="row mb-4">
-                            <div class="col-md-12 mb-4">
-                                <label class="form-label fw-bold">Category</label>
+                        <div class="row mb-3">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Category</label>
                                 <select name="category_id" id="category_select" class="form-select" required onchange="handleCategoryChange()">
+                                    <option value="">-- Select Type --</option>
                                     @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" data-ceremonies="{{ json_encode(is_array($cat->ceremonies) ? $cat->ceremonies : []) }}" {{ $ceramony->category_id == $cat->id ? 'selected' : '' }}>
+                                    <option value="{{ $cat->id }}" 
+                                            data-subcategories="{{ json_encode(is_array($cat->sub_categories) ? $cat->sub_categories : []) }}"
+                                            {{ $cat->id == $ceramony->category_id ? 'selected' : '' }}>
                                         {{ $cat->category_name }}
                                     </option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Subcategory Select -->
+                        <div class="row mb-3" id="subcategory_container" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-primary">Select Subcategory</label>
+                                <select name="sub_category" id="subcategory_select" class="form-select" onchange="handleSubcategoryChange()">
+                                    <option value="">-- Select Subcategory --</option>
                                 </select>
                             </div>
                         </div>
@@ -34,6 +47,15 @@
                             <label class="form-label fw-bold text-primary">Select Ceremony</label>
                             <div id="ceremonies_badges" class="d-flex flex-wrap gap-2">
                                 <!-- Badges injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Dynamic HTML Templates Box -->
+                        <div class="mb-4" id="html_templates_container" style="display: none;">
+                            <label class="form-label fw-bold text-primary">Select HTML Template (Optional)</label>
+                            <p class="text-muted small mb-2">If you select an HTML template, it will be used for your invitation instead of the Canva design.</p>
+                            <div class="d-flex flex-wrap gap-3" id="html_templates_list">
+                                <!-- Templates injected via JS -->
                             </div>
                         </div>
 
@@ -183,15 +205,6 @@
                             <small class="text-muted">To show your design to guests, edit your design in Canva, click "Share" -> "Public View Link", and paste it here.</small>
 
                             <input type="hidden" name="canva_design_url" id="canva_design_url_input" value="{{ $ceramony->canva_design_url }}">
-                            <!-- <div id="canva_preview_container" class="mt-3 text-center" style="{{ $ceramony->canva_design_url ? 'display: block;' : 'display: none;' }}">
-                                <label class="fw-bold text-success d-block text-start mb-2">Your Canva Design Preview:</label>
-                                <img id="canva_preview_image" src="{{ $ceramony->canva_design_url }}" alt="Canva Design" class="img-fluid rounded shadow" style="max-height: 250px;">
-                                @if($ceramony->canva_design_url)
-                                <div class="mt-2">
-                                    <a href="{{ $ceramony->canva_design_url }}" target="_blank" class="btn btn-sm btn-info text-white"><i class="bi bi-box-arrow-up-right me-1"></i> Open Full Image</a>
-                                </div>
-                                @endif
-                            </div> -->
                         </div>
                         
                         <div class="d-flex justify-content-end gap-2 mt-4">
@@ -202,8 +215,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
@@ -243,80 +254,143 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script src="{{ asset('js/hostceramonyedit.js') }}"></script>
 <script>
-    // Initial loaded ceremony name
     const initialCeremonyName = "{{ $ceramony->ceramony_name }}";
+    const initialSubCategory = "{{ $ceramony->sub_category }}";
+    const initialHtmlTemplate = "{{ $ceramony->selected_html_template }}";
     
-    function handleCategoryChange(isInitialLoad = false) {
+    let currentSubcategories = [];
+    let isInitialLoad = true;
+
+    function handleCategoryChange() {
         const select = document.getElementById('category_select');
         const option = select.options[select.selectedIndex];
+        const subcategoryContainer = document.getElementById('subcategory_container');
+        const subcategorySelect = document.getElementById('subcategory_select');
         const ceremoniesBox = document.getElementById('ceremonies_box_container');
         const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const templatesContainer = document.getElementById('html_templates_container');
         const detailsContainer = document.getElementById('ceremony_details_container');
-        const nameInput = document.getElementById('ceramony_name');
         
-        // Reset and hide
         ceremoniesBadges.innerHTML = '';
+        subcategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+        subcategoryContainer.style.display = 'none';
+        ceremoniesBox.style.display = 'none';
+        templatesContainer.style.display = 'none';
+        
         if (!isInitialLoad) {
-            nameInput.value = '';
+            detailsContainer.style.display = 'none';
+            document.getElementById('ceramony_name').value = '';
         }
 
-        if (!option || !option.value) {
-            ceremoniesBox.style.display = 'none';
-            return;
-        }
+        if (!option || !option.value) return;
 
-        const ceremonies = JSON.parse(option.getAttribute('data-ceremonies') || '[]');
-        let matchedInitial = false;
+        currentSubcategories = JSON.parse(option.getAttribute('data-subcategories') || '[]');
+        
+        if (currentSubcategories.length > 0) {
+            currentSubcategories.forEach(sub => {
+                if (sub.name) {
+                    const opt = document.createElement('option');
+                    opt.value = sub.name;
+                    opt.innerText = sub.name;
+                    if (isInitialLoad && initialSubCategory === sub.name) opt.selected = true;
+                    subcategorySelect.appendChild(opt);
+                }
+            });
+            subcategoryContainer.style.display = 'block';
+            if (isInitialLoad && initialSubCategory) handleSubcategoryChange();
+        } else {
+            handleSubcategoryChange(true);
+        }
+    }
+
+    function handleSubcategoryChange(forceEmpty = false) {
+        const subcategorySelect = document.getElementById('subcategory_select');
+        const ceremoniesBox = document.getElementById('ceremonies_box_container');
+        const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const templatesContainer = document.getElementById('html_templates_container');
+        const templatesList = document.getElementById('html_templates_list');
+        const detailsContainer = document.getElementById('ceremony_details_container');
+        
+        ceremoniesBadges.innerHTML = '';
+        templatesList.innerHTML = '';
+        ceremoniesBox.style.display = 'none';
+        templatesContainer.style.display = 'none';
+        
+        if (!isInitialLoad) {
+            detailsContainer.style.display = 'none';
+            document.getElementById('ceramony_name').value = '';
+        }
+        
+        let ceremonies = [];
+        let htmlFiles = [];
+
+        if (!forceEmpty && subcategorySelect.value !== '') {
+            const selectedSub = currentSubcategories.find(s => s.name === subcategorySelect.value);
+            if (selectedSub) {
+                ceremonies = selectedSub.ceremonies || [];
+                htmlFiles = selectedSub.html_files || [];
+            }
+        } else if (subcategorySelect.value === '' && !forceEmpty) return;
+        
+        let foundMatch = false;
 
         ceremonies.forEach(ceremony => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'btn btn-outline-primary ceremony-badge';
-            btn.innerText = ceremony;
-            
+            btn.className = 'btn ceremony-badge';
             if (isInitialLoad && ceremony === initialCeremonyName) {
-                btn.className = 'btn btn-primary text-white ceremony-badge';
-                matchedInitial = true;
-            }
-
-            btn.onclick = function() {
-                selectCeremonyBadge(this, ceremony);
-            };
-            ceremoniesBadges.appendChild(btn);
-        });
-
-        // Add "Others" button
-        const othersBtn = document.createElement('button');
-        othersBtn.type = 'button';
-        othersBtn.innerText = 'Others';
-        
-        if (isInitialLoad && !matchedInitial) {
-            othersBtn.className = 'btn btn-secondary text-white ceremony-badge';
-        } else {
-            othersBtn.className = 'btn btn-outline-secondary ceremony-badge';
-        }
-
-        othersBtn.onclick = function() {
-            selectCeremonyBadge(this, '');
-        };
-        ceremoniesBadges.appendChild(othersBtn);
-
-        ceremoniesBox.style.display = 'block';
-    }
-
-    function selectCeremonyBadge(clickedBtn, ceremonyName) {
-        // Highlight active button
-        document.querySelectorAll('.ceremony-badge').forEach(btn => {
-            btn.classList.remove('btn-primary', 'text-white');
-            if (btn.classList.contains('btn-outline-secondary') || btn.classList.contains('btn-secondary')) {
-                // Others button
-                btn.classList.remove('btn-secondary', 'text-white');
-                btn.classList.add('btn-outline-secondary');
+                btn.classList.add('btn-primary', 'text-white');
+                foundMatch = true;
             } else {
                 btn.classList.add('btn-outline-primary');
             }
+            btn.innerText = ceremony;
+            btn.onclick = function() { selectCeremonyBadge(this, ceremony); };
+            ceremoniesBadges.appendChild(btn);
         });
 
+        const othersBtn = document.createElement('button');
+        othersBtn.type = 'button';
+        othersBtn.className = 'btn ceremony-badge ' + ((isInitialLoad && !foundMatch && initialCeremonyName !== '') ? 'btn-secondary text-white' : 'btn-outline-secondary');
+        othersBtn.innerText = 'Others';
+        othersBtn.onclick = function() { selectCeremonyBadge(this, ''); };
+        ceremoniesBadges.appendChild(othersBtn);
+        ceremoniesBox.style.display = 'block';
+
+        if (htmlFiles.length > 0) {
+            htmlFiles.forEach(file => {
+                const fileName = file.split('/').pop();
+                const fileUrl = "{{ asset('') }}" + file;
+                const isSelected = (isInitialLoad && initialHtmlTemplate === file) ? 'checked' : '';
+                const activeClass = isSelected ? 'border-primary bg-light' : '';
+                const div = document.createElement('div');
+                div.className = `form-check border rounded p-2 d-flex align-items-center justify-content-between template-item ${activeClass}`;
+                div.style = 'width: 100%; max-width: 450px;';
+                div.innerHTML = `<label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;"><input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="${file}" style="margin-left: -20px;" onchange="highlightTemplate(this)" ${isSelected}><span class="text-truncate fw-medium text-dark">${fileName}</span></label><a href="${fileUrl}" target="_blank" class="btn btn-sm btn-light border text-primary">Preview</a>`;
+                templatesList.appendChild(div);
+            });
+            const isNoneSelected = (isInitialLoad && !initialHtmlTemplate) ? 'checked' : '';
+            const noneDiv = document.createElement('div');
+            noneDiv.className = `form-check border rounded p-2 d-flex align-items-center justify-content-between template-item ${isNoneSelected ? 'border-primary bg-light' : ''}`;
+            noneDiv.style = 'width: 100%; max-width: 450px;';
+            noneDiv.innerHTML = `<label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;"><input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="" style="margin-left: -20px;" onchange="highlightTemplate(this)" ${isNoneSelected}><span class="text-truncate fw-medium text-dark">None (Use Canva)</span></label>`;
+            templatesList.appendChild(noneDiv);
+            templatesContainer.style.display = 'block';
+        }
+        detailsContainer.style.display = 'block';
+        isInitialLoad = false;
+    }
+    
+    function highlightTemplate(radio) {
+        document.querySelectorAll('.template-item').forEach(el => el.classList.remove('border-primary', 'bg-light'));
+        radio.closest('.template-item').classList.add('border-primary', 'bg-light');
+    }
+
+    function selectCeremonyBadge(clickedBtn, ceremonyName) {
+        document.querySelectorAll('.ceremony-badge').forEach(btn => {
+            btn.classList.remove('btn-primary', 'text-white', 'btn-secondary');
+            btn.classList.add(btn.innerText === 'Others' ? 'btn-outline-secondary' : 'btn-outline-primary');
+        });
         if (clickedBtn.innerText === 'Others') {
             clickedBtn.classList.add('btn-secondary', 'text-white');
             clickedBtn.classList.remove('btn-outline-secondary');
@@ -325,13 +399,9 @@
             clickedBtn.classList.remove('btn-outline-primary');
         }
         
-        // Set name
+        document.getElementById('ceremony_details_container').style.display = 'block';
         const nameInput = document.getElementById('ceramony_name');
-        
-        // If clicking others, don't clear it completely if we just switched to others in edit mode, 
-        // but normally we clear it. Since it's edit, if they click others intentionally, they want a new name.
         nameInput.value = ceremonyName;
-        
         if (ceremonyName === '') {
             nameInput.focus();
         }

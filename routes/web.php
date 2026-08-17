@@ -95,6 +95,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout');
         Route::resource('host', HostController::class);
         Route::resource('package', PackageSelectController::class);
+        Route::get('categoryvenue/ajax/{id}', [CategoryVenueController::class, 'getCategoryDetails']);
         Route::resource('categoryvenue', CategoryVenueController::class);
         Route::resource('ceramony', CeramonyController::class);
         Route::get('/backgrounds', [CeramonyController::class, 'manageBackgrounds'])->name('ceramony.backgrounds.index');

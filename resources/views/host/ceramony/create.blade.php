@@ -21,8 +21,18 @@
                                 <select name="category_id" id="category_select" class="form-select" required onchange="handleCategoryChange()">
                                     <option value="">-- Select Type --</option>
                                     @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" data-ceremonies="{{ json_encode(is_array($cat->ceremonies) ? $cat->ceremonies : []) }}">{{ $cat->category_name }}</option>
+                                    <option value="{{ $cat->id }}" data-subcategories="{{ json_encode(is_array($cat->sub_categories) ? $cat->sub_categories : []) }}">{{ $cat->category_name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Subcategory Select -->
+                        <div class="row mb-3" id="subcategory_container" style="display: none;">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold text-primary">Select Subcategory</label>
+                                <select name="sub_category" id="subcategory_select" class="form-select" onchange="handleSubcategoryChange()">
+                                    <option value="">-- Select Subcategory --</option>
                                 </select>
                             </div>
                         </div>
@@ -32,6 +42,15 @@
                             <label class="form-label fw-bold text-primary">Select Ceremony</label>
                             <div id="ceremonies_badges" class="d-flex flex-wrap gap-2">
                                 <!-- Badges injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Dynamic HTML Templates Box -->
+                        <div class="mb-4" id="html_templates_container" style="display: none;">
+                            <label class="form-label fw-bold text-primary">Select HTML Template (Optional)</label>
+                            <p class="text-muted small mb-2">If you select an HTML template, it will be used for your invitation instead of the Canva design.</p>
+                            <div class="d-flex flex-wrap gap-3" id="html_templates_list">
+                                <!-- Templates injected via JS -->
                             </div>
                         </div>
 
@@ -243,24 +262,78 @@
 <script src="{{ asset('js/hostceramonycreate.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script>
+    let currentSubcategories = [];
+
     function handleCategoryChange() {
         const select = document.getElementById('category_select');
         const option = select.options[select.selectedIndex];
+        
+        const subcategoryContainer = document.getElementById('subcategory_container');
+        const subcategorySelect = document.getElementById('subcategory_select');
+        
         const ceremoniesBox = document.getElementById('ceremonies_box_container');
         const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const templatesContainer = document.getElementById('html_templates_container');
         const detailsContainer = document.getElementById('ceremony_details_container');
         
         // Reset and hide
         ceremoniesBadges.innerHTML = '';
+        subcategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+        subcategoryContainer.style.display = 'none';
+        ceremoniesBox.style.display = 'none';
+        templatesContainer.style.display = 'none';
         detailsContainer.style.display = 'none';
         document.getElementById('ceramony_name').value = '';
 
         if (!option || !option.value) {
-            ceremoniesBox.style.display = 'none';
             return;
         }
 
-        const ceremonies = JSON.parse(option.getAttribute('data-ceremonies') || '[]');
+        currentSubcategories = JSON.parse(option.getAttribute('data-subcategories') || '[]');
+        
+        if (currentSubcategories.length > 0) {
+            currentSubcategories.forEach(sub => {
+                if (sub.name) {
+                    const opt = document.createElement('option');
+                    opt.value = sub.name;
+                    opt.innerText = sub.name;
+                    subcategorySelect.appendChild(opt);
+                }
+            });
+            subcategoryContainer.style.display = 'block';
+        } else {
+            // No subcategories found, show ceremonies direct (or just "Others")
+            handleSubcategoryChange(true);
+        }
+    }
+
+    function handleSubcategoryChange(forceEmpty = false) {
+        const subcategorySelect = document.getElementById('subcategory_select');
+        const ceremoniesBox = document.getElementById('ceremonies_box_container');
+        const ceremoniesBadges = document.getElementById('ceremonies_badges');
+        const templatesContainer = document.getElementById('html_templates_container');
+        const templatesList = document.getElementById('html_templates_list');
+        const detailsContainer = document.getElementById('ceremony_details_container');
+        
+        ceremoniesBadges.innerHTML = '';
+        templatesList.innerHTML = '';
+        ceremoniesBox.style.display = 'none';
+        templatesContainer.style.display = 'none';
+        detailsContainer.style.display = 'none';
+        document.getElementById('ceramony_name').value = '';
+        
+        let ceremonies = [];
+        let htmlFiles = [];
+
+        if (!forceEmpty && subcategorySelect.value !== '') {
+            const selectedSub = currentSubcategories.find(s => s.name === subcategorySelect.value);
+            if (selectedSub) {
+                ceremonies = selectedSub.ceremonies || [];
+                htmlFiles = selectedSub.html_files || [];
+            }
+        } else if (subcategorySelect.value === '' && !forceEmpty) {
+            return; // they selected "-- Select --"
+        }
         
         ceremonies.forEach(ceremony => {
             const btn = document.createElement('button');
@@ -282,8 +355,45 @@
             selectCeremonyBadge(this, '');
         };
         ceremoniesBadges.appendChild(othersBtn);
-
         ceremoniesBox.style.display = 'block';
+
+        // Render HTML templates if available
+        if (htmlFiles.length > 0) {
+            htmlFiles.forEach(file => {
+                const fileName = file.split('/').pop();
+                const fileUrl = "{{ asset('') }}" + file;
+                const div = document.createElement('div');
+                div.className = 'form-check border rounded p-2 d-flex align-items-center justify-content-between template-item';
+                div.style = 'width: 100%; max-width: 450px;';
+                div.innerHTML = `
+                    <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
+                        <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="${file}" style="margin-left: -20px;" onchange="highlightTemplate(this)">
+                        <span class="text-truncate fw-medium text-dark">${fileName}</span>
+                    </label>
+                    <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-light border text-primary">Preview</a>
+                `;
+                templatesList.appendChild(div);
+            });
+            
+            // Add a "None" option
+            const noneDiv = document.createElement('div');
+            noneDiv.className = 'form-check border rounded p-2 d-flex align-items-center justify-content-between template-item';
+            noneDiv.style = 'width: 100%; max-width: 450px;';
+            noneDiv.innerHTML = `
+                <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
+                    <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="" style="margin-left: -20px;" onchange="highlightTemplate(this)" checked>
+                    <span class="text-truncate fw-medium text-dark">None (Use Canva)</span>
+                </label>
+            `;
+            templatesList.appendChild(noneDiv);
+            
+            templatesContainer.style.display = 'block';
+        }
+    }
+    
+    function highlightTemplate(radio) {
+        document.querySelectorAll('.template-item').forEach(el => el.classList.remove('border-primary', 'bg-light'));
+        radio.closest('.template-item').classList.add('border-primary', 'bg-light');
     }
 
     function selectCeremonyBadge(clickedBtn, ceremonyName) {

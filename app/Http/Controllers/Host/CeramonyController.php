@@ -132,8 +132,10 @@ class CeramonyController extends Controller
     {
         $validated = $request->validate([
             'category_id'            => 'required|exists:category_venues,id',
+            'sub_category'           => 'nullable|string|max:255',
             'venue_id'               => 'nullable|exists:venue_names,id',
             'ceramony_name'          => 'required|string|max:255',
+            'selected_html_template' => 'nullable|string|max:1000',
             'ceramony_date'          => 'nullable|date',
             'ceramony_time'          => 'nullable',
             'ceramony_image'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',
@@ -221,8 +223,10 @@ class CeramonyController extends Controller
         }
         $validated = $request->validate([
             'category_id'            => 'required|exists:category_venues,id',
+            'sub_category'           => 'nullable|string|max:255',
             'venue_id'               => 'nullable|exists:venue_names,id',
             'ceramony_name'          => 'required|string|max:255',
+            'selected_html_template' => 'nullable|string|max:1000',
             'ceramony_date'          => 'nullable|date',
             'ceramony_time'          => 'nullable',
             'ceramony_image'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3048',

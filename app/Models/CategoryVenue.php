@@ -10,10 +10,14 @@ class CategoryVenue extends Model
 
     protected $fillable = [
         'category_name',
-        'ceremonies'
+        'ceremonies',
+        'sub_categories',
+        'html_file'
     ];
 
     protected $casts = [
-        'ceremonies' => 'array'
+        'ceremonies'     => 'array',
+        'sub_categories' => 'array',
+        'html_file'      => 'array',
     ];
 }

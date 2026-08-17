@@ -13,8 +13,10 @@ class Ceramonies extends Model
     protected $fillable = [
         'host_id',
         'category_id',
+        'sub_category',
         'venue_id',
         'ceramony_name',
+        'selected_html_template',
         'ceramony_date',
         'ceramony_time',
         'ceramony_image',
