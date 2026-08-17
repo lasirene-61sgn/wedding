@@ -322,7 +322,8 @@ class GuestListController extends Controller
         $actualSendCount = 0;
 
         foreach ($guests as $guest) {
-            $canSendInvitation = true;
+            // Invitation can only be sent if Save the Date has been sent
+            $canSendInvitation = $guest->save_date_sent == 1;
 
             $catId = $request->category_id ?? $guest->category_id;
             if (!$catId) {
@@ -370,32 +371,11 @@ class GuestListController extends Controller
             $host->save();
         }
 
-        $messages = [];
-        if ($actualSendCount > 0) {
-            $messages[] = "{$actualSendCount} Invitation(s) sent successfully!";
-        }
         if ($skipped > 0) {
-            $messages[] = "{$skipped} guest(s) skipped because they have no category assigned.";
+            return back()->with('success', 'Operation completed. Note: ' . $skipped . ' guest(s) were skipped because they have no category assigned.');
         }
 
-        $msgStr = implode(' ', $messages);
-
-        if ($actualSendCount > 0) {
-            if ($skipped > 0) {
-                return back()->with('success', $msgStr);
-            }
-            return back()->with('success', 'Invitations sent successfully!');
-        }
-
-        if ($skipped > 0) {
-            return back()->with('error', "Failed: " . $msgStr);
-        }
-
-        if (count($selectedChannels) === 0) {
-            return back()->with('error', 'No communication channels (WhatsApp, SMS, Email) were selected.');
-        }
-
-        return back()->with('error', 'No invitations were sent. Please check your selections and try again.');
+        return back()->with('success', 'Invitations sent successfully!');
     }
     public function bulkSaveDate(Request $request, InvitationService $invitationService)
     {
@@ -560,18 +540,5 @@ class GuestListController extends Controller
         }
 
         return back()->with('success', "Reminders sent successfully to all invited guests!");
-    }
-
-    public function previewTemplate(Request $request)
-    {
-        $hostId = Auth::id();
-        $invitation = \App\Models\Invitation::where('host_id', $hostId)->first();
-        $ceremonies = \App\Models\Ceramonies::where('host_id', $hostId)->get();
-        $albums = \App\Models\Albums::where('host_id', $hostId)->get();
-        $pictures = \App\Models\Pictures::where('host_id', $hostId)->get();
-        $saveDate = \App\Models\SaveDate::where('host_id', $hostId)->first();
-        $familyDetails = \App\Models\HostFamilyDetails::where('host_id', $hostId)->first();
-
-        return view('guest_templates.template_1', compact('invitation', 'ceremonies', 'albums', 'pictures', 'saveDate', 'familyDetails'));
     }
 }

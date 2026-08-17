@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ $invitation->bride_name ?? 'Aanya' }} ♥ {{ $invitation->groom_name ?? 'Vihaan' }} · Shubh Vivaah</title>
+    <title>Aanya ♥ Vihaan · Shubh Vivaah · Jaipur 2027</title>
     <meta name="description"
-        content="You are warmly invited to the wedding of {{ $invitation->bride_name ?? 'Aanya' }} & {{ $invitation->groom_name ?? 'Vihaan' }}." />
+        content="You are warmly invited to the wedding of Aanya Sharma & Vihaan Malhotra · 8–12 February 2027 · Jaipur, Rajasthan." />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/rozha-one@latest/index.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/great-vibes@latest/index.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/mulish@latest/index.css" />
@@ -1942,7 +1942,7 @@
                         <path id="rp" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" />
                     </defs>
                     <text>
-                        <textPath href="#rp" startOffset="0">break the seal ✦ शुभ विवाह ✦ {{ strtolower($invitation->bride_name ?? 'aanya') }} &amp; {{ strtolower($invitation->groom_name ?? 'vihaan') }} ✦
+                        <textPath href="#rp" startOffset="0">break the seal ✦ शुभ विवाह ✦ aanya &amp; vihaan ✦
                         </textPath>
                     </text>
                 </svg>
@@ -1951,7 +1951,7 @@
                         <path fill="currentColor"
                             d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
                     </svg>
-                    <b>{{ $invitation ? substr($invitation->bride_name, 0, 1) : 'A' }}·{{ $invitation ? substr($invitation->groom_name, 0, 1) : 'V' }}</b>
+                    <b>A·V</b>
                     <span class="shine" aria-hidden="true"></span>
                 </span>
             </span>
@@ -1966,9 +1966,9 @@
                     <path fill="currentColor"
                         d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
                 </svg>
-                <span class="nav-mark">{{ $invitation ? substr($invitation->bride_name, 0, 1) : 'A' }}</span>
+                <span class="nav-mark">A</span>
                 <span class="nav-dot"></span>
-                <span class="nav-mark">{{ $invitation ? substr($invitation->groom_name, 0, 1) : 'V' }}</span>
+                <span class="nav-mark">V</span>
             </a>
             <div class="nav-links" data-lenis-prevent>
                 <a href="#invitation">Invitation</a>
@@ -2028,16 +2028,9 @@
             <div class="core-inner">
                 <p class="blessing">॥ वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ॥<br>॥ निर्विघ्नं कुरु मे देव सर्वकार्येषु
                     सर्वदा ॥</p>
-                <h1 class="names"><span>{{ $invitation ? substr($invitation->bride_name, 0, 1) : 'A' }}</span><span class="amp">✦</span><span>{{ $invitation ? substr($invitation->groom_name, 0, 1) : 'V' }}</span></h1>
-                @if($invitation && !empty($invitation->wedding_date))
+                <h1 class="names"><span>Aanya</span><span class="amp">✦</span><span>Vihaan</span></h1>
                 <div class="saveline"><span></span>Save the Date<span></span></div>
-                <p class="date">
-                    {{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d F Y') }}
-                    @if($invitation->wedding_city || $invitation->wedding_state)
-                        · {{ $invitation->wedding_city }}{{ $invitation->wedding_city && $invitation->wedding_state ? ', ' : '' }}{{ $invitation->wedding_state }}
-                    @endif
-                </p>
-                @endif
+                <p class="date">8 – 12 February 2027 · Jaipur, Rajasthan</p>
             </div>
         </div>
 
@@ -2047,16 +2040,10 @@
 
     <div class="marquee" aria-hidden="true">
         <div class="marquee__track">
-            <span>शुभ विवाह</span><span>{{ $invitation->bride_name ?? 'Aanya' }} ♥ {{ $invitation->groom_name ?? 'Vihaan' }}</span>
-            @if($invitation && !empty($invitation->wedding_date))
-                <span>Save the Date</span><span>{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}</span>
-            @endif
-            <span>{{ $invitation->wedding_city ?? 'City' }}</span><span>सात फेरे</span>
-            <span>शुभ विवाह</span><span>{{ $invitation->bride_name ?? 'Aanya' }} ♥ {{ $invitation->groom_name ?? 'Vihaan' }}</span>
-            @if($invitation && !empty($invitation->wedding_date))
-                <span>Save the Date</span><span>{{ \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') }}</span>
-            @endif
-            <span>{{ $invitation->wedding_city ?? 'City' }}</span><span>सात फेरे</span>
+            <span>शुभ विवाह</span><span>Aanya ♥ Vihaan</span><span>Save the Date</span><span>8–12 Feb
+                2027</span><span>Jaipur</span><span>सात फेरे</span>
+            <span>शुभ विवाह</span><span>Aanya ♥ Vihaan</span><span>Save the Date</span><span>8–12 Feb
+                2027</span><span>Jaipur</span><span>सात फेरे</span>
         </div>
     </div>
 
@@ -2093,20 +2080,16 @@
                 <div class="om">ॐ</div>
                 <h3>Dear friends &amp; family,</h3>
                 <p>With the blessings of our elders and the grace of Shree Ganesha, we joyfully invite you to celebrate
-                    the wedding of our daughter <strong>{{ $invitation->bride_name ?? 'Aanya' }}</strong> and our son <strong>{{ $invitation->groom_name ?? 'Vihaan' }}</strong>.</p>
-                <p>Two families, one table, and a week of marigolds, music and memories. Your presence
+                    the wedding of our daughter <strong>Aanya</strong> and our son <strong>Vihaan</strong>.</p>
+                <p>Two families, one table, and a week of marigolds, music and memories in the pink city. Your presence
                     would mean the world to us — please come hungry, come dressed to dance, and come ready to bless the
                     couple as they begin their life together.</p>
                 <p class="sign">Sneh sahit, with love</p>
-                <p class="hosts">
-                    {{ $invitation->bride_father_name ?? 'Shri' }} &amp; {{ $invitation->bride_mother_name ?? 'Smt. Sharma' }} &nbsp;·&nbsp;
-                    {{ $invitation->groom_father_name ?? 'Shri' }} &amp; {{ $invitation->groom_mother_name ?? 'Smt. Malhotra' }}
-                </p>
+                <p class="hosts">Shri &amp; Smt. Sharma &nbsp;·&nbsp; Shri &amp; Smt. Malhotra</p>
             </article>
         </div>
     </section>
 
-    @if($invitation && !empty($invitation->wedding_date))
     <section class="dark" id="muhurat">
         <div class="pat" aria-hidden="true"></div>
         <div class="wrap">
@@ -2148,11 +2131,11 @@
             <div class="scratch-wrap rv" style="--d:.2s">
                 <div class="scratch-card">
                     <p class="tag">Shubh Muhurat · शुभ मुहूर्त</p>
-                    <p class="fn">Vivaah · {{ $invitation && $invitation->wedding_date ? \Carbon\Carbon::parse($invitation->wedding_date)->format('l') : 'Day' }}</p>
+                    <p class="fn">Vivaah · Thursday</p>
                     <div class="row">
-                        <div><b>{{ $invitation && $invitation->wedding_date ? \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') : 'Date TBD' }}</b><small>Date</small></div>
-                        <div><b>{{ $invitation->wedding_time ?? 'Time TBD' }}</b><small>Muhurat</small></div>
-                        <div><b>{{ $invitation->wedding_location ?? 'Venue TBD' }}</b><small>{{ $invitation->wedding_city ?? 'City' }}</small></div>
+                        <div><b>11 Feb 2027</b><small>Date</small></div>
+                        <div><b>8:15 PM</b><small>Muhurat</small></div>
+                        <div><b>Hotel Rambagh</b><small>Jaipur</small></div>
                     </div>
                 </div>
                 <canvas id="scratch"></canvas>
@@ -2160,7 +2143,6 @@
             </div>
         </div>
     </section>
-    @endif
 
     <section class="cream-2" id="functions">
         <div class="wrap">
@@ -2175,28 +2157,74 @@
             </div>
 
             <div class="timeline">
-                @forelse($ceremonies as $index => $ceremony)
-                    @php
-                        $colors = ['#F5A623', '#14655A', '#C21E2A', '#D9A441', '#C97B1E'];
-                        $color = $colors[$index % count($colors)];
-                    @endphp
-                    <div class="ev rv" style="--ac:{{ $color }}">
-                        <div class="badge">{{ $index + 1 }}</div>
-                        <div class="ev-card">
-                            <p class="ev-date">
-                                {{ \Carbon\Carbon::parse($ceremony->ceramony_date)->format('l · j F') }}
-                                @if($ceremony->ceramony_time) - {{ \Carbon\Carbon::parse($ceremony->ceramony_time)->format('h:i A') }} @endif
-                            </p>
-                            <h3 class="ev-title">{{ $ceremony->ceramony_name }}</h3>
-                            <p class="ev-desc">Join us to celebrate the {{ $ceremony->ceramony_name }} ceremony.</p>
-                            <div class="ev-meta">
-                                <span class="chip">📍 {{ $ceremony->venue ? $ceremony->venue->venue_name : 'Venue TBD' }}</span>
-                            </div>
+                <div class="ev rv" style="--ac:#F5A623">
+                    <div class="badge">1</div>
+                    <div class="ev-card">
+                        <p class="ev-date">Monday · 8 February</p>
+                        <h3 class="ev-title">Ganesh Puja &amp; Haldi</h3>
+                        <p class="ev-desc">We begin the week the way our families always have — a small puja in the
+                            courtyard, then the haldi: turmeric, sandalwood and rosewater, ground the night before by
+                            Nani, pressed onto the bride and groom by anyone who can reach them.</p>
+                        <div class="ev-meta"><span class="chip">📍 Sharma Niwas, Civil Lines</span><span
+                                class="chip"><span class="dotc" style="background:#F5A623"></span>Wear yellow</span>
                         </div>
                     </div>
-                @empty
-                    <div style="text-align: center; color: #64748b; font-style: italic;">No ceremonies added yet.</div>
-                @endforelse
+                </div>
+
+                <div class="ev rv" style="--ac:#14655A">
+                    <div class="badge">2</div>
+                    <div class="ev-card">
+                        <p class="ev-date">Tuesday · 9 February</p>
+                        <h3 class="ev-title">Mehendi</h3>
+                        <p class="ev-desc">The garden fills with henna cones, a dholak, and far too much chai. Aanya's
+                            hands will take the better part of four hours — plenty of time for the rest of us to queue,
+                            argue about whose design is best, and wait for it to dry.</p>
+                        <div class="ev-meta"><span class="chip">📍 The Garden, Sharma Niwas</span><span
+                                class="chip"><span class="dotc" style="background:#14655A"></span>Wear green</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ev rv" style="--ac:#C21E2A">
+                    <div class="badge">3</div>
+                    <div class="ev-card">
+                        <p class="ev-date">Wednesday · 10 February</p>
+                        <h3 class="ev-title">Sangeet</h3>
+                        <p class="ev-desc">Both families have been rehearsing in secret since October, and both are
+                            convinced they will win. There will be a dhol, a dance floor by the water, and a slideshow
+                            Vihaan has been assured contains no photographs from 2011.</p>
+                        <div class="ev-meta"><span class="chip">📍 Rambagh Lawns</span><span class="chip"><span
+                                    class="dotc" style="background:#C21E2A"></span>Wear red &amp; gold</span></div>
+                    </div>
+                </div>
+
+                <div class="ev rv" style="--ac:#D9A441">
+                    <div class="badge">4</div>
+                    <div class="ev-card">
+                        <p class="ev-date">Thursday · 11 February</p>
+                        <h3 class="ev-title">Baraat, Jaimala &amp; Vivaah</h3>
+                        <p class="ev-desc">Vihaan arrives with the band in full cry and his cousins blocking traffic.
+                            Garlands are exchanged under the mandap, then the seven pheras around the sacred fire —
+                            seven promises, spoken quietly, while everyone we love leans in to hear.</p>
+                        <div class="ev-meta"><span class="chip">📍 The Mandap, Hotel Rambagh</span><span
+                                class="chip"><span class="dotc" style="background:#D9A441"></span>Formal · red &amp;
+                                ivory</span></div>
+                    </div>
+                </div>
+
+                <div class="ev rv" style="--ac:#C97B1E">
+                    <div class="badge">5</div>
+                    <div class="ev-card">
+                        <p class="ev-date">Friday · 12 February</p>
+                        <h3 class="ev-title">Vidaai &amp; Reception</h3>
+                        <p class="ev-desc">A handful of rice thrown over her shoulder, a car covered in marigolds, and a
+                            send-off nobody manages to get through dry-eyed. That evening we gather one last time —
+                            dinner, a first dance, and the band playing until the city goes quiet.</p>
+                        <div class="ev-meta"><span class="chip">📍 Lakeside Lawns, Hotel Rambagh</span><span
+                                class="chip"><span class="dotc" style="background:#C97B1E"></span>Black-tie
+                                optional</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -2215,31 +2243,21 @@
             </div>
 
             <div class="gallery rv" data-lenis-prevent>
-                @php
-                    $allPictures = [];
-                    foreach($pictures as $pic) {
-                        $allPictures[] = ['url' => $pic->picture, 'caption' => ''];
-                    }
-                    foreach($albums as $album) {
-                        if(is_array($album->album_images)) {
-                            foreach($album->album_images as $img) {
-                                $allPictures[] = ['url' => $img, 'caption' => $album->album_name];
-                            }
-                        }
-                    }
-                @endphp
-                
-                @forelse($allPictures as $picData)
-                    <figure class="gcard"><img
-                            src="{{ asset($picData['url']) }}"
-                            alt="Gallery Image" loading="lazy">
-                        @if($picData['caption'])
-                            <figcaption>{{ $picData['caption'] }}</figcaption>
-                        @endif
-                    </figure>
-                @empty
-                    <div style="text-align: center; color: #64748b; width: 100%; font-style: italic;">No pictures added yet.</div>
-                @endforelse
+                <figure class="gcard"><img
+                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1d89be848-f32b-4de4-af60-d704d0cb3374.png"
+                        alt="Illustration of Aanya and Vihaan under the mandap" loading="lazy">
+                    <figcaption>The seven pheras we have waited for</figcaption>
+                </figure>
+                <figure class="gcard"><img
+                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/13ccccb4e-697d-4b26-8e71-5dc7922d01c0.png"
+                        alt="Haldi thali and henna-decorated hands" loading="lazy">
+                    <figcaption>Four hours of mehendi, and worth every minute</figcaption>
+                </figure>
+                <figure class="gcard"><img
+                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1fb2abcf0-26fa-4650-8c1a-cdc1d958d735.png"
+                        alt="Illuminated Jaipur palace mandap at dusk" loading="lazy">
+                    <figcaption>The mandap, exactly as Nani imagined it</figcaption>
+                </figure>
             </div>
             <p class="gal-hint">← swipe the memories →</p>
         </div>
@@ -2258,54 +2276,58 @@
             </div>
 
             <div class="vgrid">
-                @forelse($ceremonies as $index => $ceremony)
-                    <article class="vcard rv" style="--d:.{{ $index % 5 }}s">
-                        <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
-                                <path d="M12 38 Q32 56 52 38 Q44 50 32 50 Q20 50 12 38Z" fill="currentColor"
-                                    stroke="none" />
-                                <path d="M32 8 C38 20 42 26 32 36 C22 26 26 20 32 8Z" fill="currentColor" stroke="none" />
-                            </svg></div>
-                        <div class="vbody">
-                            <p class="vtag">{{ $ceremony->ceramony_name }}</p>
-                            <h3 class="vname">
-                                @if($ceremony->venue && $ceremony->venue->location_map)
-                                    <a href="{{ $ceremony->venue->location_map }}" target="_blank" rel="noopener" style="text-decoration: underline;">{{ $ceremony->venue->venue_name }}</a>
-                                @else
-                                    {{ $ceremony->venue ? $ceremony->venue->venue_name : 'Venue TBD' }}
-                                @endif
-                            </h3>
-                            <p class="vaddr" style="margin-bottom: 0.2rem;">
-                                @if($ceremony->venue)
-                                    @if($ceremony->venue->venue_address){{ $ceremony->venue->venue_address }}<br>@endif
-                                    @if($ceremony->venue->area_name){{ $ceremony->venue->area_name }}, @endif
-                                    @if($ceremony->venue->circle){{ $ceremony->venue->circle }}, @endif
-                                    @if($ceremony->venue->wedding_location){{ $ceremony->venue->wedding_location }}<br>@endif
-                                    @if($ceremony->venue->district){{ $ceremony->venue->district }}, @endif
-                                    @if($ceremony->venue->state){{ $ceremony->venue->state }}, @endif
-                                    @if($ceremony->venue->country){{ $ceremony->venue->country }} @endif
-                                    @if($ceremony->venue->pincode)- {{ $ceremony->venue->pincode }}@endif
-                                @endif
-                            </p>
-                            <p class="vaddr">
-                                <strong>Date:</strong> {{ \Carbon\Carbon::parse($ceremony->ceramony_date)->format('d F Y') }}<br>
-                                @if($ceremony->ceramony_time)<strong>Time:</strong> {{ \Carbon\Carbon::parse($ceremony->ceramony_time)->format('h:i A') }}@endif
-                            </p>
-                            <p class="vnote">{{ $ceremony->description ?? '' }}</p>
-                            @if($ceremony->venue && $ceremony->venue->location_map)
-                            <a class="vbtn" target="_blank" rel="noopener"
-                                href="{{ $ceremony->venue->location_map }}">Get
-                                Directions →</a>
-                            @endif
-                        </div>
-                    </article>
-                @empty
-                    <div style="text-align: center; color: #64748b; width: 100%; font-style: italic;">No venues added yet.</div>
-                @endforelse
+                <article class="vcard rv">
+                    <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
+                            <path d="M12 38 Q32 56 52 38 Q44 50 32 50 Q20 50 12 38Z" fill="currentColor"
+                                stroke="none" />
+                            <path d="M32 8 C38 20 42 26 32 36 C22 26 26 20 32 8Z" fill="currentColor" stroke="none" />
+                        </svg></div>
+                    <div class="vbody">
+                        <p class="vtag">Haldi &amp; Mehendi</p>
+                        <h3 class="vname">Sharma Niwas</h3>
+                        <p class="vaddr">C-14, Civil Lines<br>Jaipur 302006, Rajasthan</p>
+                        <p class="vnote">Wear yellow for haldi — and nothing you mind staining.</p>
+                        <a class="vbtn" target="_blank" rel="noopener"
+                            href="https://www.google.com/maps/search/?api=1&query=Civil+Lines+Jaipur+Rajasthan">Get
+                            Directions →</a>
+                    </div>
+                </article>
+
+                <article class="vcard rv" style="--d:.1s">
+                    <div class="vimg"><img
+                            src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1fb2abcf0-26fa-4650-8c1a-cdc1d958d735.png"
+                            alt="Hotel Rambagh palace venue at dusk" loading="lazy"></div>
+                    <div class="vbody">
+                        <p class="vtag">Baraat, Vivaah &amp; Reception</p>
+                        <h3 class="vname">Hotel Rambagh</h3>
+                        <p class="vaddr">Bhawani Singh Road<br>Jaipur 302005, Rajasthan</p>
+                        <p class="vnote">Baraat gathers at the main gate. Pheras in the mandap.</p>
+                        <a class="vbtn" target="_blank" rel="noopener"
+                            href="https://www.google.com/maps/search/?api=1&query=Hotel+Rambagh+Palace+Jaipur">Get
+                            Directions →</a>
+                    </div>
+                </article>
+
+                <article class="vcard rv" style="--d:.2s">
+                    <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
+                            <rect x="8" y="26" width="48" height="22" rx="4" />
+                            <path d="M8 34h48M16 26v-6a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v6M14 48v6M50 48v6" />
+                        </svg></div>
+                    <div class="vbody">
+                        <p class="vtag">Where to Stay</p>
+                        <h3 class="vname">Hotel Clarks Amer</h3>
+                        <p class="vaddr">Jawaharlal Nehru Marg<br>Jaipur 302018, Rajasthan</p>
+                        <p class="vnote">Rooms held under “Sharma–Malhotra” until 10 January.</p>
+                        <a class="vbtn" target="_blank" rel="noopener"
+                            href="https://www.google.com/maps/search/?api=1&query=Hotel+Clarks+Amer+Jaipur">Get
+                            Directions →</a>
+                    </div>
+                </article>
             </div>
         </div>
     </section>
 
-    <!-- <section class="dark" id="rsvp">
+    <section class="dark" id="rsvp">
         <div class="pat" aria-hidden="true"></div>
         <div class="wrap">
             <div class="sec-head rv">
@@ -2320,26 +2342,25 @@
             </div>
 
             <div class="rsvp-card rv" style="--d:.1s" id="rsvpCard">
-                <form id="rsvpForm" method="POST" action="{{ isset($guest) ? route('guest.rsvp.update', $guest->uuid) : '#' }}" novalidate>
-                    @csrf
+                <form id="rsvpForm" novalidate>
                     <div class="field">
                         <label for="rname">Your Name</label>
                         <input id="rname" name="name" type="text" autocomplete="name" placeholder="e.g. Priya Kapoor"
-                            value="{{ isset($guest) ? $guest->guest_name : '' }}" required>
+                            required>
                         <p class="err" data-for="rname">Please tell us your name.</p>
                     </div>
                     <div class="field">
                         <label for="remail">Email</label>
                         <input id="remail" name="email" type="email" autocomplete="email" placeholder="you@example.com"
-                            value="{{ isset($guest) ? $guest->guest_email : '' }}" required>
+                            required>
                         <p class="err" data-for="remail">A valid email helps us reach you.</p>
                     </div>
                     <div class="field">
                         <label>Your Reply</label>
                         <div class="pills">
-                            <label class="pill"><input type="radio" name="rsvp_status" value="accepted" {{ (isset($guest) && $guest->rsvp_status == 'accepted') ? 'checked' : 'checked' }}><span>🌸
+                            <label class="pill"><input type="radio" name="reply" value="accept" checked><span>🌸
                                     Joyfully accepts</span></label>
-                            <label class="pill"><input type="radio" name="rsvp_status" value="declined" {{ (isset($guest) && $guest->rsvp_status == 'declined') ? 'checked' : '' }}><span>🙏 Regretfully
+                            <label class="pill"><input type="radio" name="reply" value="decline"><span>🙏 Regretfully
                                     declines</span></label>
                         </div>
                     </div>
@@ -2388,12 +2409,12 @@
                 </div>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <footer>
-        <div class="fmono">{{ $invitation->bride_name ?? 'Aanya' }} &amp; {{ $invitation->groom_name ?? 'Vihaan' }}</div>
+        <div class="fmono">Aanya &amp; Vihaan</div>
         <p class="fline">With the blessings of Shree Ganesha</p>
-        <p class="hash">#{{ $invitation->bride_name ?? 'Aanya' }}Weds{{ $invitation->groom_name ?? 'Vihaan' }} &nbsp;·&nbsp; #{{ $invitation->groom_name ?? 'Vihaan' }}Ki{{ $invitation->bride_name ?? 'Aanya' }}</p>
+        <p class="hash">#AanyaWedsVihaan &nbsp;·&nbsp; #VihaanKiAanya</p>
         <svg class="fdiya" viewBox="0 0 60 70" aria-hidden="true">
             <g class="flame">
                 <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
@@ -2401,7 +2422,7 @@
             </g>
             <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
         </svg>
-        <!-- <p class="small">Crafted with ♥ in {{ $invitation->wedding_city ?? 'the Pink City' }} · {{ $invitation && $invitation->wedding_date ? \Carbon\Carbon::parse($invitation->wedding_date)->format('d M Y') : 'Date TBD' }}</p> -->
+        <p class="small">Crafted with ♥ in the Pink City · 8–12 February 2027</p>
     </footer>
 
     <button id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -2609,23 +2630,22 @@
 
             const form = $('#rsvpForm'), success = $('#rsvpSuccess'), card = $('#rsvpCard');
             function showErr(id, show) { const e = $('.err[data-for="' + id + '"]'); if (e) e.classList.toggle('show', show); }
-            if (form) {
-                form.addEventListener('submit', e => {
-                    const name = $('#rname'), email = $('#remail');
-                    let ok = true;
-                    if (!name.value.trim()) { showErr('rname', true); ok = false; } else showErr('rname', false);
-                    const em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!em.test(email.value.trim())) { showErr('remail', true); ok = false; } else showErr('remail', false);
-                    if (!ok) {
-                        e.preventDefault();
-                    }
-                });
-            }
-            if ($('#rsvpReset')) {
-                $('#rsvpReset').addEventListener('click', () => {
-                    success.classList.remove('show'); form.reset(); form.style.display = 'block';
-                });
-            }
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const name = $('#rname'), email = $('#remail');
+                let ok = true;
+                if (!name.value.trim()) { showErr('rname', true); ok = false; } else showErr('rname', false);
+                const em = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!em.test(email.value.trim())) { showErr('remail', true); ok = false; } else showErr('remail', false);
+                if (!ok) return;
+                form.style.display = 'none';
+                success.classList.add('show');
+                const r = card.getBoundingClientRect();
+                Petals.burst(r.left + r.width / 2, r.top + r.height / 2, 80);
+            });
+            $('#rsvpReset').addEventListener('click', () => {
+                success.classList.remove('show'); form.reset(); form.style.display = 'block';
+            });
         })();
     </script>
 </body>

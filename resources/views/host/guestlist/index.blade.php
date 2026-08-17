@@ -635,8 +635,8 @@
 
     function confirmSend() {
         const form = document.getElementById('bulk-send-form');
-        // Ensure action is set to the default bulkSend route
-        form.action = "{{ route('host.guestlist.bulkSend') }}";
+        // Ensure action is empty so it posts to the default bulkSend route
+        form.action = "";
         form.submit();
     }
 </script>
