@@ -1932,498 +1932,319 @@
     <div id="progress" aria-hidden="true"></div>
 
     <div id="gate" role="dialog" aria-label="Open the wedding invitation">
-        <div class="gp l"></div>
-        <div class="gp r"></div>
-        <button class="seal" id="sealBtn" aria-label="Break the seal to open the invitation">
-            <span class="seal-top">॥ श्री गणेशाय नमः ॥</span>
-            <span class="seal-disc">
-                <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
-                    <defs>
-                        <path id="rp" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" />
-                    </defs>
-                    <text>
-                        <textPath href="#rp" startOffset="0">break the seal ✦ शुभ विवाह ✦ aanya &amp; vihaan ✦
-                        </textPath>
-                    </text>
+    <div class="gp l"></div>
+    <div class="gp r"></div>
+    <button class="seal" id="sealBtn" aria-label="Break the seal to open the invitation">
+        <span class="seal-top">॥ श्री गणेशाय नमः ॥</span>
+        <span class="seal-disc">
+            <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                    <path id="rp" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" />
+                </defs>
+                <text>
+                    <textPath href="#rp" startOffset="0">break the seal ✦ शुभ विवाह ✦ [BRIDE_INITIAL] &amp; [GROOM_INITIAL] ✦</textPath>
+                </text>
+            </svg>
+            <span class="wax">
+                <svg class="crown" viewBox="0 0 64 64" aria-hidden="true">
+                    <path fill="currentColor" d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
                 </svg>
-                <span class="wax">
-                    <svg class="crown" viewBox="0 0 64 64" aria-hidden="true">
-                        <path fill="currentColor"
-                            d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
-                    </svg>
-                    <b>A·V</b>
-                    <span class="shine" aria-hidden="true"></span>
-                </span>
+                <b>[BRIDE_INITIAL]·[GROOM_INITIAL]</b>
+                <span class="shine" aria-hidden="true"></span>
             </span>
-            <span class="seal-cta">Break the seal to begin <span class="arr">↓</span></span>
-        </button>
+        </span>
+        <span class="seal-cta">Break the seal to begin <span class="arr">↓</span></span>
+    </button>
+</div>
+
+<nav id="nav" aria-label="Sections">
+    <div class="nav-in">
+        <a class="nav-mono" href="#hero" aria-label="Home">
+            <svg class="nav-lotus" viewBox="0 0 64 64" aria-hidden="true">
+                <path fill="currentColor" d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
+            </svg>
+            <span class="nav-mark">[BRIDE_INITIAL]</span>
+            <span class="nav-dot"></span>
+            <span class="nav-mark">[GROOM_INITIAL]</span>
+        </a>
+        <div class="nav-links" data-lenis-prevent>
+            <a href="#invitation">Invitation</a>
+            <a href="#muhurat">Muhurat</a>
+            <a href="#functions">Functions</a>
+            <a href="#gallery">Yaadein</a>
+            <a href="#venues">Venues</a>
+        </div>
+        <a class="nav-rsvp" href="#rsvp">RSVP</a>
     </div>
+</nav>
 
-    <nav id="nav" aria-label="Sections">
-        <div class="nav-in">
-            <a class="nav-mono" href="#hero" aria-label="Home">
-                <svg class="nav-lotus" viewBox="0 0 64 64" aria-hidden="true">
-                    <path fill="currentColor"
-                        d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12z" />
-                </svg>
-                <span class="nav-mark">A</span>
-                <span class="nav-dot"></span>
-                <span class="nav-mark">V</span>
-            </a>
-            <div class="nav-links" data-lenis-prevent>
-                <a href="#invitation">Invitation</a>
-                <a href="#muhurat">Muhurat</a>
-                <a href="#functions">Functions</a>
-                <a href="#gallery">Yaadein</a>
-                <a href="#venues">Venues</a>
-            </div>
-            <a class="nav-rsvp" href="#rsvp">RSVP</a>
+<header class="hero" id="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-vig" aria-hidden="true"></div>
+
+    <svg class="diya left" viewBox="0 0 60 70" aria-hidden="true">
+        <g class="flame">
+            <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
+            <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
+        </g>
+        <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
+        <path d="M8 40 Q30 48 52 40" fill="none" stroke="#7a4a12" stroke-width="2" />
+    </svg>
+    <svg class="diya right" viewBox="0 0 60 70" aria-hidden="true">
+        <g class="flame">
+            <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
+            <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
+        </g>
+        <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
+        <path d="M8 40 Q30 48 52 40" fill="none" stroke="#7a4a12" stroke-width="2" />
+    </svg>
+
+    <div class="hero-core">
+        <div class="ring ring-a" aria-hidden="true">
+            <svg viewBox="0 0 400 400">
+                <circle cx="200" cy="200" r="194" fill="none" stroke="#D9A441" stroke-width="1.4" stroke-dasharray="2 9" />
+                <circle cx="200" cy="200" r="178" fill="none" stroke="#F0C060" stroke-width="1" opacity=".6" />
+            </svg>
         </div>
-    </nav>
-
-    <header class="hero" id="hero">
-        <div class="hero-bg" aria-hidden="true"></div>
-        <div class="hero-vig" aria-hidden="true"></div>
-
-        <svg class="diya left" viewBox="0 0 60 70" aria-hidden="true">
-            <g class="flame">
-                <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
-                <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
-            </g>
-            <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
-            <path d="M8 40 Q30 48 52 40" fill="none" stroke="#7a4a12" stroke-width="2" />
+        <div class="ring ring-b" aria-hidden="true">
+            <svg viewBox="0 0 400 400">
+                <circle cx="200" cy="200" r="190" fill="none" stroke="#F5A623" stroke-width="2" stroke-dasharray="1 14" stroke-linecap="round" />
+            </svg>
+        </div>
+        <svg class="lotus top" viewBox="0 0 64 64" aria-hidden="true">
+            <path fill="currentColor" d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12zM32 30c6 6 8 14 6 24h-12c-2-10 0-18 6-24z" />
         </svg>
-        <svg class="diya right" viewBox="0 0 60 70" aria-hidden="true">
-            <g class="flame">
-                <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
-                <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
-            </g>
-            <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
-            <path d="M8 40 Q30 48 52 40" fill="none" stroke="#7a4a12" stroke-width="2" />
+        <svg class="lotus bot" viewBox="0 0 64 64" aria-hidden="true">
+            <path fill="currentColor" d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12zM32 30c6 6 8 14 6 24h-12c-2-10 0-18 6-24z" />
         </svg>
 
-        <div class="hero-core">
-            <div class="ring ring-a" aria-hidden="true">
-                <svg viewBox="0 0 400 400">
-                    <circle cx="200" cy="200" r="194" fill="none" stroke="#D9A441" stroke-width="1.4"
-                        stroke-dasharray="2 9" />
-                    <circle cx="200" cy="200" r="178" fill="none" stroke="#F0C060" stroke-width="1" opacity=".6" />
-                </svg>
-            </div>
-            <div class="ring ring-b" aria-hidden="true">
-                <svg viewBox="0 0 400 400">
-                    <circle cx="200" cy="200" r="190" fill="none" stroke="#F5A623" stroke-width="2"
-                        stroke-dasharray="1 14" stroke-linecap="round" />
-                </svg>
-            </div>
-            <svg class="lotus top" viewBox="0 0 64 64" aria-hidden="true">
-                <path fill="currentColor"
-                    d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12zM32 30c6 6 8 14 6 24h-12c-2-10 0-18 6-24z" />
-            </svg>
-            <svg class="lotus bot" viewBox="0 0 64 64" aria-hidden="true">
-                <path fill="currentColor"
-                    d="M32 4c4 8 4 16 0 24-4-8-4-16 0-24zM14 14c8 4 12 12 12 20-8-2-14-8-12-20zM50 14c2 12-4 18-12 20 0-8 4-16 12-20zM6 30c10 0 18 4 22 12-10 2-18-2-22-12zM58 30c-4 10-12 14-22 12 4-8 12-12 22-12zM32 30c6 6 8 14 6 24h-12c-2-10 0-18 6-24z" />
-            </svg>
-
-            <div class="core-inner">
-                <p class="blessing">॥ वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ॥<br>॥ निर्विघ्नं कुरु मे देव सर्वकार्येषु
-                    सर्वदा ॥</p>
-                <h1 class="names"><span>Aanya</span><span class="amp">✦</span><span>Vihaan</span></h1>
-                <div class="saveline"><span></span>Save the Date<span></span></div>
-                <p class="date">8 – 12 February 2027 · Jaipur, Rajasthan</p>
-            </div>
-        </div>
-
-        <button class="scroll-cue" id="scrollCue" aria-label="Scroll to the invitation">Keep scrolling<div class="dot">
-            </div></button>
-    </header>
-
-    <div class="marquee" aria-hidden="true">
-        <div class="marquee__track">
-            <span>शुभ विवाह</span><span>Aanya ♥ Vihaan</span><span>Save the Date</span><span>8–12 Feb
-                2027</span><span>Jaipur</span><span>सात फेरे</span>
-            <span>शुभ विवाह</span><span>Aanya ♥ Vihaan</span><span>Save the Date</span><span>8–12 Feb
-                2027</span><span>Jaipur</span><span>सात फेरे</span>
+        <div class="core-inner">
+            <p class="blessing">॥ वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ॥<br>॥ निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥</p>
+            <h1 class="names"><span>[BRIDE_NAME]</span><span class="amp">✦</span><span>[GROOM_NAME]</span></h1>
+            <div class="saveline"><span></span>[SAVE_THE_DATE]<span></span></div>
+            <p class="date">[WEDDING_DATE] · [VENUE_NAME]</p>
         </div>
     </div>
 
-    <section class="cream" id="invitation">
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Shubh Aamantran</p>
-                <h2 class="sec-title">You Are Warmly Invited</h2>
-                <p class="sec-hi">आप सभी सादर आमंत्रित हैं</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
+    <button class="scroll-cue" id="scrollCue" aria-label="Scroll to the invitation">Keep scrolling<div class="dot"></div></button>
+</header>
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+        <span>शुभ विवाह</span><span>[BRIDE_NAME] ♥ [GROOM_NAME]</span><span>Save the Date</span><span>[WEDDING_DATE]</span><span>[VENUE_NAME]</span><span>सात फेरे</span>
+        <span>शुभ विवाह</span><span>[BRIDE_NAME] ♥ [GROOM_NAME]</span><span>Save the Date</span><span>[WEDDING_DATE]</span><span>[VENUE_NAME]</span><span>सात फेरे</span>
+    </div>
+</div>
+
+<section class="cream" id="invitation">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Shubh Aamantran</p>
+            <h2 class="sec-title">You Are Warmly Invited</h2>
+            <p class="sec-hi">आप सभी सादर आमंत्रित हैं</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
+
+        <article class="letter rv" style="--d:.1s">
+            <svg class="corner tl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
+                <circle cx="30" cy="30" r="3" fill="currentColor" />
+            </svg>
+            <svg class="corner tr" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
+                <circle cx="30" cy="30" r="3" fill="currentColor" />
+            </svg>
+            <svg class="corner bl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
+                <circle cx="30" cy="30" r="3" fill="currentColor" />
+            </svg>
+            <svg class="corner br" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
+                <circle cx="30" cy="30" r="3" fill="currentColor" />
+            </svg>
+
+            <div class="om">ॐ</div>
+            <h3>Dear friends &amp; family,</h3>
+            
+            <div class="parents-text" style="font-size: 1.1rem; margin: 20px 0; line-height: 1.8; opacity: 0.9;">
+                Together with their families<br>
+                <strong>[BRIDE_FATHER_NAME] &amp; [BRIDE_MOTHER_NAME]</strong><br>
+                and<br>
+                <strong>[GROOM_FATHER_NAME] &amp; [GROOM_MOTHER_NAME]</strong><br>
+                Joyfully invite you to celebrate the wedding of
             </div>
 
-            <article class="letter rv" style="--d:.1s">
-                <svg class="corner tl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
-                    <circle cx="30" cy="30" r="3" fill="currentColor" />
-                </svg>
-                <svg class="corner tr" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
-                    <circle cx="30" cy="30" r="3" fill="currentColor" />
-                </svg>
-                <svg class="corner bl" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
-                    <circle cx="30" cy="30" r="3" fill="currentColor" />
-                </svg>
-                <svg class="corner br" viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 30 C4 14 14 4 30 4 M4 44 C4 22 22 4 44 4 M10 30 C10 18 18 10 30 10" />
-                    <circle cx="30" cy="30" r="3" fill="currentColor" />
-                </svg>
+            <p>Two families, one table, and a week of marigolds, music and memories. Your presence would mean the world to us — please come hungry, come dressed to dance, and come ready to bless the couple as they begin their life together.</p>
+            
+            <p class="sign">Sneh sahit, with love</p>
+        </article>
+    </div>
+</section>
 
-                <div class="om">ॐ</div>
-                <h3>Dear friends &amp; family,</h3>
-                <p>With the blessings of our elders and the grace of Shree Ganesha, we joyfully invite you to celebrate
-                    the wedding of our daughter <strong>Aanya</strong> and our son <strong>Vihaan</strong>.</p>
-                <p>Two families, one table, and a week of marigolds, music and memories in the pink city. Your presence
-                    would mean the world to us — please come hungry, come dressed to dance, and come ready to bless the
-                    couple as they begin their life together.</p>
-                <p class="sign">Sneh sahit, with love</p>
-                <p class="hosts">Shri &amp; Smt. Sharma &nbsp;·&nbsp; Shri &amp; Smt. Malhotra</p>
+<section class="dark" id="muhurat">
+    <div class="pat" aria-hidden="true"></div>
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Counting Down</p>
+            <h2 class="sec-title">Until the Pheras</h2>
+            <p class="sec-hi">सात फेरों तक</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
+
+        <div class="count rv" id="count" aria-live="polite">
+            <div class="unit"><div class="num" data-u="d">000</div><div class="lab">Days</div></div>
+            <div class="sep">:</div>
+            <div class="unit"><div class="num" data-u="h">00</div><div class="lab">Hours</div></div>
+            <div class="sep">:</div>
+            <div class="unit"><div class="num" data-u="m">00</div><div class="lab">Minutes</div></div>
+            <div class="sep">:</div>
+            <div class="unit"><div class="num" data-u="s">00</div><div class="lab">Seconds</div></div>
+        </div>
+
+        <div class="scratch-wrap rv" style="--d:.2s">
+            <div class="scratch-card">
+                <p class="tag">Shubh Muhurat · शुभ मुहूर्त</p>
+                <p class="fn">Vivaah</p>
+                <div class="row">
+                    <div><b>[WEDDING_DATE]</b><small>Date</small></div>
+                    <div><b>[WEDDING_TIME]</b><small>Time</small></div>
+                    <div><b>[VENUE_NAME]</b><small>Venue</small></div>
+                </div>
+            </div>
+            <canvas id="scratch"></canvas>
+            <div class="scratch-hint" id="scratchHint">✦ Scratch to reveal ✦</div>
+        </div>
+    </div>
+</section>
+
+<section class="cream-2" id="functions">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Celebrations</p>
+            <h2 class="sec-title">The Wedding Ceremonies</h2>
+            <p class="sec-hi">विवाह कार्यक्रम</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
+
+        <!-- This will automatically output all ceremonies added by the host -->
+        <div class="timeline">
+            [CEREMONIES]
+        </div>
+    </div>
+</section>
+
+<section class="dark-2" id="gallery">
+    <div class="pat" aria-hidden="true"></div>
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Yaadein</p>
+            <h2 class="sec-title">Our Memories</h2>
+            <p class="sec-hi">यादें</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
+
+        <!-- This will automatically output photos added by the host -->
+        <div class="gallery rv" data-lenis-prevent>
+            [GALLERY]
+        </div>
+        
+        <div class="sec-head rv" style="margin-top: 40px;">
+            <h2 class="sec-title">Albums</h2>
+            <!-- This will automatically output albums added by the host -->
+            [ALBUMS]
+        </div>
+
+        <div class="sec-head rv" style="margin-top: 40px;">
+            <h2 class="sec-title">Videos</h2>
+            <!-- This will automatically output videos added by the host -->
+            [VIDEOS]
+        </div>
+    </div>
+</section>
+
+<section class="cream" id="venues">
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Where to Find Us</p>
+            <h2 class="sec-title">The Venues</h2>
+            <p class="sec-hi">स्थान</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
+
+        <div class="vgrid">
+            <article class="vcard rv">
+                <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
+                    <path d="M12 38 Q32 56 52 38 Q44 50 32 50 Q20 50 12 38Z" fill="currentColor" stroke="none" />
+                    <path d="M32 8 C38 20 42 26 32 36 C22 26 26 20 32 8Z" fill="currentColor" stroke="none" />
+                </svg></div>
+                <div class="vbody">
+                    <p class="vtag">Wedding Venue</p>
+                    <h3 class="vname">[VENUE_NAME]</h3>
+                    <p class="vaddr">[VENUE_ADDRESS]</p>
+                    <a class="vbtn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=[VENUE_NAME]">Get Directions →</a>
+                </div>
             </article>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="dark" id="muhurat">
-        <div class="pat" aria-hidden="true"></div>
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Counting Down</p>
-                <h2 class="sec-title">Until the Pheras</h2>
-                <p class="sec-hi">सात फेरों तक</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
-            </div>
+<section class="dark" id="rsvp">
+    <div class="pat" aria-hidden="true"></div>
+    <div class="wrap">
+        <div class="sec-head rv">
+            <p class="kicker">Kindly Reply</p>
+            <h2 class="sec-title">Aap Aa Rahe Hain?</h2>
+            <p class="sec-hi">कृपया उत्तर दीजिए</p>
+            <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" /></svg><i></i></div>
+        </div>
 
-            <div class="count rv" id="count" aria-live="polite">
-                <div class="unit">
-                    <div class="num" data-u="d">000</div>
-                    <div class="lab">Days</div>
+        <div class="rsvp-card rv" style="--d:.1s" id="rsvpCard">
+            <form id="rsvpForm" novalidate>
+                <div class="field">
+                    <label for="rname">Your Name</label>
+                    <input id="rname" name="name" type="text" autocomplete="name" placeholder="e.g. Priya Kapoor" required>
                 </div>
-                <div class="sep">:</div>
-                <div class="unit">
-                    <div class="num" data-u="h">00</div>
-                    <div class="lab">Hours</div>
+                <div class="field">
+                    <label for="remail">Email</label>
+                    <input id="remail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
                 </div>
-                <div class="sep">:</div>
-                <div class="unit">
-                    <div class="num" data-u="m">00</div>
-                    <div class="lab">Minutes</div>
-                </div>
-                <div class="sep">:</div>
-                <div class="unit">
-                    <div class="num" data-u="s">00</div>
-                    <div class="lab">Seconds</div>
-                </div>
-            </div>
-
-            <p class="sec-lead rv" style="--d:.1s;margin-bottom:2rem">Every second brings us closer to the mandap. ✦
-                Scratch the card to reveal the auspicious hour.</p>
-
-            <div class="scratch-wrap rv" style="--d:.2s">
-                <div class="scratch-card">
-                    <p class="tag">Shubh Muhurat · शुभ मुहूर्त</p>
-                    <p class="fn">Vivaah · Thursday</p>
-                    <div class="row">
-                        <div><b>11 Feb 2027</b><small>Date</small></div>
-                        <div><b>8:15 PM</b><small>Muhurat</small></div>
-                        <div><b>Hotel Rambagh</b><small>Jaipur</small></div>
+                <div class="field">
+                    <label>Your Reply</label>
+                    <div class="pills">
+                        <label class="pill"><input type="radio" name="reply" value="accept" checked><span>🌸 Joyfully accepts</span></label>
+                        <label class="pill"><input type="radio" name="reply" value="decline"><span>🙏 Regretfully declines</span></label>
                     </div>
                 </div>
-                <canvas id="scratch"></canvas>
-                <div class="scratch-hint" id="scratchHint">✦ Scratch to reveal ✦</div>
+                <button class="submit" type="submit">Bhejein · Send Reply</button>
+            </form>
+
+            <div class="success" id="rsvpSuccess">
+                <svg class="check" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="34" />
+                    <path d="M24 42 l11 11 l22 -26" />
+                </svg>
+                <p class="hi">धन्यवाद</p>
+                <h3>Dhanyavaad!</h3>
+                <p>Your reply is safely with us.</p>
+                <button class="ghost" id="rsvpReset" type="button">Send Another Reply</button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="cream-2" id="functions">
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Five Days of Celebration</p>
-                <h2 class="sec-title">The Wedding Functions</h2>
-                <p class="sec-hi">विवाह कार्यक्रम</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
-            </div>
-
-            <div class="timeline">
-                <div class="ev rv" style="--ac:#F5A623">
-                    <div class="badge">1</div>
-                    <div class="ev-card">
-                        <p class="ev-date">Monday · 8 February</p>
-                        <h3 class="ev-title">Ganesh Puja &amp; Haldi</h3>
-                        <p class="ev-desc">We begin the week the way our families always have — a small puja in the
-                            courtyard, then the haldi: turmeric, sandalwood and rosewater, ground the night before by
-                            Nani, pressed onto the bride and groom by anyone who can reach them.</p>
-                        <div class="ev-meta"><span class="chip">📍 Sharma Niwas, Civil Lines</span><span
-                                class="chip"><span class="dotc" style="background:#F5A623"></span>Wear yellow</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="ev rv" style="--ac:#14655A">
-                    <div class="badge">2</div>
-                    <div class="ev-card">
-                        <p class="ev-date">Tuesday · 9 February</p>
-                        <h3 class="ev-title">Mehendi</h3>
-                        <p class="ev-desc">The garden fills with henna cones, a dholak, and far too much chai. Aanya's
-                            hands will take the better part of four hours — plenty of time for the rest of us to queue,
-                            argue about whose design is best, and wait for it to dry.</p>
-                        <div class="ev-meta"><span class="chip">📍 The Garden, Sharma Niwas</span><span
-                                class="chip"><span class="dotc" style="background:#14655A"></span>Wear green</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="ev rv" style="--ac:#C21E2A">
-                    <div class="badge">3</div>
-                    <div class="ev-card">
-                        <p class="ev-date">Wednesday · 10 February</p>
-                        <h3 class="ev-title">Sangeet</h3>
-                        <p class="ev-desc">Both families have been rehearsing in secret since October, and both are
-                            convinced they will win. There will be a dhol, a dance floor by the water, and a slideshow
-                            Vihaan has been assured contains no photographs from 2011.</p>
-                        <div class="ev-meta"><span class="chip">📍 Rambagh Lawns</span><span class="chip"><span
-                                    class="dotc" style="background:#C21E2A"></span>Wear red &amp; gold</span></div>
-                    </div>
-                </div>
-
-                <div class="ev rv" style="--ac:#D9A441">
-                    <div class="badge">4</div>
-                    <div class="ev-card">
-                        <p class="ev-date">Thursday · 11 February</p>
-                        <h3 class="ev-title">Baraat, Jaimala &amp; Vivaah</h3>
-                        <p class="ev-desc">Vihaan arrives with the band in full cry and his cousins blocking traffic.
-                            Garlands are exchanged under the mandap, then the seven pheras around the sacred fire —
-                            seven promises, spoken quietly, while everyone we love leans in to hear.</p>
-                        <div class="ev-meta"><span class="chip">📍 The Mandap, Hotel Rambagh</span><span
-                                class="chip"><span class="dotc" style="background:#D9A441"></span>Formal · red &amp;
-                                ivory</span></div>
-                    </div>
-                </div>
-
-                <div class="ev rv" style="--ac:#C97B1E">
-                    <div class="badge">5</div>
-                    <div class="ev-card">
-                        <p class="ev-date">Friday · 12 February</p>
-                        <h3 class="ev-title">Vidaai &amp; Reception</h3>
-                        <p class="ev-desc">A handful of rice thrown over her shoulder, a car covered in marigolds, and a
-                            send-off nobody manages to get through dry-eyed. That evening we gather one last time —
-                            dinner, a first dance, and the band playing until the city goes quiet.</p>
-                        <div class="ev-meta"><span class="chip">📍 Lakeside Lawns, Hotel Rambagh</span><span
-                                class="chip"><span class="dotc" style="background:#C97B1E"></span>Black-tie
-                                optional</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="dark-2" id="gallery">
-        <div class="pat" aria-hidden="true"></div>
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Yaadein</p>
-                <h2 class="sec-title">A Few of Our Favourites</h2>
-                <p class="sec-hi">यादें</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
-            </div>
-
-            <div class="gallery rv" data-lenis-prevent>
-                <figure class="gcard"><img
-                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1d89be848-f32b-4de4-af60-d704d0cb3374.png"
-                        alt="Illustration of Aanya and Vihaan under the mandap" loading="lazy">
-                    <figcaption>The seven pheras we have waited for</figcaption>
-                </figure>
-                <figure class="gcard"><img
-                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/13ccccb4e-697d-4b26-8e71-5dc7922d01c0.png"
-                        alt="Haldi thali and henna-decorated hands" loading="lazy">
-                    <figcaption>Four hours of mehendi, and worth every minute</figcaption>
-                </figure>
-                <figure class="gcard"><img
-                        src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1fb2abcf0-26fa-4650-8c1a-cdc1d958d735.png"
-                        alt="Illuminated Jaipur palace mandap at dusk" loading="lazy">
-                    <figcaption>The mandap, exactly as Nani imagined it</figcaption>
-                </figure>
-            </div>
-            <p class="gal-hint">← swipe the memories →</p>
-        </div>
-    </section>
-
-    <section class="cream" id="venues">
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Where to Find Us</p>
-                <h2 class="sec-title">The Venues</h2>
-                <p class="sec-hi">स्थान</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
-            </div>
-
-            <div class="vgrid">
-                <article class="vcard rv">
-                    <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
-                            <path d="M12 38 Q32 56 52 38 Q44 50 32 50 Q20 50 12 38Z" fill="currentColor"
-                                stroke="none" />
-                            <path d="M32 8 C38 20 42 26 32 36 C22 26 26 20 32 8Z" fill="currentColor" stroke="none" />
-                        </svg></div>
-                    <div class="vbody">
-                        <p class="vtag">Haldi &amp; Mehendi</p>
-                        <h3 class="vname">Sharma Niwas</h3>
-                        <p class="vaddr">C-14, Civil Lines<br>Jaipur 302006, Rajasthan</p>
-                        <p class="vnote">Wear yellow for haldi — and nothing you mind staining.</p>
-                        <a class="vbtn" target="_blank" rel="noopener"
-                            href="https://www.google.com/maps/search/?api=1&query=Civil+Lines+Jaipur+Rajasthan">Get
-                            Directions →</a>
-                    </div>
-                </article>
-
-                <article class="vcard rv" style="--d:.1s">
-                    <div class="vimg"><img
-                            src="https://image.qwenlm.ai/public_source/941bea6b-9409-4ea8-911c-4611ff7a77ee/1fb2abcf0-26fa-4650-8c1a-cdc1d958d735.png"
-                            alt="Hotel Rambagh palace venue at dusk" loading="lazy"></div>
-                    <div class="vbody">
-                        <p class="vtag">Baraat, Vivaah &amp; Reception</p>
-                        <h3 class="vname">Hotel Rambagh</h3>
-                        <p class="vaddr">Bhawani Singh Road<br>Jaipur 302005, Rajasthan</p>
-                        <p class="vnote">Baraat gathers at the main gate. Pheras in the mandap.</p>
-                        <a class="vbtn" target="_blank" rel="noopener"
-                            href="https://www.google.com/maps/search/?api=1&query=Hotel+Rambagh+Palace+Jaipur">Get
-                            Directions →</a>
-                    </div>
-                </article>
-
-                <article class="vcard rv" style="--d:.2s">
-                    <div class="vicon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4">
-                            <rect x="8" y="26" width="48" height="22" rx="4" />
-                            <path d="M8 34h48M16 26v-6a4 4 0 0 1 4-4h24a4 4 0 0 1 4 4v6M14 48v6M50 48v6" />
-                        </svg></div>
-                    <div class="vbody">
-                        <p class="vtag">Where to Stay</p>
-                        <h3 class="vname">Hotel Clarks Amer</h3>
-                        <p class="vaddr">Jawaharlal Nehru Marg<br>Jaipur 302018, Rajasthan</p>
-                        <p class="vnote">Rooms held under “Sharma–Malhotra” until 10 January.</p>
-                        <a class="vbtn" target="_blank" rel="noopener"
-                            href="https://www.google.com/maps/search/?api=1&query=Hotel+Clarks+Amer+Jaipur">Get
-                            Directions →</a>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="dark" id="rsvp">
-        <div class="pat" aria-hidden="true"></div>
-        <div class="wrap">
-            <div class="sec-head rv">
-                <p class="kicker">Kindly Reply</p>
-                <h2 class="sec-title">Aap Aa Rahe Hain?</h2>
-                <p class="sec-hi">कृपया उत्तर दीजिए</p>
-                <div class="divider"><i></i><svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 2c2 4 2 8 0 12-2-4-2-8 0-12zM3 8c4 2 6 6 6 10-4-1-7-4-6-10zM21 8c1 6-2 9-6 10 0-4 2-8 6-10zM12 12c3 3 4 7 3 12h-6c-1-5 0-9 3-12z" />
-                    </svg><i></i></div>
-                <p class="sec-lead">Please reply by the tenth of January so we can arrange your rooms and thaali.</p>
-            </div>
-
-            <div class="rsvp-card rv" style="--d:.1s" id="rsvpCard">
-                <form id="rsvpForm" novalidate>
-                    <div class="field">
-                        <label for="rname">Your Name</label>
-                        <input id="rname" name="name" type="text" autocomplete="name" placeholder="e.g. Priya Kapoor"
-                            required>
-                        <p class="err" data-for="rname">Please tell us your name.</p>
-                    </div>
-                    <div class="field">
-                        <label for="remail">Email</label>
-                        <input id="remail" name="email" type="email" autocomplete="email" placeholder="you@example.com"
-                            required>
-                        <p class="err" data-for="remail">A valid email helps us reach you.</p>
-                    </div>
-                    <div class="field">
-                        <label>Your Reply</label>
-                        <div class="pills">
-                            <label class="pill"><input type="radio" name="reply" value="accept" checked><span>🌸
-                                    Joyfully accepts</span></label>
-                            <label class="pill"><input type="radio" name="reply" value="decline"><span>🙏 Regretfully
-                                    declines</span></label>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="rsize">Party Size</label>
-                        <select id="rsize" name="size">
-                            <option>Just me</option>
-                            <option>Two of us</option>
-                            <option>Three</option>
-                            <option>Four</option>
-                            <option>Five or more</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label>Which Functions</label>
-                        <div class="pills">
-                            <label class="pill"><input type="checkbox" name="fn" value="all" checked><span>All
-                                    five</span></label>
-                            <label class="pill"><input type="checkbox" name="fn" value="haldi"><span>Haldi &amp;
-                                    Mehendi</span></label>
-                            <label class="pill"><input type="checkbox" name="fn"
-                                    value="sangeet"><span>Sangeet</span></label>
-                            <label class="pill"><input type="checkbox" name="fn" value="vivaah"><span>Baraat &amp;
-                                    Vivaah</span></label>
-                            <label class="pill"><input type="checkbox" name="fn"
-                                    value="reception"><span>Reception</span></label>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="rnote">A Note for Us</label>
-                        <textarea id="rnote" name="note"
-                            placeholder="Dietary needs, a song request, a blessing…"></textarea>
-                    </div>
-                    <button class="submit" type="submit">Bhejein · Send Reply</button>
-                </form>
-
-                <div class="success" id="rsvpSuccess">
-                    <svg class="check" viewBox="0 0 80 80">
-                        <circle cx="40" cy="40" r="34" />
-                        <path d="M24 42 l11 11 l22 -26" />
-                    </svg>
-                    <p class="hi">धन्यवाद</p>
-                    <h3>Dhanyavaad!</h3>
-                    <p>Your reply is safely with us. We cannot wait to see you under the marigolds.</p>
-                    <button class="ghost" id="rsvpReset" type="button">Send Another Reply</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="fmono">Aanya &amp; Vihaan</div>
-        <p class="fline">With the blessings of Shree Ganesha</p>
-        <p class="hash">#AanyaWedsVihaan &nbsp;·&nbsp; #VihaanKiAanya</p>
-        <svg class="fdiya" viewBox="0 0 60 70" aria-hidden="true">
-            <g class="flame">
-                <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
-                <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
-            </g>
-            <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
-        </svg>
-        <p class="small">Crafted with ♥ in the Pink City · 8–12 February 2027</p>
-    </footer>
+<footer>
+    <div class="fmono">[BRIDE_NAME] &amp; [GROOM_NAME]</div>
+    <p class="fline">With the blessings of Shree Ganesha</p>
+    <p class="hash">#[BRIDE_INITIAL]Weds[GROOM_INITIAL]</p>
+    <svg class="fdiya" viewBox="0 0 60 70" aria-hidden="true">
+        <g class="flame">
+            <path d="M30 4 C36 16 40 22 30 34 C20 22 24 16 30 4Z" fill="#FFD166" />
+            <path d="M30 12 C33 19 35 23 30 30 C25 23 27 19 30 12Z" fill="#FF8F1F" />
+        </g>
+        <path d="M8 40 Q30 60 52 40 Q44 52 30 52 Q16 52 8 40Z" fill="#D9A441" />
+    </svg>
+    <p class="small">Crafted with ♥ · [WEDDING_DATE]</p>
+</footer>
 
     <button id="top" aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">

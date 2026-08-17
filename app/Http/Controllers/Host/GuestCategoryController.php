@@ -60,4 +60,12 @@ class GuestCategoryController extends Controller
     {
         return Excel::download(new GuestCategoryExport(Auth::id()), 'guest_categories.xlsx');
     }
+
+    public function destroy($id)
+    {
+        $category = GuestCategory::where('id', $id)->where('host_id', Auth::id())->firstOrFail();
+        $category->delete();
+        
+        return redirect()->route('host.categories.index')->with('success', 'Category Deleted Successfully!');
+    }
 }

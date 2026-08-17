@@ -46,6 +46,18 @@ class GuestListController extends Controller
         return view('host.guestlist.show', compact('guestlist'));
     }
 
+    public function previewTemplate()
+    {
+        $invitation = \App\Models\Invitation::where('host_id', Auth::id())->first();
+        if (!$invitation || !$invitation->selected_html_template) {
+            return response("<div style='padding:40px; text-align:center; font-family:sans-serif;'>No template has been selected or customized yet. Please go to Invitations and select a template first.</div>");
+        }
+        
+        return redirect()->route('host.invitation.live-preview', [
+            'template' => $invitation->selected_html_template
+        ]);
+    }
+
     public function create()
     {
         $ceramonies = Ceramonies::where('host_id', Auth::id())->get();
@@ -110,9 +122,12 @@ class GuestListController extends Controller
                 $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
+                
+                $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
+                $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
+                
                 $validated['assigned_ceremonies'] = $allCeremonyNames;
-                $validated['ceramony_id'] = $ceremonyIds[0] ?? null;
+                $validated['ceramony_id'] = $validCeremonies->first() ? $validCeremonies->first()->id : null;
             }
         }
 
@@ -182,19 +197,23 @@ class GuestListController extends Controller
                 $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
+                
+                $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
+                $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
+                
                 $guestlist->assigned_ceremonies = $allCeremonyNames;
-                $guestlist->ceramony_id = $ceremonyIds[0] ?? null;
+                $guestlist->ceramony_id = $validCeremonies->first() ? $validCeremonies->first()->id : null;
                 // clear ceremony_ids so it doesn't overwrite below
                 unset($request['ceremony_ids']); 
             }
         }
 
         if ($request->has('ceremony_ids')) {
-            $allCeremonyNames = Ceramonies::whereIn('id', $request->ceremony_ids)->pluck('ceramony_name')->implode(', ');
+            $validCeremonies = Ceramonies::whereIn('id', $request->ceremony_ids)->get();
+            $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
 
             $guestlist->assigned_ceremonies = $allCeremonyNames;
-            $guestlist->ceramony_id = $request->ceremony_ids[0] ?? null;
+            $guestlist->ceramony_id = $validCeremonies->first() ? $validCeremonies->first()->id : null;
         } elseif (empty($validated['category_id'])) {
             $guestlist->assigned_ceremonies = '';
             $guestlist->ceramony_id = null;
@@ -285,10 +304,9 @@ class GuestListController extends Controller
                 'email'    => ['limit' => $host->effectiveEmailLimit(),    'sent_field' => 'email_sent_count'],
             ];
 
-            // Count ALL selected guests that will receive an invitation (as long as they have save_date_sent)
+            // Count ALL selected guests that will receive an invitation
             $newSendCount = GuestList::whereIn('id', $request->ids)
                 ->where('host_id', Auth::id())
-                ->where('save_date_sent', true)   // invitation requires save_date sent
                 ->count();
 
             foreach ($selectedChannels as $channel) {
@@ -322,8 +340,8 @@ class GuestListController extends Controller
         $actualSendCount = 0;
 
         foreach ($guests as $guest) {
-            // Invitation can only be sent if Save the Date has been sent
-            $canSendInvitation = $guest->save_date_sent == 1;
+            // Allow sending invitation regardless of whether save the date was sent
+            $canSendInvitation = true;
 
             $catId = $request->category_id ?? $guest->category_id;
             if (!$catId) {
@@ -336,10 +354,12 @@ class GuestListController extends Controller
                 $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
+                
+                $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
+                $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
             } else {
                 $allCeremonyNames = $guest->assigned_ceremonies;
-                $ceremonyIds = [$guest->ceramony_id];
+                $validCeremonies = collect();
             }
 
             if ($canSendInvitation && count($selectedChannels) > 0) {
@@ -355,7 +375,7 @@ class GuestListController extends Controller
             if ($request->category_id) {
                 $updateData['category_id']           = $request->category_id;
                 $updateData['assigned_ceremonies']   = $allCeremonyNames;
-                $updateData['ceramony_id']           = $ceremonyIds[0] ?? $guest->ceramony_id;
+                $updateData['ceramony_id']           = $validCeremonies->first() ? $validCeremonies->first()->id : null;
             }
 
             $guest->update($updateData);

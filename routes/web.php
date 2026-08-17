@@ -188,10 +188,12 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::resource('video', VideoController::class);
         Route::delete('album/{id}/delete-image', [AlbumController::class, 'deleteImage'])->name('album.delete-image');
 
+       Route::match(['get', 'post'], 'invitation/live-preview', [InvitationController::class, 'livePreview'])->name('invitation.live-preview');
         Route::resource('invitation', InvitationController::class);
         Route::resource('savedate', SaveDateController::class);
         Route::get('guestlist/sample', [GuestListController::class, 'downloadSample'])->name('guestlist.downloadSample');
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
+        Route::get('guestlist/preview', [GuestListController::class, 'previewTemplate'])->name('guestlist.previewTemplate');
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');
         Route::post('guestlist/bulk-save-date', [GuestListController::class, 'bulkSaveDate'])->name('guestlist.bulkSaveDate');

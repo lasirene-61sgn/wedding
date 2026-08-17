@@ -33,6 +33,7 @@ class Invitation extends Model
         'country',
         'wedding_image',
         'selected_background_id',
+        'selected_html_template',
         'theme',
         'is_main',
         'text_color',
