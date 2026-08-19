@@ -41,7 +41,7 @@
                     <label for="plan_name" class="block text-sm font-semibold text-gray-700 mb-2">
                         Plan Name <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="plan_name" id="plan_name" value="{{ old('plan_name') }}"
+                    <input type="text" name="package_name" id="package_name" value="{{ old('package_name') }}"
                         placeholder="e.g. Gold Plan"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
@@ -61,7 +61,7 @@
                     <label for="guest_count" class="block text-sm font-semibold text-gray-700 mb-2">
                         Guest Count <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="guest_count" id="guest_count" value="{{ old('guest_count') }}"
+                    <input type="text" name="guest_limit" id="guest_count" value="{{ old('guest_limit') }}"
                         placeholder="e.g. 100"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
@@ -81,7 +81,7 @@
                     <label for="invitation" class="block text-sm font-semibold text-gray-700 mb-2">
                         Invitation <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="invitation" id="invitation" value="{{ old('invitation') }}"
+                    <input type="text" name="invitaion" id="invitation" value="{{ old('invitaion') }}"
                         placeholder="Enter invitation info"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
@@ -101,7 +101,7 @@
                     <label for="ceremonies" class="block text-sm font-semibold text-gray-700 mb-2">
                         Ceremonies <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="ceremonies" id="ceremonies" value="{{ old('ceremonies') }}"
+                    <input type="text" name="ceramonies" id="ceremonies" value="{{ old('ceramonies') }}"
                         placeholder="Enter ceremonies info"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
@@ -121,7 +121,7 @@
                     <label for="gallery_display" class="block text-sm font-semibold text-gray-700 mb-2">
                         Gallery (Text Display) <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="gallery_display" id="gallery_display" value="{{ old('gallery_display') }}"
+                    <input type="text" name="gallery" id="gallery" value="{{ old('gallery') }}"
                         placeholder="Enter gallery text for display (e.g. 1.5 MB)"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>
                 </div>
@@ -138,10 +138,10 @@
 
                 <!-- Message Service (Text Display) -->
                 <div>
-                    <label for="message_service_display" class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label for="package_description" class="block text-sm font-semibold text-gray-700 mb-2">
                         Message Service (Text Display) <span class="text-red-500">*</span>
                     </label>
-                    <textarea name="message_service_display" id="message_service_display" rows="3"
+                    <textarea name="package_description" id="package_description" rows="3"
                         placeholder="Enter package details for display..."
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all" required>{{ old('message_service_display') }}</textarea>
                 </div>
@@ -191,7 +191,7 @@
                     <label for="dcg_qr_code" class="block text-sm font-semibold text-gray-700 mb-2">
                         DCG QR Code <span class="text-xs text-gray-400 font-normal">(Optional)</span>
                     </label>
-                    <input type="text" name="dcg_qr_code" id="dcg_qr_code" value="{{ old('dcg_qr_code') }}"
+                    <input type="text" name="dcgqrcode" id="dcgqrcode" value="{{ old('dcgqrcode') }}"
                         placeholder="Enter QR code info"
                         class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block transition-all">
                 </div>
