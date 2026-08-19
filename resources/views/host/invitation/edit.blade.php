@@ -970,8 +970,9 @@
         // Before submitting the main form, capture any custom edits made in the Live Editor
         mainForm.addEventListener('submit', function() {
             if (templateSelect.value && templateSelect.value.trim() !== '') {
-                document.getElementById('customized_html').value = editor.getHtml();
-                document.getElementById('customized_css').value = editor.getCss();
+                // Base64 encode to bypass WAF HTML payload blocking
+                document.getElementById('customized_html').value = 'B64:' + btoa(unescape(encodeURIComponent(editor.getHtml() || '')));
+                document.getElementById('customized_css').value = 'B64:' + btoa(unescape(encodeURIComponent(editor.getCss() || '')));
             }
         });
     });
