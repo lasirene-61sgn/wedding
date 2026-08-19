@@ -82,23 +82,25 @@ class InvitationController extends Controller
 
         $invitation = Invitation::create($validated);
 
-        $category = CategoryVenue::firstOrCreate(['category_name' => 'Wedding']);
-        Ceramonies::create([
-            'host_id' => Auth::id(),
-            'category_id' => $category->id,
-            'venue_id' => $invitation->venue_id,
-            'ceramony_name' => 'Wedding: ' . $invitation->bride_name . ' & ' . $invitation->groom_name,
-            'ceramony_date' => $invitation->wedding_date,
-            'ceramony_time' => $invitation->wedding_time,
-            'ceramony_image' => $invitation->wedding_image,
-            'is_main' => true,
-            'selected_background_id' => $invitation->selected_background_id,
-            'selected_html_template' => $invitation->selected_html_template,
-            'text_color' => $invitation->text_color,
-            'details_color' => $invitation->details_color,
-            'text_positions' => $invitation->text_positions,
-            'custom_canvas_texts' => $invitation->custom_canvas_texts,
-        ]);
+        if (!empty($invitation->wedding_date) && !empty($invitation->wedding_time) && !empty($invitation->venue_id)) {
+            $category = CategoryVenue::firstOrCreate(['category_name' => 'Wedding']);
+            Ceramonies::create([
+                'host_id' => Auth::id(),
+                'category_id' => $category->id,
+                'venue_id' => $invitation->venue_id,
+                'ceramony_name' => 'Wedding: ' . $invitation->bride_name . ' & ' . $invitation->groom_name,
+                'ceramony_date' => $invitation->wedding_date,
+                'ceramony_time' => $invitation->wedding_time,
+                'ceramony_image' => $invitation->wedding_image,
+                'is_main' => true,
+                'selected_background_id' => $invitation->selected_background_id,
+                'selected_html_template' => $invitation->selected_html_template,
+                'text_color' => $invitation->text_color,
+                'details_color' => $invitation->details_color,
+                'text_positions' => $invitation->text_positions,
+                'custom_canvas_texts' => $invitation->custom_canvas_texts,
+            ]);
+        }
 
         SaveDate::create([
             'host_id' => Auth::id(),
@@ -235,21 +237,29 @@ class InvitationController extends Controller
 
         // Update Main Ceremony record
         $mainCeremonyName = 'Wedding: ' . ($invitation->bride_name ?? '') . ' & ' . ($invitation->groom_name ?? '');
-        Ceramonies::where('host_id', Auth::id())
-            ->where('is_main', true)
-            ->update([
-                'ceramony_name' => $mainCeremonyName,
-                'ceramony_date' => $invitation->wedding_date,
-                'ceramony_time' => $invitation->wedding_time,
-                'venue_id' => $invitation->venue_id,
-                'ceramony_image' => $invitation->wedding_image,
-                'selected_background_id' => $invitation->selected_background_id,
-                'selected_html_template' => $invitation->selected_html_template,
-                'text_color' => $invitation->text_color,
-                'details_color' => $invitation->details_color,
-                'text_positions' => $invitation->text_positions,
-                'custom_canvas_texts' => $invitation->custom_canvas_texts,
-            ]);
+        if (!empty($invitation->wedding_date) && !empty($invitation->wedding_time) && !empty($invitation->venue_id)) {
+            $category = CategoryVenue::firstOrCreate(['category_name' => 'Wedding']);
+            Ceramonies::updateOrCreate(
+                ['host_id' => Auth::id(), 'is_main' => true],
+                [
+                    'category_id' => $category->id,
+                    'ceramony_name' => $mainCeremonyName,
+                    'ceramony_date' => $invitation->wedding_date,
+                    'ceramony_time' => $invitation->wedding_time,
+                    'venue_id' => $invitation->venue_id,
+                    'ceramony_image' => $invitation->wedding_image,
+                    'selected_background_id' => $invitation->selected_background_id,
+                    'selected_html_template' => $invitation->selected_html_template,
+                    'text_color' => $invitation->text_color,
+                    'details_color' => $invitation->details_color,
+                    'text_positions' => $invitation->text_positions,
+                    'custom_canvas_texts' => $invitation->custom_canvas_texts,
+                ]
+            );
+        } else {
+            // Delete main ceremony if details are removed
+            Ceramonies::where('host_id', Auth::id())->where('is_main', true)->delete();
+        }
 
         return redirect()->route('host.invitation.index')->with('Success', 'Invitation Updated Successfully');
     }
