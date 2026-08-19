@@ -724,6 +724,10 @@
 
             const formData = new FormData(mainForm);
             formData.delete('_method');
+            formData.delete('customized_html');
+            formData.delete('customized_css');
+            formData.delete('text_positions');
+            formData.delete('custom_canvas_texts');
             formData.append('template', selected);
 
             fetch("{{ route('host.invitation.live-preview') }}", {
