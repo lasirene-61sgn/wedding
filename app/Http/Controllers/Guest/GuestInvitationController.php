@@ -260,65 +260,139 @@ class GuestInvitationController extends Controller
             }
         }
 
-        // Dynamic Ceremonies HTML block - ONLY FOR ASSIGNED CEREMONIES
-        $assignedNames = explode(', ', $invite->assigned_ceremonies);
-        $detailedCeremonies = Ceramonies::where('host_id', $hostId)
-            ->whereIn('ceramony_name', $assignedNames)
-            ->orderBy('ceramony_date', 'asc')
-            ->orderBy('ceramony_time', 'asc')
-            ->get();
+        // 1. Template block repetition support for Ceremonies
+        if (preg_match('/<!--\s*CEREMONY_ITEM\s*-->(.*?)<!--\s*\/CEREMONY_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
 
-        $ceremoniesHtml = '';
-        if ($detailedCeremonies->count() > 0) {
-            $ceremoniesHtml .= '<div class="ceremonies-container" style="display: grid; gap: 12px; margin: 15px 0;">';
+            // Dynamic Ceremonies HTML block - ONLY FOR ASSIGNED CEREMONIES
+            $assignedNames = explode(', ', $invite->assigned_ceremonies);
+            $detailedCeremonies = Ceramonies::where('host_id', $hostId)
+                ->whereIn('ceramony_name', $assignedNames)
+                ->orderBy('ceramony_date', 'asc')
+                ->orderBy('ceramony_time', 'asc')
+                ->get();
+
             foreach ($detailedCeremonies as $ceremony) {
                 $cDate = $ceremony->ceramony_date ? \Carbon\Carbon::parse($ceremony->ceramony_date)->format('d M Y') : '';
                 $cTime = $ceremony->ceramony_time ? \Carbon\Carbon::parse($ceremony->ceramony_time)->format('h:i A') : '';
-                $ceremoniesHtml .= '<div class="ceremony-item" style="padding: 12px; border-left: 4px solid #b02663; background: rgba(0,0,0,0.03); border-radius: 6px;">';
-                $ceremoniesHtml .= '<strong style="display:block; font-size: 1.1em; color: inherit;">' . htmlspecialchars($ceremony->ceramony_name) . '</strong>';
-                $ceremoniesHtml .= '<span style="font-size: 0.9em; opacity: 0.85;">' . $cDate . ($cTime ? ' at ' . $cTime : '') . '</span>';
+                $cImage = !empty($ceremony->ceramony_image) ? asset('storage/' . $ceremony->ceramony_image) : '';
+
+                $cReplacements = [
+                    '[CERAMONY_NAME]'  => htmlspecialchars($ceremony->ceramony_name),
+                    '[CERAMONY_DATE]'  => $cDate,
+                    '[CERAMONY_TIME]'  => $cTime,
+                    '[CERAMONY_IMAGE]' => $cImage,
+                    '[VENUE_NAME]'     => htmlspecialchars($venueName),
+                ];
+
+                $renderedItems .= str_replace(array_keys($cReplacements), array_values($cReplacements), $itemTemplate);
+            }
+
+            $html = preg_replace('/<!--\s*CEREMONY_ITEM\s*-->.*?<!--\s*\/CEREMONY_ITEM\s*-->/s', $renderedItems, $html);
+            $ceremoniesHtml = ''; // Already handled
+        } else {
+            // Fallback for simple [CEREMONIES] placeholder
+            $ceremoniesHtml = '';
+            $assignedNames = explode(', ', $invite->assigned_ceremonies);
+            $detailedCeremonies = Ceramonies::where('host_id', $hostId)
+                ->whereIn('ceramony_name', $assignedNames)
+                ->orderBy('ceramony_date', 'asc')
+                ->orderBy('ceramony_time', 'asc')
+                ->get();
+
+            if ($detailedCeremonies->count() > 0) {
+                $ceremoniesHtml .= '<div class="ceremonies-container" style="display: grid; gap: 12px; margin: 15px 0;">';
+                foreach ($detailedCeremonies as $ceremony) {
+                    $cDate = $ceremony->ceramony_date ? \Carbon\Carbon::parse($ceremony->ceramony_date)->format('d M Y') : '';
+                    $cTime = $ceremony->ceramony_time ? \Carbon\Carbon::parse($ceremony->ceramony_time)->format('h:i A') : '';
+                    $ceremoniesHtml .= '<div class="ceremony-item" style="padding: 12px; border-left: 4px solid #b02663; background: rgba(0,0,0,0.03); border-radius: 6px;">';
+                    $ceremoniesHtml .= '<strong style="display:block; font-size: 1.1em; color: inherit;">' . htmlspecialchars($ceremony->ceramony_name) . '</strong>';
+                    $ceremoniesHtml .= '<span style="font-size: 0.9em; opacity: 0.85;">' . $cDate . ($cTime ? ' at ' . $cTime : '') . '</span>';
+                    $ceremoniesHtml .= '</div>';
+                }
                 $ceremoniesHtml .= '</div>';
             }
-            $ceremoniesHtml .= '</div>';
         }
 
-        // Dynamic Gallery Photos HTML block
+        // 2. Template block repetition support for Gallery
         $pictures = Pictures::where('host_id', $hostId)->latest()->take(8)->get();
-        $galleryHtml = '';
-        if ($pictures->count() > 0) {
-            $galleryHtml .= '<div class="gallery-container" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+        if (preg_match('/<!--\s*GALLERY_ITEM\s*-->(.*?)<!--\s*\/GALLERY_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($pictures as $pic) {
-                $galleryHtml .= '<img src="' . asset('storage/' . $pic->picture) . '" style="width: 110px; height: 110px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">';
+                $pReplacements = [
+                    '[GALLERY_IMAGE]' => asset('storage/' . $pic->picture),
+                ];
+                $renderedItems .= str_replace(array_keys($pReplacements), array_values($pReplacements), $itemTemplate);
             }
-            $galleryHtml .= '</div>';
+            $html = preg_replace('/<!--\s*GALLERY_ITEM\s*-->.*?<!--\s*\/GALLERY_ITEM\s*-->/s', $renderedItems, $html);
+            $galleryHtml = '';
+        } else {
+            $galleryHtml = '';
+            if ($pictures->count() > 0) {
+                $galleryHtml .= '<div class="gallery-container" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+                foreach ($pictures as $pic) {
+                    $galleryHtml .= '<img src="' . asset('storage/' . $pic->picture) . '" style="width: 110px; height: 110px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">';
+                }
+                $galleryHtml .= '</div>';
+            }
         }
 
-        // Dynamic Albums HTML block
+        // 3. Template block repetition support for Albums
         $albums = Albums::where('host_id', $hostId)->latest()->take(5)->get();
-        $albumsHtml = '';
-        if ($albums->count() > 0) {
-            $albumsHtml .= '<div class="albums-container" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+        if (preg_match('/<!--\s*ALBUM_ITEM\s*-->(.*?)<!--\s*\/ALBUM_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($albums as $album) {
-                $albumsHtml .= '<div style="text-align:center;">';
-                if (!empty($album->album_images) && is_array($album->album_images)) {
-                    $firstImg = $album->album_images[0];
-                    $albumsHtml .= '<img src="' . asset('storage/' . $firstImg) . '" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">';
+                $cover = !empty($album->album_images) && is_array($album->album_images) ? asset('storage/' . $album->album_images[0]) : '';
+                $aReplacements = [
+                    '[ALBUM_IMAGE]' => $cover,
+                    '[ALBUM_NAME]'  => htmlspecialchars($album->album_name),
+                ];
+                $renderedItems .= str_replace(array_keys($aReplacements), array_values($aReplacements), $itemTemplate);
+            }
+            $html = preg_replace('/<!--\s*ALBUM_ITEM\s*-->.*?<!--\s*\/ALBUM_ITEM\s*-->/s', $renderedItems, $html);
+            $albumsHtml = '';
+        } else {
+            $albumsHtml = '';
+            if ($albums->count() > 0) {
+                $albumsHtml .= '<div class="albums-container" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+                foreach ($albums as $album) {
+                    $albumsHtml .= '<div style="text-align:center;">';
+                    if (!empty($album->album_images) && is_array($album->album_images)) {
+                        $firstImg = $album->album_images[0];
+                        $albumsHtml .= '<img src="' . asset('storage/' . $firstImg) . '" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">';
+                    }
+                    $albumsHtml .= '<strong style="display:block; margin-top:5px; font-size: 0.9em; color: inherit;">' . htmlspecialchars($album->album_name) . '</strong>';
+                    $albumsHtml .= '</div>';
                 }
-                $albumsHtml .= '<strong style="display:block; margin-top:5px; font-size: 0.9em; color: inherit;">' . htmlspecialchars($album->album_name) . '</strong>';
                 $albumsHtml .= '</div>';
             }
-            $albumsHtml .= '</div>';
         }
 
-        // Dynamic Videos HTML block
+        // 4. Template block repetition support for Videos
         $videos = Videos::where('host_id', $hostId)->latest()->take(5)->get();
-        $videosHtml = '';
-        if ($videos->count() > 0) {
-            $videosHtml .= '<div class="videos-container" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+        if (preg_match('/<!--\s*VIDEO_ITEM\s*-->(.*?)<!--\s*\/VIDEO_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($videos as $vid) {
-                $videosHtml .= '<video controls src="' . asset('storage/' . $vid->videos) . '" style="width: 250px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></video>';
+                $vReplacements = [
+                    '[VIDEO_URL]' => asset('storage/' . $vid->videos),
+                ];
+                $renderedItems .= str_replace(array_keys($vReplacements), array_values($vReplacements), $itemTemplate);
             }
-            $videosHtml .= '</div>';
+            $html = preg_replace('/<!--\s*VIDEO_ITEM\s*-->.*?<!--\s*\/VIDEO_ITEM\s*-->/s', $renderedItems, $html);
+            $videosHtml = '';
+        } else {
+            $videosHtml = '';
+            if ($videos->count() > 0) {
+                $videosHtml .= '<div class="videos-container" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 15px 0;">';
+                foreach ($videos as $vid) {
+                    $videosHtml .= '<video controls src="' . asset('storage/' . $vid->videos) . '" style="width: 250px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"></video>';
+                }
+                $videosHtml .= '</div>';
+            }
         }
 
         // Dynamic Save the Date message & picture block
@@ -346,9 +420,23 @@ class GuestInvitationController extends Controller
         $brideInitial = !empty(trim($bride)) ? mb_substr(trim($bride), 0, 1) : '';
         $groomInitial = !empty(trim($groom)) ? mb_substr(trim($groom), 0, 1) : '';
 
+        $guestSide = '';
+        if (strtolower($guest->relation) === 'bride') {
+            $guestSide = 'Bride Side';
+        } elseif (strtolower($guest->relation) === 'groom') {
+            $guestSide = 'Groom Side';
+        }
+
+        $invitationType = '';
+        if ($guestCategory) {
+            $invitationType = ucfirst($guestCategory->group_type);
+        }
+
         // Replace placeholders
         $replacements = [
             '[GUEST_NAME]' => '<span class="guest-name-highlight" style="font-weight: bold; color: inherit;">' . $guestAddressing . '</span>',
+            '[GUEST_SIDE]' => htmlspecialchars($guestSide),
+            '[INVITATION_TYPE]' => htmlspecialchars($invitationType),
             '[BRIDE_NAME]' => htmlspecialchars($bride),
             '[GROOM_NAME]' => htmlspecialchars($groom),
             '[BRIDE_INITIAL]' => htmlspecialchars(strtoupper($brideInitial)),
@@ -375,19 +463,10 @@ class GuestInvitationController extends Controller
         $originalHtml = $html;
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
 
-        // Auto-inject missing dynamic content
+        // Auto-inject missing dynamic content ONLY for Ceremonies
         $autoInject = '';
         if ($ceremoniesHtml && !str_contains($originalHtml, '[CEREMONIES]')) {
             $autoInject .= '<div style="margin-top:40px; text-align:center;"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Your Ceremonies</h3>' . $ceremoniesHtml . '</div>';
-        }
-        if ($galleryHtml && !str_contains($originalHtml, '[GALLERY]')) {
-            $autoInject .= '<div style="margin-top:40px; text-align:center;"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Our Memories</h3>' . $galleryHtml . '</div>';
-        }
-        if ($albumsHtml && !str_contains($originalHtml, '[ALBUMS]')) {
-            $autoInject .= '<div style="margin-top:40px; text-align:center;"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Albums</h3>' . $albumsHtml . '</div>';
-        }
-        if ($videosHtml && !str_contains($originalHtml, '[VIDEOS]')) {
-            $autoInject .= '<div style="margin-top:40px; text-align:center;"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Videos</h3>' . $videosHtml . '</div>';
         }
 
         if (!empty($autoInject)) {

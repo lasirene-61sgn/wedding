@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[BRIDE_NAME] & [GROOM_NAME] Wedding</title>
+    <title>[BRIDE_NAME] &amp; [GROOM_NAME] Wedding</title>
     <style>
         :root {
             --primary: [TITLE_COLOR];
@@ -344,7 +344,7 @@
         }
 
         .gallery-item::after {
-            content: '🔍';
+            content: '&#128269;';
             position: absolute;
             top: 50%;
             left: 50%;
@@ -426,14 +426,14 @@
     <!-- ANIMATED LANDING PAGE (Rotating Circle) -->
     <div id="landing-page" class="landing-page">
         <div class="rotating-circle-container" onclick="enterSite()">
-            <svg viewBox="0 0 200 200" class="rotating-svg">
+            <svg viewbox="0 0 200 200" class="rotating-svg">
                 <defs>
-                    <path id="circlePath" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
+                    <path id="circlePath" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0"></path>
                 </defs>
                 <text class="rotating-text-path">
-                    <textPath href="#circlePath" startOffset="0%">
-                        [BRIDE_NAME] & [GROOM_NAME] &nbsp;•&nbsp; [BRIDE_NAME] & [GROOM_NAME] &nbsp;•&nbsp;
-                    </textPath>
+                    <textpath href="#circlePath" startoffset="0%">
+                        [BRIDE_NAME] &amp; [GROOM_NAME] &nbsp;&bull;&nbsp; [BRIDE_NAME] &amp; [GROOM_NAME] &nbsp;&bull;&nbsp;
+                    </textpath>
                 </text>
             </svg>
             <div class="center-content">
@@ -444,7 +444,7 @@
     </div>
 
     <header>
-        <h1>[BRIDE_NAME] & [GROOM_NAME]</h1>
+        <h1>[BRIDE_NAME] &amp; [GROOM_NAME]</h1>
         <p style="font-size: 1.5em; margin: 10px 0;">Are getting married on [WEDDING_DATE] at [WEDDING_TIME]</p>
         <p style="font-size: 1.2em; margin: 10px 0;">[VENUE_NAME]</p>
         <p style="font-size: 1.1em; font-style: italic; margin-top: 20px; opacity: 0.9;">Welcome [GUEST_NAME]
@@ -457,57 +457,42 @@
         <h2>Wedding Events</h2>
         <div class="ceremony-grid">
             <!-- Dummy Card 1 -->
-            <article class="ceremony-card">
-                <img src="https://via.placeholder.com/400x200?text=Haldi" alt="Haldi Event">
+            <!-- CEREMONY_ITEM --><article class="ceremony-card">
+                <img src="[CERAMONY_IMAGE]" alt="Haldi Event">
                 <div class="ceremony-card-content">
-                    <h3>Haldi Ceremony</h3>
-                    <p>12 Nov 2026 at 10:00 AM<br>Main Hall</p>
+                    <h3>[CERAMONY_NAME]</h3>
+                    <p>[CERAMONY_DATE] at [CERAMONY_TIME] - [VENUE_NAME]</p>
                 </div>
-            </article>
+            </article><!-- /CEREMONY_ITEM -->
 
             <!-- Dummy Card 2 -->
-            <article class="ceremony-card">
-                <img src="https://via.placeholder.com/400x200?text=Sangeet" alt="Sangeet Event">
-                <div class="ceremony-card-content">
-                    <h3>Sangeet Night</h3>
-                    <p>13 Nov 2026 at 07:00 PM<br>Banquet</p>
-                </div>
-            </article>
+            
 
             <!-- Dummy Card 3 -->
-            <article class="ceremony-card">
-                <img src="https://via.placeholder.com/400x200?text=Wedding" alt="Wedding Event">
-                <div class="ceremony-card-content">
-                    <h3>Main Wedding</h3>
-                    <p>14 Nov 2026 at 09:00 AM<br>Lawn</p>
-                </div>
-            </article>
+            
         </div>
 
         <!-- ALBUMS SECTION -->
         <h2>Our Albums</h2>
         <div class="albums-flex">
             <!-- Dummy Album 1 -->
-            <div class="album-card">
-                <img src="https://via.placeholder.com/150?text=Pre+Wedding" alt="Album 1">
-                <h4>Pre-Wedding Shoot</h4>
-            </div>
+            <!-- ALBUM_ITEM --><div class="album-card">
+                <img src="[ALBUM_IMAGE]" alt="Album 1">
+                <h4>[ALBUM_NAME]</h4>
+            </div><!-- /ALBUM_ITEM -->
 
             <!-- Dummy Album 2 -->
-            <div class="album-card">
-                <img src="https://via.placeholder.com/150?text=Engagement" alt="Album 2">
-                <h4>Engagement</h4>
-            </div>
+            
         </div>
 
         <!-- GALLERY SECTION -->
         <h2>Photo Gallery</h2>
         <div class="gallery-grid">
             <!-- Dummy Gallery Images -->
-            <div class="gallery-item"><img src="https://via.placeholder.com/200?text=Pic+1" alt="Gallery"></div>
-            <div class="gallery-item"><img src="https://via.placeholder.com/200?text=Pic+2" alt="Gallery"></div>
-            <div class="gallery-item"><img src="https://via.placeholder.com/200?text=Pic+3" alt="Gallery"></div>
-            <div class="gallery-item"><img src="https://via.placeholder.com/200?text=Pic+4" alt="Gallery"></div>
+            <!-- GALLERY_ITEM --><div class="gallery-item"><img src="[GALLERY_IMAGE]" alt="Gallery"></div><!-- /GALLERY_ITEM -->
+            
+            
+            
         </div>
 
     </div>

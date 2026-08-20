@@ -250,30 +250,157 @@ class CategoryVenueController extends Controller
         $timePattern = '/\b\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)\b/';
         $htmlContent = preg_replace($timePattern, '[WEDDING_TIME]', $htmlContent);
 
-        // 4. Auto-detect repeated card sections for ceremonies and wrap with dynamic loop tags
-        if (!str_contains($htmlContent, '<!-- CEREMONY_ITEM -->')) {
-            $ceremonyCardPattern = '/(<(?:div|li|article)[^>]*class=["\'][^"\']*(?:ceremony|event|program|timeline|function|schedule)[^"\']*["\'][^>]*>)(.*?)(<\/(?:div|li|article)>)/is';
-            
-            if (preg_match($ceremonyCardPattern, $htmlContent)) {
-                $htmlContent = preg_replace_callback(
-                    $ceremonyCardPattern,
-                    function ($matches) {
-                        $inner = $matches[2];
-                        // Replace ceremony image source
-                        $inner = preg_replace('/src=["\'][^"\']+["\']/', 'src="[CERAMONY_IMAGE]"', $inner);
-                        // Replace heading with ceremony name
-                        $inner = preg_replace('/(<h[1-6][^>]*>)(.*?)(<\/h[1-6]>)/is', '$1[CERAMONY_NAME]$3', $inner);
-                        // Replace paragraph details with date & time
-                        $inner = preg_replace('/(<p[^>]*>)(.*?)(<\/p>)/is', '$1[CERAMONY_DATE] at [CERAMONY_TIME]$3', $inner);
+        // 4. Advanced DOM Parsing for structural pattern detection
+        $dom = new \DOMDocument();
+        // Suppress errors due to invalid HTML often found in templates
+        libxml_use_internal_errors(true);
+        // Load with proper encoding and prevent adding extra html/body tags
+        @$dom->loadHTML('<?xml encoding="UTF-8">' . $htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
 
-                        return '<!-- CEREMONY_ITEM -->' . $matches[1] . $inner . $matches[3] . '<!-- /CEREMONY_ITEM -->';
-                    },
-                    $htmlContent,
-                    1 // Apply loop wrapping to the first matching card pattern
-                );
+        $xpath = new \DOMXPath($dom);
+
+        // --- Helper to wrap node with comments ---
+        $wrapWithComments = function($node, $itemName) use ($dom) {
+            $startComment = $dom->createComment(" {$itemName} ");
+            $endComment = $dom->createComment(" /{$itemName} ");
+            $node->parentNode->insertBefore($startComment, $node);
+            
+            if ($node->nextSibling) {
+                $node->parentNode->insertBefore($endComment, $node->nextSibling);
+            } else {
+                $node->parentNode->appendChild($endComment);
+            }
+        };
+
+        // --- DETECT CEREMONIES ---
+        // Look for repeating blocks (same tag) under the same parent that contain an img, a heading, and a paragraph
+        $processedCeremonies = false;
+        $containers = $xpath->query('//*[count(*[self::div or self::article or self::li or self::section]) > 1]');
+        foreach ($containers as $container) {
+            if ($processedCeremonies) break;
+            
+            $children = $xpath->query('./*[self::div or self::article or self::li or self::section]', $container);
+            $validChildren = [];
+            
+            foreach ($children as $child) {
+                $hasImg = $xpath->evaluate('count(.//img) > 0', $child);
+                $hasHeading = $xpath->evaluate('count(.//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6) > 0', $child);
+                $hasP = $xpath->evaluate('count(.//p | .//span) > 0', $child);
+                
+                if ($hasImg && $hasHeading && $hasP) {
+                    $validChildren[] = $child;
+                }
+            }
+
+            // If we found a repeating pattern of at least 2 cards matching the structure
+            if (count($validChildren) >= 2) {
+                $first = $validChildren[0];
+                
+                // Inject placeholders in the first child
+                $img = $xpath->query('.//img', $first)->item(0);
+                if ($img) $img->setAttribute('src', '[CERAMONY_IMAGE]');
+                
+                $headings = $xpath->query('.//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6', $first);
+                if ($headings->length > 0) $headings->item(0)->nodeValue = '[CERAMONY_NAME]';
+                
+                $paras = $xpath->query('.//p', $first);
+                if ($paras->length > 0) {
+                    $paras->item(0)->nodeValue = '[CERAMONY_DATE] at [CERAMONY_TIME] - [VENUE_NAME]';
+                }
+
+                // Remove the other dummy cards to prevent duplicates
+                for ($i = 1; $i < count($validChildren); $i++) {
+                    $validChildren[$i]->parentNode->removeChild($validChildren[$i]);
+                }
+
+                $wrapWithComments($first, 'CEREMONY_ITEM');
+                $processedCeremonies = true;
             }
         }
 
+        // --- DETECT GALLERY ---
+        // Look for repeating images (or wrappers with just an image)
+        $processedGallery = false;
+        foreach ($containers as $container) {
+            if ($processedGallery) break;
+            
+            $children = $xpath->query('./*[self::div or self::li or self::figure or self::a or self::img]', $container);
+            $validChildren = [];
+            
+            foreach ($children as $child) {
+                // It should either BE an image, or contain exactly one image and no text/headings
+                $isImg = $child->nodeName === 'img';
+                $hasImg = $xpath->evaluate('count(.//img) = 1', $child);
+                $hasHeading = $xpath->evaluate('count(.//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6) > 0', $child);
+                
+                if (($isImg || $hasImg) && !$hasHeading && trim($child->textContent) === '') {
+                    $validChildren[] = $child;
+                }
+            }
+
+            if (count($validChildren) >= 3) { // At least 3 dummy images to be considered a gallery
+                $first = $validChildren[0];
+                
+                $img = $first->nodeName === 'img' ? $first : $xpath->query('.//img', $first)->item(0);
+                if ($img) $img->setAttribute('src', '[GALLERY_IMAGE]');
+                
+                for ($i = 1; $i < count($validChildren); $i++) {
+                    $validChildren[$i]->parentNode->removeChild($validChildren[$i]);
+                }
+
+                $wrapWithComments($first, 'GALLERY_ITEM');
+                $processedGallery = true;
+            }
+        }
+
+        // --- DETECT ALBUMS ---
+        // Similar to gallery, but has a heading (title)
+        $processedAlbums = false;
+        foreach ($containers as $container) {
+            if ($processedAlbums) continue;
+            
+            $children = $xpath->query('./*[self::div or self::li or self::figure or self::article]', $container);
+            $validChildren = [];
+            
+            foreach ($children as $child) {
+                $hasImg = $xpath->evaluate('count(.//img) = 1', $child);
+                $hasHeading = $xpath->evaluate('count(.//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6 | .//strong | .//b) > 0', $child);
+                $hasP = $xpath->evaluate('count(.//p) > 0', $child); // Albums usually don't have long descriptions in this UI
+                
+                if ($hasImg && $hasHeading && !$hasP) {
+                    $validChildren[] = $child;
+                }
+            }
+
+            // Make sure it doesn't overlap with ceremonies
+            $first = count($validChildren) > 0 ? $validChildren[0] : null;
+            if ($first && $first->previousSibling && $first->previousSibling->nodeName === '#comment' && strpos($first->previousSibling->nodeValue, 'CEREMONY_ITEM') !== false) {
+                continue;
+            }
+
+            if (count($validChildren) >= 2) { 
+                $first = $validChildren[0];
+                
+                $img = $xpath->query('.//img', $first)->item(0);
+                if ($img) $img->setAttribute('src', '[ALBUM_IMAGE]');
+                
+                $headings = $xpath->query('.//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6 | .//strong | .//b', $first);
+                if ($headings->length > 0) $headings->item(0)->nodeValue = '[ALBUM_NAME]';
+                
+                for ($i = 1; $i < count($validChildren); $i++) {
+                    $validChildren[$i]->parentNode->removeChild($validChildren[$i]);
+                }
+
+                $wrapWithComments($first, 'ALBUM_ITEM');
+                $processedAlbums = true;
+            }
+        }
+
+        $htmlContent = $dom->saveHTML();
+        // Remove the xml encoding declaration added for unicode safety
+        $htmlContent = str_replace('<?xml encoding="UTF-8">', '', $htmlContent);
+        
         // 5. Fallback placeholder for ceremonies container if no repeating card was detected
         if (!str_contains($htmlContent, '[CEREMONIES]') && !str_contains($htmlContent, '<!-- CEREMONY_ITEM -->')) {
             if (str_contains($htmlContent, '</body>')) {

@@ -55,7 +55,7 @@
                             <label class="form-label fw-bold text-primary">Select HTML Template (Optional)</label>
                             <p class="text-muted small mb-2">If you select an HTML template, it will be used for your invitation instead of the Canva design.</p>
                             <div class="d-flex flex-wrap gap-3" id="html_templates_list">
-                                <!-- Templates injected via JS -->
+                               
                             </div>
                         </div>
 
@@ -116,7 +116,7 @@
                             <input type="file" name="ceramony_image" class="form-control">
                         </div>
 
-                        <div class="row mb-3">
+                        <!-- <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Title Text Color</label>
                                 <input type="color" name="text_color" id="text_color" class="form-control form-control-color w-100" value="{{ $ceramony->text_color ?? '#b02663' }}">
@@ -125,12 +125,12 @@
                                 <label class="form-label">Details Text Color</label>
                                 <input type="color" name="details_color" id="details_color" class="form-control form-control-color w-100" value="{{ $ceramony->details_color ?? '#2b4c5e' }}">
                             </div>
-                        </div>
+                        </div> -->
 
                         <input type="hidden" name="text_positions" id="text_positions" value="{{ is_array($ceramony->text_positions) ? json_encode($ceramony->text_positions) : ($ceramony->text_positions ?? '{}') }}">
                         <input type="hidden" name="custom_canvas_texts" id="custom_canvas_texts" value="{{ is_array($ceramony->custom_canvas_texts) ? json_encode($ceramony->custom_canvas_texts) : ($ceramony->custom_canvas_texts ?? '{}') }}">
 
-                        <div class="mb-4">
+                        <!-- <div class="mb-4">
                             <label class="form-label fw-bold">Select Background</label>
                             <div class="row">
                                 @foreach($backgrounds as $bg)
@@ -142,9 +142,9 @@
                                 </div>
                                 @endforeach
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="mb-4 position-relative" id="live-preview-container" style="display: none;">
+                        <!-- <div class="mb-4 position-relative" id="live-preview-container" style="display: none;">
                             <label class="form-label fw-bold">Live Preview</label>
                             <p class="text-muted small mb-2">You can click to edit the text directly on the canvas, and drag it anywhere!</p>
                             
@@ -185,9 +185,9 @@
                             <div class="ceremony-card-preview border" id="preview_card">
                                 <canvas id="designCanvas" width="450" height="600"></canvas>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="mb-4 d-none">
+                        <!-- <div class="mb-4 d-none">
                             <label class="form-label fw-bold">Canva Integration</label>
                             
                             <div class="d-flex align-items-center gap-2 mb-2">
@@ -205,7 +205,7 @@
                             <small class="text-muted">To show your design to guests, edit your design in Canva, click "Share" -> "Public View Link", and paste it here.</small>
 
                             <input type="hidden" name="canva_design_url" id="canva_design_url_input" value="{{ $ceramony->canva_design_url }}">
-                        </div>
+                        </div> -->
                         
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('host.ceramony.index') }}" class="btn btn-light border fw-bold">Cancel</a>

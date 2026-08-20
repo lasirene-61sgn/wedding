@@ -366,7 +366,7 @@ class InvitationController extends Controller
             $html = preg_replace('/<!--\s*CEREMONY_ITEM\s*-->.*?<!--\s*\/CEREMONY_ITEM\s*-->/s', $renderedItems, $html);
             $ceremoniesHtml = ''; // Already handled inside custom template layout
         } else {
-            // 2. Clean fallback for simple [CEREMONIES] placeholder with un-styled semantic markup
+            // Fallback for simple [CEREMONIES] placeholder with un-styled semantic markup
             $ceremoniesHtml = '';
             if ($ceremonies->count() > 0) {
                 $ceremoniesHtml .= '<div class="ceremonies-container">';
@@ -387,42 +387,83 @@ class InvitationController extends Controller
             }
         }
 
-        // Dynamic Gallery Photos HTML block
+        // 2. Template block repetition support for Gallery
         $pictures = Pictures::where('host_id', $hostId)->latest()->take(8)->get();
-        $galleryHtml = '';
-        if ($pictures->count() > 0) {
-            $galleryHtml .= '<div class="gallery-container">';
+        if (preg_match('/<!--\s*GALLERY_ITEM\s*-->(.*?)<!--\s*\/GALLERY_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($pictures as $pic) {
-                $galleryHtml .= '<img class="gallery-image" src="' . asset('storage/' . $pic->picture) . '">';
+                $pReplacements = [
+                    '[GALLERY_IMAGE]' => asset('storage/' . $pic->picture),
+                ];
+                $renderedItems .= str_replace(array_keys($pReplacements), array_values($pReplacements), $itemTemplate);
             }
-            $galleryHtml .= '</div>';
+            $html = preg_replace('/<!--\s*GALLERY_ITEM\s*-->.*?<!--\s*\/GALLERY_ITEM\s*-->/s', $renderedItems, $html);
+            $galleryHtml = '';
+        } else {
+            $galleryHtml = '';
+            if ($pictures->count() > 0) {
+                $galleryHtml .= '<div class="gallery-container">';
+                foreach ($pictures as $pic) {
+                    $galleryHtml .= '<img class="gallery-image" src="' . asset('storage/' . $pic->picture) . '">';
+                }
+                $galleryHtml .= '</div>';
+            }
         }
 
-        // Dynamic Albums HTML block
+        // 3. Template block repetition support for Albums
         $albums = Albums::where('host_id', $hostId)->latest()->take(5)->get();
-        $albumsHtml = '';
-        if ($albums->count() > 0) {
-            $albumsHtml .= '<div class="albums-container">';
+        if (preg_match('/<!--\s*ALBUM_ITEM\s*-->(.*?)<!--\s*\/ALBUM_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($albums as $album) {
-                $albumsHtml .= '<div class="album-item">';
-                if (!empty($album->album_images) && is_array($album->album_images)) {
-                    $albumsHtml .= '<img class="album-cover" src="' . asset('storage/' . $album->album_images[0]) . '">';
+                $cover = !empty($album->album_images) && is_array($album->album_images) ? asset('storage/' . $album->album_images[0]) : '';
+                $aReplacements = [
+                    '[ALBUM_IMAGE]' => $cover,
+                    '[ALBUM_NAME]'  => htmlspecialchars($album->album_name),
+                ];
+                $renderedItems .= str_replace(array_keys($aReplacements), array_values($aReplacements), $itemTemplate);
+            }
+            $html = preg_replace('/<!--\s*ALBUM_ITEM\s*-->.*?<!--\s*\/ALBUM_ITEM\s*-->/s', $renderedItems, $html);
+            $albumsHtml = '';
+        } else {
+            $albumsHtml = '';
+            if ($albums->count() > 0) {
+                $albumsHtml .= '<div class="albums-container">';
+                foreach ($albums as $album) {
+                    $albumsHtml .= '<div class="album-item">';
+                    if (!empty($album->album_images) && is_array($album->album_images)) {
+                        $albumsHtml .= '<img class="album-cover" src="' . asset('storage/' . $album->album_images[0]) . '">';
+                    }
+                    $albumsHtml .= '<strong class="album-title">' . htmlspecialchars($album->album_name) . '</strong>';
+                    $albumsHtml .= '</div>';
                 }
-                $albumsHtml .= '<strong class="album-title">' . htmlspecialchars($album->album_name) . '</strong>';
                 $albumsHtml .= '</div>';
             }
-            $albumsHtml .= '</div>';
         }
 
-        // Dynamic Videos HTML block
+        // 4. Template block repetition support for Videos
         $videos = Videos::where('host_id', $hostId)->latest()->take(5)->get();
-        $videosHtml = '';
-        if ($videos->count() > 0) {
-            $videosHtml .= '<div class="videos-container">';
+        if (preg_match('/<!--\s*VIDEO_ITEM\s*-->(.*?)<!--\s*\/VIDEO_ITEM\s*-->/s', $html, $matches)) {
+            $itemTemplate = $matches[1];
+            $renderedItems = '';
             foreach ($videos as $vid) {
-                $videosHtml .= '<video controls class="video-item" src="' . asset('storage/' . $vid->videos) . '"></video>';
+                $vReplacements = [
+                    '[VIDEO_URL]' => asset('storage/' . $vid->videos),
+                ];
+                $renderedItems .= str_replace(array_keys($vReplacements), array_values($vReplacements), $itemTemplate);
             }
-            $videosHtml .= '</div>';
+            $html = preg_replace('/<!--\s*VIDEO_ITEM\s*-->.*?<!--\s*\/VIDEO_ITEM\s*-->/s', $renderedItems, $html);
+            $videosHtml = '';
+        } else {
+            $videosHtml = '';
+            if ($videos->count() > 0) {
+                $videosHtml .= '<div class="videos-container">';
+                foreach ($videos as $vid) {
+                    $videosHtml .= '<video controls class="video-item" src="' . asset('storage/' . $vid->videos) . '"></video>';
+                }
+                $videosHtml .= '</div>';
+            }
         }
 
         // Dynamic Save the Date message & picture block
@@ -474,24 +515,19 @@ class InvitationController extends Controller
             '[BACKGROUND_IMAGE]'    => $bgUrl,
             '[TITLE_COLOR]'         => $request->input('text_color', $invitation->text_color ?? '#b02663'),
             '[DETAILS_COLOR]'       => $request->input('details_color', $invitation->details_color ?? '#2b4c5e'),
+            // Add Guest defaults for live preview
+            '[GUEST_NAME]'          => 'Guest Name',
+            '[GUEST_SIDE]'          => 'Guest Side',
+            '[INVITATION_TYPE]'     => 'Invitation Type',
         ];
 
         $originalHtml = $html;
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
 
-        // Auto-inject missing dynamic content if placeholders weren't present in the template
+        // Auto-inject missing dynamic content if placeholders weren't present in the template ONLY for Ceremonies
         $autoInject = '';
         if ($ceremoniesHtml && !str_contains($originalHtml, '[CEREMONIES]')) {
             $autoInject .= '<div class="injected-section injected-ceremonies"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Other Ceremonies</h3>' . $ceremoniesHtml . '</div>';
-        }
-        if ($galleryHtml && !str_contains($originalHtml, '[GALLERY]')) {
-            $autoInject .= '<div class="injected-section injected-gallery"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Our Memories</h3>' . $galleryHtml . '</div>';
-        }
-        if ($albumsHtml && !str_contains($originalHtml, '[ALBUMS]')) {
-            $autoInject .= '<div class="injected-section injected-albums"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Albums</h3>' . $albumsHtml . '</div>';
-        }
-        if ($videosHtml && !str_contains($originalHtml, '[VIDEOS]')) {
-            $autoInject .= '<div class="injected-section injected-videos"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Videos</h3>' . $videosHtml . '</div>';
         }
 
         if ($autoInject !== '') {

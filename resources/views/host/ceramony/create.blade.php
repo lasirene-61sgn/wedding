@@ -50,7 +50,6 @@
                             <label class="form-label fw-bold text-primary">Select HTML Template (Optional)</label>
                             <p class="text-muted small mb-2">If you select an HTML template, it will be used for your invitation instead of the Canva design.</p>
                             <div class="d-flex flex-wrap gap-3" id="html_templates_list">
-                                <!-- Templates injected via JS -->
                             </div>
                         </div>
 
@@ -93,7 +92,7 @@
                             <input type="file" name="ceramony_image" class="form-control">
                         </div>
 
-                        <div class="row mb-3">
+                        <!-- <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Title Text Color</label>
                                 <input type="color" name="text_color" id="text_color" class="form-control form-control-color w-100" value="#b02663">
@@ -102,12 +101,12 @@
                                 <label class="form-label">Details Text Color</label>
                                 <input type="color" name="details_color" id="details_color" class="form-control form-control-color w-100" value="#2b4c5e">
                             </div>
-                        </div>
+                        </div> -->
 
                         <input type="hidden" name="text_positions" id="text_positions" value="{}">
                         <input type="hidden" name="custom_canvas_texts" id="custom_canvas_texts" value="{}">
 
-                        <div class="mb-4">
+                        <!-- <div class="mb-4">
                             <label class="form-label fw-bold">Select Background</label>
                             <div class="row">
                                 @foreach($backgrounds as $bg)
@@ -119,9 +118,9 @@
                                 </div>
                                 @endforeach
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="mb-4 position-relative" id="live-preview-container" style="display: none;">
+                        <!-- <div class="mb-4 position-relative" id="live-preview-container" style="display: none;">
                             <label class="form-label fw-bold">Live Preview</label>
                             <p class="text-muted small mb-2">You can click to edit the text directly on the canvas, and drag it anywhere!</p>
                             
@@ -186,7 +185,7 @@
                                 <label class="fw-bold text-success d-block text-start mb-2">Your Canva Design Preview:</label>
                                 <img id="canva_preview_image" src="" alt="Canva Design" class="img-fluid rounded shadow" style="max-height: 250px;">
                             </div>
-                        </div>
+                        </div> -->
                         
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('host.ceramony.index') }}" class="btn btn-light border">Cancel</a>
