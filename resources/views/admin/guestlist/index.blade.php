@@ -86,11 +86,28 @@
 
                             <!-- Invitation Route Metadata -->
                             <td class="py-4 px-6">
-                                <span class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                                <span class="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-1 rounded inline-block mb-1">
                                     {{ $guest->send_via ?: 'Not Specified' }}
                                 </span>
                                 <div class="text-xs mt-1 {{ $guest->invitation_sent ? 'text-emerald-600' : 'text-amber-600' }}">
                                     ● {{ $guest->invitation_sent ? 'Dispatched' : 'Pending Delivery' }}
+                                </div>
+                                <div class="mt-2 flex space-x-2">
+                                    @if($guest->whatsapp_number || $guest->guest_number)
+                                        <a href="https://wa.me/{{ $guest->whatsapp_number ?? $guest->guest_number }}" target="_blank" title="WhatsApp" class="text-emerald-600 hover:text-emerald-700 p-1 bg-emerald-50 rounded">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.128.552 4.195 1.6 6.015L.23 23.518l5.632-1.477c1.745.952 3.716 1.455 5.764 1.455 6.645 0 12.031-5.386 12.031-12.031S18.676 0 12.031 0zm0 21.436c-1.802 0-3.565-.483-5.111-1.401l-.367-.217-3.793.994.996-3.696-.237-.378a9.96 9.96 0 01-1.517-5.31C2.001 5.922 7.42 5 12.031 5s10.03 4.498 10.03 10.428-4.498 10.436-10.03 10.436zm5.503-7.518c-.302-.151-1.785-.882-2.062-.983-.277-.101-.479-.151-.681.151-.202.302-.781.983-.957 1.184-.176.202-.353.227-.655.076-1.528-.767-2.73-1.636-3.8-3.08-.225-.304.225-.281.821-1.474.1-.2.05-.377-.025-.528-.075-.151-.681-1.642-.932-2.247-.245-.589-.494-.509-.681-.518-.176-.01-.378-.01-.58-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.034-1.058 2.52 0 1.486 1.083 2.922 1.234 3.123.151.202 2.128 3.25 5.155 4.557 2.05 1.077 2.825 1.152 3.328 1.052.571-.114 1.785-.731 2.037-1.438.252-.707.252-1.312.176-1.438-.076-.126-.277-.202-.579-.353z"/></svg>
+                                        </a>
+                                    @endif
+                                    @if($guest->guest_number)
+                                        <a href="sms:{{ $guest->guest_number }}" title="SMS" class="text-blue-600 hover:text-blue-700 p-1 bg-blue-50 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                        </a>
+                                    @endif
+                                    @if($guest->guest_email)
+                                        <a href="mailto:{{ $guest->guest_email }}" title="Email" class="text-rose-600 hover:text-rose-700 p-1 bg-rose-50 rounded">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                        </a>
+                                    @endif
                                 </div>
                             </td>
 
