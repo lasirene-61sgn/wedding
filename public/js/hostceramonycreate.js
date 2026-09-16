@@ -195,59 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('tool_animation_type').addEventListener('change', function (e) { const activeObj = canvas.getActiveObject(); if (activeObj) { activeObj.animType = this.value; saveCanvasState(); } });
         document.getElementById('tool_animation_duration').addEventListener('input', function (e) { const activeObj = canvas.getActiveObject(); if (activeObj) { activeObj.animDuration = this.value; saveCanvasState(); } });
 
-        const saveVenueBtn = document.getElementById('saveVenueBtn');
-        if (saveVenueBtn) {
-            saveVenueBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                let form = document.getElementById('quickVenueForm');
-                if (!form) return;
-                let formData = new FormData(form);
-                const csrfToken = form.querySelector('input[name="_token"]')?.value || '';
-                fetch("/host/venue", {
-                    method: "POST",
-                    body: formData,
-                    headers: { 
-                        "X-Requested-With": "XMLHttpRequest",
-                        "Accept": "application/json",
-                        "X-CSRF-TOKEN": csrfToken
-                    }
-                })
-                    .then(async res => {
-                        if (!res.ok) {
-                            const errData = await res.json();
-                            throw errData;
-                        }
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (data.id) {
-                            let select = document.getElementById('venue_select');
-                            if (select) {
-                                let option = new Option(data.venue_name, data.id, true, true);
-                                option.setAttribute('data-name', data.venue_name);
-                                select.add(option);
-                                select.dispatchEvent(new Event('change'));
-                            }
-                            var modalEl = document.getElementById('addVenueModal');
-                            if (modalEl) {
-                                var modal = bootstrap.Modal.getInstance(modalEl);
-                                if (modal) modal.hide();
-                            }
-                        } else {
-                            alert("Error: Venue ID not returned.");
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        if (err && err.errors) {
-                            alert("Validation Error:\n" + Object.values(err.errors).flat().join('\n'));
-                        } else {
-                            alert("Error saving venue. Make sure all required fields (Pincode, Full Address, etc.) are filled.");
-                        }
-                    });
-            });
-        }
-
         const pincodeInput = document.getElementById('v_pincode');
         if (pincodeInput) {
             pincodeInput.addEventListener('keyup', function () {

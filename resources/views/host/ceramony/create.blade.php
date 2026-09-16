@@ -186,7 +186,7 @@
                                 <img id="canva_preview_image" src="" alt="Canva Design" class="img-fluid rounded shadow" style="max-height: 250px;">
                             </div>
                         </div> -->
-                        
+
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('host.ceramony.index') }}" class="btn btn-light border">Cancel</a>
                             <button type="submit" class="btn btn-primary px-5 fw-bold">Create Ceremony</button>
@@ -266,15 +266,15 @@
     function handleCategoryChange() {
         const select = document.getElementById('category_select');
         const option = select.options[select.selectedIndex];
-        
+
         const subcategoryContainer = document.getElementById('subcategory_container');
         const subcategorySelect = document.getElementById('subcategory_select');
-        
+
         const ceremoniesBox = document.getElementById('ceremonies_box_container');
         const ceremoniesBadges = document.getElementById('ceremonies_badges');
         const templatesContainer = document.getElementById('html_templates_container');
         const detailsContainer = document.getElementById('ceremony_details_container');
-        
+
         // Reset and hide
         ceremoniesBadges.innerHTML = '';
         subcategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
@@ -282,14 +282,15 @@
         ceremoniesBox.style.display = 'none';
         templatesContainer.style.display = 'none';
         detailsContainer.style.display = 'none';
-        document.getElementById('ceramony_name').value = '';
+        const ceramonyNameInput = document.getElementById('ceramony_name');
+        if (ceramonyNameInput) ceramonyNameInput.value = '';
 
         if (!option || !option.value) {
             return;
         }
 
         currentSubcategories = JSON.parse(option.getAttribute('data-subcategories') || '[]');
-        
+
         if (currentSubcategories.length > 0) {
             currentSubcategories.forEach(sub => {
                 if (sub.name) {
@@ -301,7 +302,6 @@
             });
             subcategoryContainer.style.display = 'block';
         } else {
-            // No subcategories found, show ceremonies direct (or just "Others")
             handleSubcategoryChange(true);
         }
     }
@@ -313,14 +313,15 @@
         const templatesContainer = document.getElementById('html_templates_container');
         const templatesList = document.getElementById('html_templates_list');
         const detailsContainer = document.getElementById('ceremony_details_container');
-        
+
         ceremoniesBadges.innerHTML = '';
         templatesList.innerHTML = '';
         ceremoniesBox.style.display = 'none';
         templatesContainer.style.display = 'none';
         detailsContainer.style.display = 'none';
-        document.getElementById('ceramony_name').value = '';
-        
+        const ceramonyNameInput = document.getElementById('ceramony_name');
+        if (ceramonyNameInput) ceramonyNameInput.value = '';
+
         let ceremonies = [];
         let htmlFiles = [];
 
@@ -331,9 +332,9 @@
                 htmlFiles = selectedSub.html_files || [];
             }
         } else if (subcategorySelect.value === '' && !forceEmpty) {
-            return; // they selected "-- Select --"
+            return;
         }
-        
+
         ceremonies.forEach(ceremony => {
             const btn = document.createElement('button');
             btn.type = 'button';
@@ -345,7 +346,6 @@
             ceremoniesBadges.appendChild(btn);
         });
 
-        // Add "Others" button
         const othersBtn = document.createElement('button');
         othersBtn.type = 'button';
         othersBtn.className = 'btn btn-outline-secondary ceremony-badge';
@@ -356,51 +356,47 @@
         ceremoniesBadges.appendChild(othersBtn);
         ceremoniesBox.style.display = 'block';
 
-        // Render HTML templates if available
         if (htmlFiles.length > 0) {
             htmlFiles.forEach(file => {
                 const fileName = file.split('/').pop();
-                const fileUrl = "{{ asset('') }}" + file;
+                const fileUrl = window.location.origin + '/' + file;
                 const div = document.createElement('div');
                 div.className = 'form-check border rounded p-2 d-flex align-items-center justify-content-between template-item';
                 div.style = 'width: 100%; max-width: 450px;';
                 div.innerHTML = `
-                    <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
-                        <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="${file}" style="margin-left: -20px;" onchange="highlightTemplate(this)">
-                        <span class="text-truncate fw-medium text-dark">${fileName}</span>
-                    </label>
-                    <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-light border text-primary">Preview</a>
-                `;
+                <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
+                    <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="${file}" style="margin-left: -20px;" onchange="highlightTemplate(this)">
+                    <span class="text-truncate fw-medium text-dark">${fileName}</span>
+                </label>
+                <a href="${fileUrl}" target="_blank" class="btn btn-sm btn-light border text-primary">Preview</a>
+            `;
                 templatesList.appendChild(div);
             });
-            
-            // Add a "None" option
+
             const noneDiv = document.createElement('div');
             noneDiv.className = 'form-check border rounded p-2 d-flex align-items-center justify-content-between template-item';
             noneDiv.style = 'width: 100%; max-width: 450px;';
             noneDiv.innerHTML = `
-                <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
-                    <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="" style="margin-left: -20px;" onchange="highlightTemplate(this)" checked>
-                    <span class="text-truncate fw-medium text-dark">None (Use Canva)</span>
-                </label>
-            `;
+            <label class="form-check-label d-flex align-items-center gap-2 cursor-pointer w-100" style="margin-left: 20px;">
+                <input class="form-check-input mt-0 template-radio" type="radio" name="selected_html_template" value="" style="margin-left: -20px;" onchange="highlightTemplate(this)" checked>
+                <span class="text-truncate fw-medium text-dark">None (Use Canva)</span>
+            </label>
+        `;
             templatesList.appendChild(noneDiv);
-            
+
             templatesContainer.style.display = 'block';
         }
     }
-    
+
     function highlightTemplate(radio) {
         document.querySelectorAll('.template-item').forEach(el => el.classList.remove('border-primary', 'bg-light'));
         radio.closest('.template-item').classList.add('border-primary', 'bg-light');
     }
 
     function selectCeremonyBadge(clickedBtn, ceremonyName) {
-        // Highlight active button
         document.querySelectorAll('.ceremony-badge').forEach(btn => {
             btn.classList.remove('btn-primary', 'text-white');
             if (btn.classList.contains('btn-outline-secondary')) {
-                // Others button
                 btn.classList.remove('btn-secondary', 'text-white');
             }
         });
@@ -413,17 +409,124 @@
             clickedBtn.classList.remove('btn-outline-primary');
         }
 
-        // Show details container
-        document.getElementById('ceremony_details_container').style.display = 'block';
-        
-        // Set name
+        const detailsContainer = document.getElementById('ceremony_details_container');
+        if (detailsContainer) detailsContainer.style.display = 'block';
+
         const nameInput = document.getElementById('ceramony_name');
-        nameInput.value = ceremonyName;
-        
-        if (ceremonyName === '') {
-            nameInput.focus();
+        if (nameInput) {
+            nameInput.value = ceremonyName;
+            if (ceremonyName === '') {
+                nameInput.focus();
+            }
         }
     }
-</script>
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Pincode Auto-Fetching (India Post API)
+        const pincodeInput = document.getElementById('v_pincode');
+        if (pincodeInput) {
+            pincodeInput.addEventListener('input', function() {
+                let pincode = this.value.trim();
+                let loadIndicator = document.getElementById('pin_load');
+
+                if (pincode.length === 6) {
+                    if (loadIndicator) loadIndicator.style.display = 'inline';
+
+                    fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (loadIndicator) loadIndicator.style.display = 'none';
+                            if (data && data[0] && data[0].Status === "Success") {
+                                let postOfficeList = data[0].PostOffice;
+                                let areaSelect = document.getElementById('v_area');
+                                if (areaSelect) {
+                                    areaSelect.innerHTML = '<option value="">-- Select Area --</option>';
+                                    postOfficeList.forEach(po => {
+                                        let option = document.createElement('option');
+                                        option.value = po.Name;
+                                        option.textContent = po.Name;
+                                        areaSelect.appendChild(option);
+                                    });
+                                }
+
+                                let districtEl = document.getElementById('v_district');
+                                let stateEl = document.getElementById('v_state');
+                                let countryEl = document.getElementById('v_country');
+                                let circleEl = document.getElementById('v_circle');
+
+                                if (districtEl) districtEl.value = postOfficeList[0].District || '';
+                                if (stateEl) stateEl.value = postOfficeList[0].State || '';
+                                if (countryEl) countryEl.value = postOfficeList[0].Country || 'India';
+                                if (circleEl) circleEl.value = postOfficeList[0].Circle || '';
+                            } else {
+                                alert('Invalid Pincode or details not found.');
+                            }
+                        })
+                        .catch(error => {
+                            if (loadIndicator) loadIndicator.style.display = 'none';
+                            console.error('Error fetching pincode:', error);
+                        });
+                }
+            });
+        }
+
+        // 2. Quick Save Venue via AJAX
+        const saveVenueBtn = document.getElementById('saveVenueBtn');
+        if (saveVenueBtn) {
+            saveVenueBtn.addEventListener('click', function() {
+                let form = document.getElementById('quickVenueForm');
+                if (!form) return;
+
+                let formData = new FormData(form);
+                let csrfTokenInput = form.querySelector('input[name="_token"]');
+                let csrfToken = csrfTokenInput ? csrfTokenInput.value : '';
+
+                fetch(window.location.origin + '/host/venue', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.id && data.venue_name) {
+                            let venueSelect = document.getElementById('venue_select');
+                            if (venueSelect) {
+                                let newOption = document.createElement('option');
+                                newOption.value = data.id;
+                                newOption.setAttribute('data-name', data.venue_name);
+                                newOption.textContent = data.venue_name;
+                                newOption.selected = true;
+                                venueSelect.appendChild(newOption);
+                            }
+
+                            // Close Modal Safely using Bootstrap 5
+                            let modalEl = document.getElementById('addVenueModal');
+                            if (modalEl) {
+                                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                                if (modalInstance) {
+                                    modalInstance.hide();
+                                } else {
+                                    // Fallback if bootstrap instance is missing
+                                    let closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"]');
+                                    if (closeBtn) closeBtn.click();
+                                }
+                            }
+
+                            form.reset();
+                        } else {
+                            alert(data.message || 'Failed to save venue. Please check required fields.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error saving venue:', error);
+                        alert('An error occurred while saving the venue.');
+                    });
+            });
+        }
+    });
+</script>
 @endsection

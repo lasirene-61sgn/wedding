@@ -88,7 +88,7 @@
                                             </option>
                                             @endforeach
                                         </select>
-                                        <button type="button" class="btn btn-warning text-white" id="edit_venue_btn">Edit</button>
+                                        <button type="button" class="btn btn-warning text-white" id="edit_venue_btn" style="display: none;">Edit</button>
                                         <button type="button" class="btn btn-primary" id="new_venue_btn">+ New</button>
                                     </div>
                                 </div>
@@ -410,6 +410,198 @@
     // Run on load
     document.addEventListener('DOMContentLoaded', function() {
         handleCategoryChange(true);
+
+        // 1. Pincode Auto-Fetching (India Post API)
+        const pincodeInput = document.getElementById('v_pincode');
+        if (pincodeInput) {
+            pincodeInput.addEventListener('input', function() {
+                let pincode = this.value.trim();
+                let loadIndicator = document.getElementById('pin_load');
+                if (pincode.length === 6) {
+                    if (loadIndicator) loadIndicator.style.display = 'inline';
+                    fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (loadIndicator) loadIndicator.style.display = 'none';
+                            if (data && data[0] && data[0].Status === "Success") {
+                                let postOfficeList = data[0].PostOffice;
+                                let areaSelect = document.getElementById('v_area');
+                                if (areaSelect) {
+                                    areaSelect.innerHTML = '<option value="">-- Select Area --</option>';
+                                    postOfficeList.forEach(po => {
+                                        let option = document.createElement('option');
+                                        option.value = po.Name;
+                                        option.textContent = po.Name;
+                                        areaSelect.appendChild(option);
+                                    });
+                                }
+                                let districtEl = document.getElementById('v_district');
+                                let stateEl = document.getElementById('v_state');
+                                let countryEl = document.getElementById('v_country');
+                                let circleEl = document.getElementById('v_circle');
+                                if (districtEl) districtEl.value = postOfficeList[0].District || '';
+                                if (stateEl) stateEl.value = postOfficeList[0].State || '';
+                                if (countryEl) countryEl.value = postOfficeList[0].Country || 'India';
+                                if (circleEl) circleEl.value = postOfficeList[0].Circle || '';
+                            } else {
+                                alert('Invalid Pincode or details not found.');
+                            }
+                        })
+                        .catch(error => {
+                            if (loadIndicator) loadIndicator.style.display = 'none';
+                            console.error('Error fetching pincode:', error);
+                        });
+                }
+            });
+        }
+
+        // 2. Venue Toggle & Edit Logic
+        const venueSelect = document.getElementById('venue_select');
+        const editBtn = document.getElementById('edit_venue_btn');
+        const newBtn = document.getElementById('new_venue_btn');
+        const quickVenueForm = document.getElementById('venueForm');
+        let editingVenueId = null;
+
+        function toggleVenueButtons() {
+            if (venueSelect && venueSelect.value) {
+                if (editBtn) editBtn.style.display = 'inline-block';
+                if (newBtn) newBtn.style.display = 'none';
+            } else {
+                if (editBtn) editBtn.style.display = 'none';
+                if (newBtn) newBtn.style.display = 'inline-block';
+            }
+        }
+
+        if (venueSelect) {
+            venueSelect.addEventListener('change', toggleVenueButtons);
+            toggleVenueButtons(); // initial state
+        }
+
+        if (newBtn) {
+            newBtn.addEventListener('click', function() {
+                editingVenueId = null;
+                if (quickVenueForm) quickVenueForm.reset();
+                document.getElementById('v_id').value = '';
+                document.getElementById('venueModal').querySelector('.modal-title').textContent = 'Add New Venue';
+                new bootstrap.Modal(document.getElementById('venueModal')).show();
+            });
+        }
+
+        if (editBtn) {
+            editBtn.addEventListener('click', function() {
+                const selectedOpt = venueSelect.options[venueSelect.selectedIndex];
+                if (!selectedOpt || !selectedOpt.value) return;
+
+                editingVenueId = selectedOpt.value;
+                if (quickVenueForm) quickVenueForm.reset();
+                document.getElementById('v_id').value = editingVenueId;
+                document.getElementById('venueModal').querySelector('.modal-title').textContent = 'Update Venue Details';
+
+                document.getElementById('v_name').value = selectedOpt.getAttribute('data-name') || '';
+                document.getElementById('v_pincode').value = selectedOpt.getAttribute('data-pin') || '';
+                
+                // Add the option to area select if it doesn't exist
+                let areaSelect = document.getElementById('v_area');
+                let areaVal = selectedOpt.getAttribute('data-area') || '';
+                if (areaVal) {
+                    areaSelect.innerHTML = `<option value="${areaVal}">${areaVal}</option>`;
+                }
+                
+                document.getElementById('v_district').value = selectedOpt.getAttribute('data-district') || '';
+                document.getElementById('v_state').value = selectedOpt.getAttribute('data-state') || '';
+                document.getElementById('v_circle').value = selectedOpt.getAttribute('data-circle') || '';
+                document.getElementById('v_country').value = selectedOpt.getAttribute('data-country') || 'India';
+                document.getElementById('v_wedding_location').value = selectedOpt.getAttribute('data-landmark') || '';
+                document.getElementById('v_location_map').value = selectedOpt.getAttribute('data-map') || '';
+                document.getElementById('v_address').value = selectedOpt.getAttribute('data-address') || '';
+
+                new bootstrap.Modal(document.getElementById('venueModal')).show();
+            });
+        }
+
+        // 3. Quick Save/Update Venue via AJAX
+        const saveVenueBtn = document.getElementById('saveVenueBtn');
+        if (saveVenueBtn) {
+            saveVenueBtn.addEventListener('click', function() {
+                let form = document.getElementById('venueForm');
+                if (!form) return;
+                let formData = new FormData(form);
+                let csrfTokenInput = form.querySelector('input[name="_token"]');
+                let csrfToken = csrfTokenInput ? csrfTokenInput.value : '';
+                
+                let endpoint = window.location.origin + '/host/venue';
+                if (editingVenueId) {
+                    endpoint = window.location.origin + '/host/venue/update/' + editingVenueId;
+                }
+
+                fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.id && data.venue_name) {
+                            if (editingVenueId) {
+                                // Update existing option
+                                let opt = venueSelect.querySelector(`option[value="${data.id}"]`);
+                                if (opt) {
+                                    opt.setAttribute('data-name', data.venue_name);
+                                    opt.setAttribute('data-pin', data.pincode || '');
+                                    opt.setAttribute('data-area', data.area_name || '');
+                                    opt.setAttribute('data-district', data.district || '');
+                                    opt.setAttribute('data-state', data.state || '');
+                                    opt.setAttribute('data-circle', data.circle || '');
+                                    opt.setAttribute('data-country', data.country || 'India');
+                                    opt.setAttribute('data-landmark', data.wedding_location || '');
+                                    opt.setAttribute('data-map', data.location_map || '');
+                                    opt.setAttribute('data-address', data.venue_address || '');
+                                    opt.textContent = data.venue_name;
+                                }
+                            } else {
+                                // Add new option
+                                let newOption = document.createElement('option');
+                                newOption.value = data.id;
+                                newOption.setAttribute('data-name', data.venue_name);
+                                newOption.setAttribute('data-pin', data.pincode || '');
+                                newOption.setAttribute('data-area', data.area_name || '');
+                                newOption.setAttribute('data-district', data.district || '');
+                                newOption.setAttribute('data-state', data.state || '');
+                                newOption.setAttribute('data-circle', data.circle || '');
+                                newOption.setAttribute('data-country', data.country || 'India');
+                                newOption.setAttribute('data-landmark', data.wedding_location || '');
+                                newOption.setAttribute('data-map', data.location_map || '');
+                                newOption.setAttribute('data-address', data.venue_address || '');
+                                newOption.textContent = data.venue_name;
+                                newOption.selected = true;
+                                if (venueSelect) venueSelect.appendChild(newOption);
+                                toggleVenueButtons();
+                            }
+                            let modalEl = document.getElementById('venueModal');
+                            if (modalEl) {
+                                let modalInstance = bootstrap.Modal.getInstance(modalEl);
+                                if (modalInstance) {
+                                    modalInstance.hide();
+                                } else {
+                                    let closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"]');
+                                    if (closeBtn) closeBtn.click();
+                                }
+                            }
+                            form.reset();
+                        } else {
+                            alert(data.message || 'Failed to save venue. Please check required fields.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error saving venue:', error);
+                        alert('An error occurred while saving the venue.');
+                    });
+            });
+        }
     });
 </script>
 

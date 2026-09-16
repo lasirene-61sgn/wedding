@@ -112,7 +112,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/venues/{venue}/approve', [AdminVenueController::class, 'approve'])->name('venues.approve');
         Route::get('/crm', [AdminCrmController::class, 'index'])->name('crm.index');
         Route::resource('addons', ChannelAddonController::class);
-        
     });
 
     Route::middleware(['auth:host'])->group(function () {
@@ -129,15 +128,15 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
     Route::post('/register', [HostLoginController::class, 'register'])->name('register.submit');
     Route::get('/register/verify-otp', [HostLoginController::class, 'showVerifyForm'])->name('verify.form');
     Route::post('/register/verify-otp', [HostLoginController::class, 'verifyOtp'])->name('verify.submit');
-    
+
     // NEW REGISTRATION WIZARD ROUTES (Unauthenticated)
     Route::get('/register/packages', [HostLoginController::class, 'showRegisterPackagesForm'])->name('register.packages');
     Route::post('/register/packages', [HostLoginController::class, 'verifyRegisterPayment'])->name('register.packages.select');
     Route::post('/register/init-payment', [HostLoginController::class, 'initRegisterPayment'])->name('register.initPayment');
-    
+
     Route::get('/register/set-password', [HostLoginController::class, 'showRegisterSetPasswordForm'])->name('register.set-password.view');
     Route::post('/register/set-password', [HostLoginController::class, 'submitRegisterSetPassword'])->name('register.set-password.submit');
-    
+
     Route::get('/auth/google', [HostLoginController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('/auth/google/callback', [HostLoginController::class, 'handleGoogleCallback']);
     Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -168,7 +167,8 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         // PLUGGED IN: CHAT SETUP FORM WIZARD ROUTES
         // ==========================================
         Route::prefix('wizard')->name('wizard.')->group(function () {
-            Route::get('/', [ChatWizardController::class, 'index'])->name('index'); 
+            Route::get('/', [ChatWizardController::class, 'index'])->name('index');
+            
             Route::post('/store-venue', [ChatWizardController::class, 'storeVenue'])->name('storeVenue');
             Route::post('/store-invitation', [ChatWizardController::class, 'storeInvitation'])->name('storeInvitation');
             Route::post('/store-savedate', [ChatWizardController::class, 'storeSaveDate'])->name('storeSaveDate');
@@ -179,7 +179,6 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         // Your existing Resource Routes
         Route::post('venue/update/{id}', [VenueController::class, 'update'])->name('venue.custom_update');
         Route::resource('venue', VenueController::class);
-        Route::post('/host/venue/store', [VenueController::class, 'store'])->name('host.venue.store');
         Route::resource('ceramony', HostCeramonyController::class);
 
         // Gallery Resources
@@ -188,7 +187,7 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
         Route::resource('video', VideoController::class);
         Route::delete('album/{id}/delete-image', [AlbumController::class, 'deleteImage'])->name('album.delete-image');
 
-       Route::match(['get', 'post'], 'invitation/live-preview', [InvitationController::class, 'livePreview'])->name('invitation.live-preview');
+        Route::match(['get', 'post'], 'invitation/live-preview', [InvitationController::class, 'livePreview'])->name('invitation.live-preview');
         Route::resource('invitation', InvitationController::class);
         Route::resource('savedate', SaveDateController::class);
         Route::get('guestlist/sample', [GuestListController::class, 'downloadSample'])->name('guestlist.downloadSample');
@@ -235,7 +234,7 @@ Route::prefix('guest')->name('guest.')->group(function () {
     // Login routes
     Route::get('/login', [GuestInvitationController::class, 'showLogin'])->name('login');
     Route::post('/login', [GuestInvitationController::class, 'login'])->name('login.post');
-    
+
     // Public invitation links
     Route::get('/wedding/{uuid}/save-the-date', [GuestInvitationController::class, 'saveTheDate'])->name('save_the_date');
 
