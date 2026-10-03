@@ -71,109 +71,7 @@
                         </div>
                     </div>
 
-                    <!-- MANAGE RELATED DETAILS CARD -->
-                    <div class="card mb-4 shadow-sm border-0 bg-white">
-                        <div class="card-body">
-                            <div class="mb-3 p-3 bg-white border rounded shadow-sm">
-                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-plus-circle-dotted me-1"></i> Manage Related Details</h6>
-                        <div class="d-flex gap-2 justify-content-center flex-wrap">
-                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" data-bs-toggle="modal" data-bs-target="#quickCeremonyModal"><i class="bi bi-calendar-event"></i> + Ceremony</button>
-                            <button type="button" class="btn btn-sm btn-outline-info fw-bold" data-bs-toggle="modal" data-bs-target="#quickPhotoModal"><i class="bi bi-image"></i> + Photo</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-toggle="modal" data-bs-target="#quickAlbumModal"><i class="bi bi-folder-plus"></i> + Album</button>
-                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold" data-bs-toggle="modal" data-bs-target="#quickVideoModal"><i class="bi bi-play-circle"></i> + Video</button>
-                            <button type="button" class="btn btn-sm btn-outline-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#quickSaveDateModal"><i class="bi bi-bookmark-heart"></i> Save Date</button>
-                        </div>
-                        
-                        <div class="mt-4 border-top pt-3 text-start">
-                            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-list-check"></i> Added Details Preview</h6>
-                            
-                            @if(isset($ceremonies) && $ceremonies->count() > 0)
-                                <div class="mb-3">
-                                    <strong class="d-block mb-2 text-primary small"><i class="bi bi-calendar-event"></i> Ceremonies</strong>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @foreach($ceremonies as $c)
-                                            <div class="border rounded p-2 bg-light shadow-sm d-flex gap-2 align-items-center" style="min-width: 180px;">
-                                                @if($c->ceramony_image)
-                                                    <img src="{{ asset('storage/' . $c->ceramony_image) }}" class="rounded shadow-sm border" style="width: 45px; height: 45px; object-fit: cover;">
-                                                @else
-                                                    <div class="rounded shadow-sm bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 45px; height: 45px;"><i class="bi bi-calendar-event"></i></div>
-                                                @endif
-                                                <div>
-                                                    <div class="fw-bold" style="font-size: 0.85rem;">{{ $c->ceramony_name }}</div>
-                                                    <div class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-clock"></i> {{ $c->ceramony_date ? \Carbon\Carbon::parse($c->ceramony_date)->format('d M y') : '' }} {{ $c->ceramony_time ? \Carbon\Carbon::parse($c->ceramony_time)->format('h:i A') : '' }}</div>
-                                                    @if($c->venue)
-                                                        <div class="text-primary mt-1" style="font-size: 0.7rem; line-height: 1.2;">
-                                                            <strong><i class="bi bi-geo-alt-fill"></i> {{ $c->venue->venue_name }}</strong><br>
-                                                            <span class="text-muted">{{ \Illuminate\Support\Str::limit($c->venue->venue_address, 40) }}</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-                            
-                            @if(isset($pictures) && $pictures->count() > 0)
-                                <div class="mb-3">
-                                    <strong class="d-block mb-2 text-info small"><i class="bi bi-image"></i> Gallery Photos</strong>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @foreach($pictures as $pic)
-                                            <img src="{{ asset('storage/' . $pic->picture) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover;">
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if(isset($albums) && $albums->count() > 0)
-                                <div class="mb-3">
-                                    <strong class="d-block mb-2 text-secondary small"><i class="bi bi-folder"></i> Albums (Click to View)</strong>
-                                    <div class="d-flex flex-wrap gap-3">
-                                        @foreach($albums as $a)
-                                            <div class="text-center cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewAlbumModal_{{ $a->id }}">
-                                                @if(!empty($a->album_images) && is_array($a->album_images))
-                                                    <img src="{{ asset('storage/' . $a->album_images[0]) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                                @else
-                                                    <div class="rounded shadow-sm bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 55px; height: 55px;"><i class="bi bi-folder"></i></div>
-                                                @endif
-                                                <div class="mt-1 text-truncate fw-bold text-primary" style="max-width: 65px; font-size: 0.75rem;" title="{{ $a->album_name }}">{{ $a->album_name }}</div>
-                                                <div class="text-muted" style="font-size: 0.65rem;">
-                                                    {{ !empty($a->album_images) && is_array($a->album_images) ? count($a->album_images) . ' photos' : 'Empty' }}
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if(isset($videos) && $videos->count() > 0)
-                                <div class="mb-3">
-                                    <strong class="d-block mb-2 text-danger small"><i class="bi bi-play-circle"></i> Videos</strong>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @foreach($videos as $vid)
-                                            <div class="rounded shadow-sm bg-dark d-flex align-items-center justify-content-center text-white border" style="width: 80px; height: 55px;">
-                                                <i class="bi bi-play-btn fs-4"></i>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if(isset($saveDate) && $saveDate)
-                                <div class="mb-3">
-                                    <strong class="d-block mb-2 text-warning small"><i class="bi bi-bookmark-heart"></i> Save the Date</strong>
-                                    <div class="d-flex align-items-center gap-3 border rounded p-2 bg-light shadow-sm">
-                                        @if(!empty($saveDate->image))
-                                            <img src="{{ asset('storage/' . $saveDate->image) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover;">
-                                        @endif
-                                        <div class="fst-italic text-muted small">"{{ \Illuminate\Support\Str::limit($saveDate->message, 80) }}"</div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        </div> <!-- close mb-3 p-3 bg-white -->
-                        </div> <!-- close card-body -->
-                    </div> <!-- close card -->
+                   
 
                 <div class="card mb-4 shadow-sm border-0 bg-light">
                     <div class="card-body">
@@ -282,6 +180,109 @@
 
                 <input type="hidden" name="customized_html" id="customized_html">
                 <input type="hidden" name="customized_css" id="customized_css">
+                 <!-- MANAGE RELATED DETAILS CARD -->
+                    <div class="card mb-4 shadow-sm border-0 bg-white">
+                        <div class="card-body">
+                            <div class="mb-3 p-3 bg-white border rounded shadow-sm">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-plus-circle-dotted me-1"></i> Manage Related Details</h6>
+                        <div class="d-flex gap-2 justify-content-center flex-wrap">
+                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" data-bs-toggle="modal" data-bs-target="#quickCeremonyModal"><i class="bi bi-calendar-event"></i> + Ceremony</button>
+                            <button type="button" class="btn btn-sm btn-outline-info fw-bold" data-bs-toggle="modal" data-bs-target="#quickPhotoModal"><i class="bi bi-image"></i> + Photo</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" data-bs-toggle="modal" data-bs-target="#quickAlbumModal"><i class="bi bi-folder-plus"></i> + Album</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold" data-bs-toggle="modal" data-bs-target="#quickVideoModal"><i class="bi bi-play-circle"></i> + Video</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning fw-bold text-dark" data-bs-toggle="modal" data-bs-target="#quickSaveDateModal"><i class="bi bi-bookmark-heart"></i> Save Date</button>
+                        </div>
+                        
+                        <div class="mt-4 border-top pt-3 text-start">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-list-check"></i> Added Details Preview</h6>
+                            
+                            @if(isset($ceremonies) && $ceremonies->count() > 0)
+                                <div class="mb-3">
+                                    <strong class="d-block mb-2 text-primary small"><i class="bi bi-calendar-event"></i> Ceremonies</strong>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach($ceremonies as $c)
+                                            <div class="border rounded p-2 bg-light shadow-sm d-flex gap-2 align-items-center" style="min-width: 180px;">
+                                                @if($c->ceramony_image)
+                                                    <img src="{{ asset('storage/' . $c->ceramony_image) }}" class="rounded shadow-sm border" style="width: 45px; height: 45px; object-fit: cover;">
+                                                @else
+                                                    <div class="rounded shadow-sm bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 45px; height: 45px;"><i class="bi bi-calendar-event"></i></div>
+                                                @endif
+                                                <div>
+                                                    <div class="fw-bold" style="font-size: 0.85rem;">{{ $c->ceramony_name }}</div>
+                                                    <div class="text-muted" style="font-size: 0.7rem;"><i class="bi bi-clock"></i> {{ $c->ceramony_date ? \Carbon\Carbon::parse($c->ceramony_date)->format('d M y') : '' }} {{ $c->ceramony_time ? \Carbon\Carbon::parse($c->ceramony_time)->format('h:i A') : '' }}</div>
+                                                    @if($c->venue)
+                                                        <div class="text-primary mt-1" style="font-size: 0.7rem; line-height: 1.2;">
+                                                            <strong><i class="bi bi-geo-alt-fill"></i> {{ $c->venue->venue_name }}</strong><br>
+                                                            <span class="text-muted">{{ \Illuminate\Support\Str::limit($c->venue->venue_address, 40) }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            @if(isset($pictures) && $pictures->count() > 0)
+                                <div class="mb-3">
+                                    <strong class="d-block mb-2 text-info small"><i class="bi bi-image"></i> Gallery Photos</strong>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach($pictures as $pic)
+                                            <img src="{{ asset('storage/' . $pic->picture) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover;">
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(isset($albums) && $albums->count() > 0)
+                                <div class="mb-3">
+                                    <strong class="d-block mb-2 text-secondary small"><i class="bi bi-folder"></i> Albums (Click to View)</strong>
+                                    <div class="d-flex flex-wrap gap-3">
+                                        @foreach($albums as $a)
+                                            <div class="text-center cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewAlbumModal_{{ $a->id }}">
+                                                @if(!empty($a->album_images) && is_array($a->album_images))
+                                                    <img src="{{ asset('storage/' . $a->album_images[0]) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                                @else
+                                                    <div class="rounded shadow-sm bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 55px; height: 55px;"><i class="bi bi-folder"></i></div>
+                                                @endif
+                                                <div class="mt-1 text-truncate fw-bold text-primary" style="max-width: 65px; font-size: 0.75rem;" title="{{ $a->album_name }}">{{ $a->album_name }}</div>
+                                                <div class="text-muted" style="font-size: 0.65rem;">
+                                                    {{ !empty($a->album_images) && is_array($a->album_images) ? count($a->album_images) . ' photos' : 'Empty' }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(isset($videos) && $videos->count() > 0)
+                                <div class="mb-3">
+                                    <strong class="d-block mb-2 text-danger small"><i class="bi bi-play-circle"></i> Videos</strong>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach($videos as $vid)
+                                            <div class="rounded shadow-sm bg-dark d-flex align-items-center justify-content-center text-white border" style="width: 80px; height: 55px;">
+                                                <i class="bi bi-play-btn fs-4"></i>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(isset($saveDate) && $saveDate)
+                                <div class="mb-3">
+                                    <strong class="d-block mb-2 text-warning small"><i class="bi bi-bookmark-heart"></i> Save the Date</strong>
+                                    <div class="d-flex align-items-center gap-3 border rounded p-2 bg-light shadow-sm">
+                                        @if(!empty($saveDate->image))
+                                            <img src="{{ asset('storage/' . $saveDate->image) }}" class="rounded shadow-sm border" style="width: 55px; height: 55px; object-fit: cover;">
+                                        @endif
+                                        <div class="fst-italic text-muted small">"{{ \Illuminate\Support\Str::limit($saveDate->message, 80) }}"</div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        </div> <!-- close mb-3 p-3 bg-white -->
+                        </div> <!-- close card-body -->
+                    </div> <!-- close card -->
 
                 <button type="submit" class="btn btn-primary btn-lg w-100 mb-3 shadow">✨ Update Wedding Invitation</button>
             </form>

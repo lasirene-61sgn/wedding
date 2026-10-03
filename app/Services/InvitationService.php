@@ -81,7 +81,7 @@ class InvitationService
             // 1. Determine who is creating the invitation and put their name first
             if ($relation === 'bride' || $relation === 'groom') {
                 // For bride_groom_invit template
-                $msg91TemplateId = env('MSG91_FLOW_COUPLE_ID', '6a17d05b5e19870c280f5242');
+                $msg91TemplateId = env('MSG91_FLOW_COUPLE_ID', '');#6a17d05b5e19870c280f5242
                 $smsVariables = [
                     'var1' => $invitation->bride_name ?? 'Bride',
                     'var2' => $invitation->groom_name ?? 'Groom',
@@ -89,7 +89,7 @@ class InvitationService
                 ];
             } elseif ($relation === 'bride_parent') {
                 // For Invite_Bride template
-                $msg91TemplateId = env('MSG91_FLOW_BRIDE_PARENT_ID', '68a577370fc63d1e78442d26');
+                $msg91TemplateId = env('MSG91_FLOW_BRIDE_PARENT_ID', '');#68a577370fc63d1e78442d26
                 $smsVariables = [
                     'var1' => $invitation->bride_mother_name ?? '',
                     'var2' => $invitation->bride_father_name ?? '',
@@ -97,7 +97,7 @@ class InvitationService
                 ];
             } elseif ($relation === 'groom_parent') {
                 // For Invite_Groom template
-                $msg91TemplateId = env('MSG91_FLOW_GROOM_PARENT_ID', '68a598a35af05446a26303f9');
+                $msg91TemplateId = env('MSG91_FLOW_GROOM_PARENT_ID', '');#68a598a35af05446a26303f9
                 $smsVariables = [
                     'var1' => $invitation->groom_mother_name ?? '',
                     'var2' => $invitation->groom_father_name ?? '',
