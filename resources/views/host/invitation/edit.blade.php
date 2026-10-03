@@ -1,5 +1,6 @@
 @extends('layouts.host')
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     .preview-container {
         border: 2px solid #dee2e6;
@@ -113,15 +114,20 @@
                 </div>
 
                 <div class="row" id="party_details_row">
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-warning py-2 mb-0 shadow-sm border-0">
+                            <i class="bi bi-info-circle-fill me-2"></i> Bride and groom info are filled up. To change anything, please contact admin via <a href="mailto:bj@lasireneexim.com" class="fw-bold text-dark text-decoration-underline"><i class="bi bi-envelope"></i> Email</a> or <a href="https://wa.me/7418111000" target="_blank" class="fw-bold text-dark text-decoration-underline"><i class="bi bi-whatsapp"></i> WhatsApp</a>.
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="card mb-4 shadow-sm border-info">
                             <div class="card-header bg-info text-white fw-bold">Bride's Information</div>
                             <div class="card-body">
-                                <div class="mb-2"><label>Full Name</label><input type="text" name="bride_name" value="{{ $invitation->bride_name }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Mobile Number</label><input type="text" name="bride_number" value="{{ $invitation->bride_number }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Email Address</label><input type="email" name="bride_email" value="{{ $invitation->bride_email }}" class="form-control watch-input"></div>
-                                <div class="mb-2"><label>Father's Name</label><input type="text" name="bride_father_name" value="{{ $invitation->bride_father_name }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Mother's Name</label><input type="text" name="bride_mother_name" value="{{ $invitation->bride_mother_name }}" class="form-control watch-input" required></div>
+                                <div class="mb-2"><label>Full Name</label><input type="text" name="bride_name" value="{{ $invitation->bride_name }}" class="form-control watch-input" required {{ $invitation->bride_name ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Mobile Number</label><input type="text" name="bride_number" value="{{ $invitation->bride_number }}" class="form-control watch-input" required {{ $invitation->bride_number ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Email Address</label><input type="email" name="bride_email" value="{{ $invitation->bride_email }}" class="form-control watch-input" {{ $invitation->bride_email ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Father's Name</label><input type="text" name="bride_father_name" value="{{ $invitation->bride_father_name }}" class="form-control watch-input" required {{ $invitation->bride_father_name ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Mother's Name</label><input type="text" name="bride_mother_name" value="{{ $invitation->bride_mother_name }}" class="form-control watch-input" required {{ $invitation->bride_mother_name ? 'readonly' : '' }}></div>
                             </div>
                         </div>
                     </div>
@@ -130,11 +136,11 @@
                         <div class="card mb-4 shadow-sm border-secondary">
                             <div class="card-header bg-secondary text-white fw-bold">Groom's Information</div>
                             <div class="card-body">
-                                <div class="mb-2"><label>Full Name</label><input type="text" name="groom_name" value="{{ $invitation->groom_name }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Mobile Number</label><input type="text" name="groom_number" value="{{ $invitation->groom_number }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Email Address</label><input type="email" name="groom_email" value="{{ $invitation->groom_email }}" class="form-control watch-input"></div>
-                                <div class="mb-2"><label>Father's Name</label><input type="text" name="groom_father_name" value="{{ $invitation->groom_father_name }}" class="form-control watch-input" required></div>
-                                <div class="mb-2"><label>Mother's Name</label><input type="text" name="groom_mother_name" value="{{ $invitation->groom_mother_name }}" class="form-control watch-input" required></div>
+                                <div class="mb-2"><label>Full Name</label><input type="text" name="groom_name" value="{{ $invitation->groom_name }}" class="form-control watch-input" required {{ $invitation->groom_name ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Mobile Number</label><input type="text" name="groom_number" value="{{ $invitation->groom_number }}" class="form-control watch-input" required {{ $invitation->groom_number ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Email Address</label><input type="email" name="groom_email" value="{{ $invitation->groom_email }}" class="form-control watch-input" {{ $invitation->groom_email ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Father's Name</label><input type="text" name="groom_father_name" value="{{ $invitation->groom_father_name }}" class="form-control watch-input" required {{ $invitation->groom_father_name ? 'readonly' : '' }}></div>
+                                <div class="mb-2"><label>Mother's Name</label><input type="text" name="groom_mother_name" value="{{ $invitation->groom_mother_name }}" class="form-control watch-input" required {{ $invitation->groom_mother_name ? 'readonly' : '' }}></div>
                             </div>
                         </div>
                     </div>
@@ -145,7 +151,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3"><label>Wedding Date</label><input type="date" id="wedding_date" name="wedding_date" value="{{ $invitation->wedding_date }}" class="form-control watch-input"></div>
-                            <div class="col-md-6 mb-3"><label>Wedding Time</label><input type="time" id="wedding_time" name="wedding_time" value="{{ $invitation->wedding_time }}" class="form-control watch-input"></div>
+                            <div class="col-md-6 mb-3"><label>Wedding Time</label><input type="text" id="wedding_time" name="wedding_time" value="{{ $invitation->wedding_time }}" class="form-control watch-input" placeholder="Select Time"></div>
 
 
                         </div>
@@ -567,7 +573,20 @@
 @push('scripts')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.21.2/css/grapes.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.21.2/grapes.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (document.getElementById('wedding_time')) {
+            flatpickr("#wedding_time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                altInput: true,
+                altFormat: "h:i K"
+            });
+        }
+    });
+
     let modalCurrentSubcategories = [];
 
     function handleModalCategoryChange() {

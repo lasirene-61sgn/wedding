@@ -116,7 +116,11 @@ class CeramonyController extends Controller
 
     public function index()
     {
-        $ceramonies = Ceramonies::with(['category', 'venue'])->where('host_id', Auth::id())->get();
+        $ceramonies = Ceramonies::with(['category', 'venue'])
+            ->where('host_id', Auth::id())
+            ->orderByDesc('is_main')
+            ->orderByDesc('created_at')
+            ->get();
         return view('host.ceramony.index', compact('ceramonies'));
     }
 
@@ -125,7 +129,8 @@ class CeramonyController extends Controller
         $categories = CategoryVenue::all();
         $venues = VenueName::where('host_id', Auth::id())->orWhereNull('host_id')->get();
         $backgrounds = CeramonyBackground::all();
-        return view('host.ceramony.create', compact('categories', 'venues', 'backgrounds'));
+        $existingCeremonies = Ceramonies::where('host_id', Auth::id())->pluck('ceramony_name')->toArray();
+        return view('host.ceramony.create', compact('categories', 'venues', 'backgrounds', 'existingCeremonies'));
     }
 
     public function store(Request $request)
@@ -156,6 +161,28 @@ class CeramonyController extends Controller
                 })->first();
             if (!$checkVenue) {
                 return redirect()->route('host.ceramony.create')->with('error', 'venue not found');
+            }
+        }
+
+        $host = Auth::user();
+        if ($host && $host->package) {
+            $limit = (int) $host->package->ceramonies;
+            if ($limit > 0) {
+                $count = Ceramonies::where('host_id', $host->id)->count();
+                if ($count >= $limit) {
+                    return redirect()->back()->withInput()->with('error', 'Ceremony limit reached. Your current plan allows up to ' . $limit . ' ceremonies. Please upgrade your package to add more.');
+                }
+            }
+        }
+
+        if ($request->ceramony_date && $request->ceramony_time) {
+            $conflict = Ceramonies::where('host_id', Auth::id())
+                ->where('ceramony_date', $request->ceramony_date)
+                ->where('ceramony_time', $request->ceramony_time)
+                ->first();
+
+            if ($conflict) {
+                return redirect()->back()->withInput()->with('error', 'You already have another ceremony scheduled at this exact date and time.');
             }
         }
         
@@ -213,7 +240,10 @@ class CeramonyController extends Controller
         $categories = CategoryVenue::all();
         $venues = VenueName::where('host_id', Auth::id())->orWhereNull('host_id')->get();
         $backgrounds = CeramonyBackground::all();
-        return view('host.ceramony.edit', compact('categories', 'ceramony', 'venues', 'backgrounds'));
+        $existingCeremonies = Ceramonies::where('host_id', Auth::id())
+                                ->where('id', '!=', $ceramony->id)
+                                ->pluck('ceramony_name')->toArray();
+        return view('host.ceramony.edit', compact('categories', 'ceramony', 'venues', 'backgrounds', 'existingCeremonies'));
     }
 
     public function update(Request $request, Ceramonies $ceramony)
@@ -239,6 +269,18 @@ class CeramonyController extends Controller
             'canva_design_url'       => 'nullable|string',
             'canva_public_link'      => 'nullable|url|max:1000'
         ]);
+
+        if ($request->ceramony_date && $request->ceramony_time) {
+            $conflict = Ceramonies::where('host_id', Auth::id())
+                ->where('ceramony_date', $request->ceramony_date)
+                ->where('ceramony_time', $request->ceramony_time)
+                ->where('id', '!=', $ceramony->id)
+                ->first();
+
+            if ($conflict) {
+                return redirect()->back()->withInput()->with('error', 'You already have another ceremony scheduled at this exact date and time.');
+            }
+        }
 
         if (isset($validated['text_positions'])) {
             $validated['text_positions'] = json_decode($validated['text_positions'], true);

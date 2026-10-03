@@ -2,6 +2,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/hostceramonyedit.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <div class="container mt-4">
     <div class="row">
         <!-- Form Side -->
@@ -12,6 +13,9 @@
                     <a href="{{ route('host.ceramony.index') }}" class="btn btn-sm btn-outline-secondary">Back</a>
                 </div>
                 <div class="card-body">
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     <form action="{{ route('host.ceramony.update', $ceramony->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -101,7 +105,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold">Time</label>
-                                    <input type="time" name="ceramony_time" id="ceramony_time" class="form-control" value="{{ $ceramony->ceramony_time }}">
+                                    <input type="text" name="ceramony_time" id="ceramony_time" class="form-control" value="{{ $ceramony->ceramony_time }}" placeholder="Select Time">
                                 </div>
                             </div>
                         </div>
@@ -253,10 +257,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script src="{{ asset('js/hostceramonyedit.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     const initialCeremonyName = "{{ $ceramony->ceramony_name }}";
     const initialSubCategory = "{{ $ceramony->sub_category }}";
     const initialHtmlTemplate = "{{ $ceramony->selected_html_template }}";
+    const existingCeremonies = @json($existingCeremonies ?? []);
     
     let currentSubcategories = [];
     let isInitialLoad = true;
@@ -335,6 +341,9 @@
         let foundMatch = false;
 
         ceremonies.forEach(ceremony => {
+            if (existingCeremonies.includes(ceremony)) {
+                return; // Skip already created ceremonies
+            }
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'btn ceremony-badge';
@@ -598,11 +607,22 @@
                     })
                     .catch(error => {
                         console.error('Error saving venue:', error);
-                        alert('An error occurred while saving the venue.');
-                    });
-            });
-        }
-    });
-</script>
+                            alert('An error occurred while saving the venue.');
+                        });
+                });
+            }
+
+            // 4. Initialize Flatpickr for Time Selection (12-hour format)
+            if (document.getElementById('ceramony_time')) {
+                flatpickr("#ceramony_time", {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i", // Internal value format (24h)
+                    altInput: true,
+                    altFormat: "h:i K" // Display format (12h AM/PM)
+                });
+            }
+        });
+    </script>
 
 @endsection

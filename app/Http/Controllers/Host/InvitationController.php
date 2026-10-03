@@ -64,6 +64,17 @@ class InvitationController extends Controller
         $validated['host_id'] = Auth::id();
         $validated['is_main'] = false;
 
+        $host = Auth::user();
+        if ($host && $host->package) {
+            $limit = (int) $host->package->invitaion;
+            if ($limit > 0) {
+                $count = Invitation::where('host_id', $host->id)->count();
+                if ($count >= $limit) {
+                    return redirect()->back()->withInput()->with('error', 'Invitation limit reached. Your current plan allows up to ' . $limit . ' invitations. Please upgrade your package to add more.');
+                }
+            }
+        }
+
         if (isset($validated['text_positions'])) {
             $validated['text_positions'] = json_decode($validated['text_positions'], true);
         }

@@ -91,7 +91,7 @@
                         @if($item->ceramony_time)
                         <div class="{{ $item->ceramony_date ? 'col-6 border-start ps-3' : 'col-12' }}">
                             <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Time</small>
-                            <span class="small fw-bold"><i class="bi bi-clock text-primary me-1"></i> {{ $item->ceramony_time }}</span>
+                            <span class="small fw-bold"><i class="bi bi-clock text-primary me-1"></i> {{ \Carbon\Carbon::parse($item->ceramony_time)->format('h:i A') }}</span>
                         </div>
                         @endif
                     </div>

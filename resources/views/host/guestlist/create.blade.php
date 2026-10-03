@@ -43,6 +43,7 @@
                 <div class="form-group">
                     <label class="form-label">WhatsApp/Mobile Number *</label>
                     <input type="text" name="guest_number" required value="{{ old('guest_number') }}" class="form-input @error('guest_number') input-error @enderror">
+                    <small style="color: #64748b; font-size: 11px;">Note: Mobile number cannot be changed once the invitation is sent.</small>
                     @error('guest_number')
                         <span class="error-message">{{ $message }}</span>
                     @enderror

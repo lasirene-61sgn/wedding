@@ -50,11 +50,14 @@
                     </div>
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Primary Number</label>
-                        <input type="text" name="guest_number" value="{{ $guestlist->guest_number }}" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        <input type="text" name="guest_number" value="{{ $guestlist->guest_number }}" required style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; {{ $guestlist->invitation_sent ? 'background-color: #f1f5f9; cursor: not-allowed;' : '' }}" {{ $guestlist->invitation_sent ? 'readonly' : '' }}>
+                        @if($guestlist->invitation_sent)
+                            <small style="color: #ef4444; font-size: 10px; display: block; margin-top: 4px;">Cannot change after invite sent</small>
+                        @endif
                     </div>
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">WhatsApp Number</label>
-                        <input type="text" name="whatsapp_number" value="{{ $guestlist->whatsapp_number }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        <input type="text" name="whatsapp_number" value="{{ $guestlist->whatsapp_number }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; {{ $guestlist->invitation_sent ? 'background-color: #f1f5f9; cursor: not-allowed;' : '' }}" {{ $guestlist->invitation_sent ? 'readonly' : '' }}>
                     </div>
                     <div>
                         <label style="display: block; font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 8px;">Email Address</label>

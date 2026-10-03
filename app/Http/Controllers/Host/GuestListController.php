@@ -84,9 +84,15 @@ class GuestListController extends Controller
             'guest_name' => 'required',
             'guest_number' => [
                 'required',
-                Rule::unique('guest_lists')->where(function ($query) {
-                    return $query->where('host_id', Auth::id());
-                }),
+                function ($attribute, $value, $fail) {
+                    $exists = \App\Models\GuestList::where('host_id', Auth::id())
+                        ->where('guest_number', $value)
+                        ->where('invitation_sent', true)
+                        ->exists();
+                    if ($exists) {
+                        $fail('An invitation has already been sent to this mobile number. You cannot add it again.');
+                    }
+                },
             ],
             'guest_email' => 'nullable',
             'relation' => 'nullable|in:bride,groom,bride_parent,groom_parent',
@@ -159,9 +165,16 @@ class GuestListController extends Controller
             'guest_name' => 'required',
             'guest_number' => [
                 'required',
-                Rule::unique('guest_lists')->where(function ($query) {
-                    return $query->where('host_id', Auth::id());
-                })->ignore($id), // Ignore the current guest's ID so you can save edits
+                function ($attribute, $value, $fail) use ($id) {
+                    $exists = \App\Models\GuestList::where('host_id', Auth::id())
+                        ->where('guest_number', $value)
+                        ->where('invitation_sent', true)
+                        ->where('id', '!=', $id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('An invitation has already been sent to this mobile number. You cannot use it for another guest.');
+                    }
+                },
             ],
             'guest_email' => 'nullable',
             'relation' => 'nullable|in:bride,groom,bride_parent,groom_parent',
@@ -239,6 +252,11 @@ class GuestListController extends Controller
             $newMember->save();
             }
         }
+        if ($guestlist->invitation_sent) {
+            unset($validated['guest_number']);
+            unset($validated['whatsapp_number']);
+        }
+
         $guestlist->update($validated);
         return redirect()->route('host.guestlist.index')->with('Success', 'Guest List Updated');
     }

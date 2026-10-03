@@ -2,7 +2,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/hostceramonycreate.css') }}">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <div class="container mt-4">
     <div class="row">
         <!-- Form Side -->
@@ -12,6 +12,9 @@
                     <h5 class="mb-0 text-primary">Create New Ceremony</h5>
                 </div>
                 <div class="card-body">
+                    @if(session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     <form action="{{ route('host.ceramony.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -80,7 +83,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Time</label>
-                                    <input type="time" name="ceramony_time" id="ceramony_time" class="form-control">
+                                    <input type="text" name="ceramony_time" id="ceramony_time" class="form-control" placeholder="Select Time">
                                 </div>
                             </div>
                         </div>
@@ -260,8 +263,10 @@
 </div>
 <script src="{{ asset('js/hostceramonycreate.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     let currentSubcategories = [];
+    const existingCeremonies = @json($existingCeremonies ?? []);
 
     function handleCategoryChange() {
         const select = document.getElementById('category_select');
@@ -336,6 +341,9 @@
         }
 
         ceremonies.forEach(ceremony => {
+            if (existingCeremonies.includes(ceremony)) {
+                return; // Skip already created ceremonies
+            }
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'btn btn-outline-primary ceremony-badge';
@@ -523,10 +531,21 @@
                     })
                     .catch(error => {
                         console.error('Error saving venue:', error);
-                        alert('An error occurred while saving the venue.');
-                    });
-            });
-        }
-    });
-</script>
+                            alert('An error occurred while saving the venue.');
+                        });
+                });
+            }
+
+            // 3. Initialize Flatpickr for Time Selection (12-hour format)
+            if (document.getElementById('ceramony_time')) {
+                flatpickr("#ceramony_time", {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i", // Internal value format (24h)
+                    altInput: true,
+                    altFormat: "h:i K" // Display format (12h AM/PM)
+                });
+            }
+        });
+    </script>
 @endsection

@@ -2,6 +2,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/hostinvitationcreation.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">Create Wedding Invitation</h2>
@@ -118,7 +119,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 mb-3"><label>Wedding Date</label><input type="date" id="wedding_date" name="wedding_date" class="form-control watch-input"></div>
-                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="time" id="wedding_time" name="wedding_time" class="form-control watch-input"></div>
+                            <div class="col-md-4 mb-3"><label>Wedding Time</label><input type="text" id="wedding_time" name="wedding_time" class="form-control watch-input" placeholder="Select Time"></div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -227,6 +228,20 @@
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (document.getElementById('wedding_time')) {
+            flatpickr("#wedding_time", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                altInput: true,
+                altFormat: "h:i K"
+            });
+        }
+    });
+</script>
 <script src="{{ asset('js/hostinvitationcreation.js') }}"></script>
 @endpush
 @endsection
