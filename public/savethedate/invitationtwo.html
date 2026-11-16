@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Karan & Simran - Wedding Invitation</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-espresso: #1c1108;
+      --card-brown: #4e331e;
+      --card-dark: #2c1a0e;
+      --gold-bright: #ffd700;
+      --gold-mid: #d4af37;
+      --gold-dark: #8a5a19;
+      --sunflower-yellow: #ffda1a;
+      --sunflower-orange: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0d0703;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Responsive Mobile/Card Viewport Container */
+    .invitation-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 430px;
+      height: 100dvh;
+      max-height: 932px;
+      background: var(--bg-espresso);
+      overflow: hidden;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85);
+    }
+
+    @media (min-width: 480px) {
+      .invitation-wrapper {
+        height: 92dvh;
+        border-radius: 18px;
+      }
+    }
+
+    /* Hidden Shared SVG Definitions */
+    .svg-defs {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* =======================================================
+       PAGE 2: INNER SUNFLOWER & ARCH INVITATION CARD
+       ======================================================= */
+    .inner-page {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 50% 45%, #362212 0%, #1a0f07 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: clamp(20px, 4vh, 36px) clamp(14px, 4vw, 22px) 0;
+      z-index: 1;
+    }
+
+    /* Subtle Dark Stucco/Parchment Texture Overlay */
+    .inner-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(rgba(212, 175, 55, 0.06) 1px, transparent 0),
+        radial-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 0);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+      pointer-events: none;
+    }
+
+    /* Mughal Pointed Arch Card Container */
+    .arch-card-wrapper {
+      position: relative;
+      width: 100%;
+      height: 94%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(55px, 9vh, 80px) 16px clamp(35px, 6vh, 55px);
+      z-index: 2;
+      opacity: 0;
+      transform: translateY(25px) scale(0.95);
+      transition: all 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+    }
+
+    .invitation-wrapper.opened .arch-card-wrapper {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Arch SVG Background Shape */
+    .arch-svg-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      filter: drop-shadow(0 -8px 25px rgba(0, 0, 0, 0.65));
+    }
+
+    /* Top Arch 8 Mini Sunflowers Garland */
+    .arch-garland-svg {
+      position: absolute;
+      top: -12px;
+      left: 0;
+      width: 100%;
+      height: 150px;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s;
+    }
+
+    .invitation-wrapper.opened .arch-garland-svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Header Text ("WEDDING Ceremony") */
+    .header-text-group {
+      text-align: center;
+      margin-top: clamp(18px, 3vh, 32px);
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.8s ease 0.85s;
+    }
+
+    .wedding-caps {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: -10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .ceremony-script {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.5rem, 8.5vw, 3.3rem);
+      font-weight: 400;
+      color: #f5c73d;
+      text-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Center Large Sunflower & "KS" Monogram Medallion */
+    .sunflower-medallion {
+      position: relative;
+      width: clamp(240px, 68vw, 295px);
+      height: clamp(240px, 68vw, 295px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: auto 0;
+      z-index: 3;
+      opacity: 0;
+      transform: scale(0.75);
+      transition: all 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.05s;
+    }
+
+    .invitation-wrapper.opened .sunflower-medallion {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Slowly Rotating Sunflower Petals Ring */
+    .sunflower-petals-ring {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55));
+      animation: slowSpin 38s linear infinite;
+    }
+
+    @keyframes slowSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Stationary Dark Brown Inner Circle & Monogram */
+    .monogram-center-disc {
+      position: relative;
+      width: 68%;
+      height: 68%;
+      border-radius: 50%;
+      background: 
+        radial-gradient(circle at 35% 30%, #4e3421 0%, #2b190d 75%, #1c1008 100%);
+      border: 6px solid #231309;
+      box-shadow: 
+        0 0 0 2px #5e4027,
+        0 8px 20px rgba(0, 0, 0, 0.65),
+        inset 0 0 18px rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    /* Inner Subtle Rim Ring */
+    .monogram-center-disc::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(212, 175, 55, 0.28);
+      pointer-events: none;
+    }
+
+    .ks-monogram-svg {
+      width: 78%;
+      height: 78%;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+    }
+
+    /* Couple Names Footer ("Karan & Simran") */
+    .couple-names-footer {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.85rem, 6.2vw, 2.35rem);
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.8px;
+      text-align: center;
+      margin-bottom: clamp(10px, 2vh, 20px);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.8s ease 1.3s;
+    }
+
+    .couple-names-footer .amp {
+      font-family: 'Great Vibes', cursive;
+      color: #f5b921;
+      font-size: 1.25em;
+      font-weight: 400;
+      margin: 0 4px;
+    }
+
+    .invitation-wrapper.opened .header-text-group,
+    .invitation-wrapper.opened .couple-names-footer {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Bottom Corner Golden Marigold Clusters */
+    .corner-marigold {
+      position: absolute;
+      bottom: -8px;
+      width: clamp(95px, 26vw, 125px);
+      height: clamp(95px, 26vw, 125px);
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1) 0.9s;
+    }
+
+    .marigold-left {
+      left: -8px;
+      transform: translate(-20px, 20px);
+    }
+
+    .marigold-right {
+      right: -8px;
+      transform: translate(20px, 20px) scaleX(-1);
+    }
+
+    .invitation-wrapper.opened .marigold-left {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    .invitation-wrapper.opened .marigold-right {
+      opacity: 1;
+      transform: translate(0, 0) scaleX(-1);
+    }
+
+    /* =======================================================
+       PAGE 1: ORNATE DARK & GOLD BOTANICAL GATE DOORS
+       ======================================================= */
+    .gate-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: auto;
+      perspective: 1400px;
+      transition: visibility 0s 1.6s;
+    }
+
+    .invitation-wrapper.opened .gate-overlay {
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    /* Left & Right Ornate Doors */
+    .gate-door {
+      position: absolute;
+      top: 0;
+      width: 50.2%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #261708 0%, #140b03 100%);
+      overflow: hidden;
+      transition: transform 1.45s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease 0.25s;
+      will-change: transform;
+    }
+
+    .gate-left {
+      left: 0;
+      transform-origin: left center;
+      border-right: 1.5px solid #9c6c1e;
+      box-shadow: 6px 0 25px rgba(0, 0, 0, 0.7);
+    }
+
+    .gate-right {
+      right: 0;
+      transform-origin: right center;
+      border-left: 1.5px solid #9c6c1e;
+      box-shadow: -6px 0 25px rgba(0, 0, 0, 0.7);
+    }
+
+    .gate-pattern-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Mirror right door botanical artwork */
+    .gate-right .gate-pattern-svg {
+      transform: scaleX(-1);
+    }
+
+    /* Center Glowing Gold Seam Arch Accents (Top & Bottom) */
+    .center-gold-seam {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      transform: translateX(-50%);
+      background: linear-gradient(to bottom, #f3c65f 0%, #8a5a19 25%, #d4af37 50%, #8a5a19 75%, #f3c65f 100%);
+      z-index: 16;
+      transition: opacity 0.45s ease;
+    }
+
+    .center-gold-seam::before,
+    .center-gold-seam::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 22px;
+      background: radial-gradient(circle, #e5b74e 0%, #996515 100%);
+    }
+
+    .center-gold-seam::before {
+      top: 0;
+      clip-path: polygon(0 0, 100% 0, 58% 100%, 42% 100%);
+    }
+
+    .center-gold-seam::after {
+      bottom: 0;
+      clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+    }
+
+    /* Door Opening Animation */
+    .invitation-wrapper.opened .gate-left {
+      transform: translateX(-102%) rotateY(-25deg);
+      opacity: 0;
+    }
+
+    .invitation-wrapper.opened .gate-right {
+      transform: translateX(102%) rotateY(25deg);
+      opacity: 0;
+    }
+
+    .invitation-wrapper.opened .center-gold-seam {
+      opacity: 0;
+    }
+
+    /* =======================================================
+       METALLIC GOLD SERRATED COIN SEAL ("TAP TO OPEN")
+       ======================================================= */
+    .gold-seal-btn {
+      position: relative;
+      z-index: 20;
+      width: clamp(180px, 48vw, 208px);
+      height: clamp(180px, 48vw, 208px);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+      transform: translateY(-28px);
+      animation: goldPulse 2.5s ease-in-out infinite;
+      transition: transform 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.45s ease;
+    }
+
+    .gold-seal-btn:active {
+      transform: translateY(-28px) scale(0.93);
+    }
+
+    .invitation-wrapper.opened .gold-seal-btn {
+      animation: none;
+      transform: translateY(-28px) scale(1.35);
+      opacity: 0;
+    }
+
+    @keyframes goldPulse {
+      0%, 100% {
+        transform: translateY(-28px) scale(1);
+        filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.75));
+      }
+      50% {
+        transform: translateY(-28px) scale(1.045);
+        filter: drop-shadow(0 18px 30px rgba(212, 175, 55, 0.45));
+      }
+    }
+
+    .seal-label {
+      position: relative;
+      z-index: 2;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: clamp(1.02rem, 3.6vw, 1.2rem);
+      line-height: 1.22;
+      color: #ffffff;
+      text-align: center;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 4px rgba(90, 50, 5, 0.85);
+      pointer-events: none;
+    }
+
+    /* Golden Sparkle Canvas */
+    #gold-dust-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* Replay Button */
+    .replay-btn {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      background: rgba(28, 17, 8, 0.82);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      color: #fbe69b;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease 2s;
+    }
+
+    .invitation-wrapper.opened .replay-btn {
+      opacity: 0.9;
+      pointer-events: auto;
+    }
+
+    .replay-btn:hover {
+      background: rgba(54, 34, 18, 0.95);
+    }
+
+    /* Save The Date Info Card */
+    .std-info-card {
+      margin-top: 4px;
+      text-align: center;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.8s ease 1.7s;
+    }
+    .invitation-wrapper.opened .std-info-card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .std-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #ffd700;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+      margin-bottom: 2px;
+    }
+    .std-venue {
+      font-size: 0.75rem;
+      letter-spacing: 0.8px;
+      color: #f59e0b;
+      opacity: 0.9;
+      margin-bottom: 3px;
+    }
+    .std-msg {
+      font-size: 0.7rem;
+      font-style: italic;
+      color: #fde047;
+      opacity: 0.85;
+      max-width: 270px;
+      margin: 0 auto 6px;
+    }
+    .std-cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffd700, #b45309);
+      color: #1c1108;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .std-cta-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 5px 18px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared Reusable SVG Components -->
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Gold Botanical Linework Gradient for Page 1 -->
+      <linearGradient id="botanicalGold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#d49b27" />
+        <stop offset="35%" stop-color="#8c5a12" />
+        <stop offset="70%" stop-color="#c99322" />
+        <stop offset="100%" stop-color="#5e3a08" />
+      </linearGradient>
+
+      <!-- Sunflower Petal Gradient -->
+      <linearGradient id="sunPetalGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stop-color="#fff04d" />
+        <stop offset="55%" stop-color="#ffca00" />
+        <stop offset="100%" stop-color="#d97706" />
+      </linearGradient>
+
+      <!-- Single Sunflower Petal Component -->
+      <path id="singleSunPetal" d="M 0,-75 C -9,-102 -8,-126 0,-138 C 8,-126 9,-102 0,-75 Z" fill="url(#sunPetalGrad)" />
+
+      <!-- Mini Sunflower Component for Top Arch Garland -->
+      <g id="miniSunflower">
+        <!-- 16 Petals -->
+        <g fill="url(#sunPetalGrad)">
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(22.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(45)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(67.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(90)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(112.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(135)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(157.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(180)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(202.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(225)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(247.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(270)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(292.5)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(315)" />
+          <ellipse cx="0" cy="-12" rx="3.2" ry="7" transform="rotate(337.5)" />
+        </g>
+        <!-- Dark Brown Seed Center -->
+        <circle cx="0" cy="0" r="7.5" fill="#3b200d" stroke="#854d0e" stroke-width="1.2" />
+        <circle cx="0" cy="0" r="4.5" fill="#1f1006" />
+      </g>
+
+      <!-- Half-Door Intricate Gold Foliage Artwork for Page 1 -->
+      <g id="doorFoliageHalf">
+        <!-- Sweeping Botanical Vines -->
+        <g fill="none" stroke="url(#botanicalGold)" stroke-width="2.2" stroke-linecap="round">
+          <path d="M 200,450 C 165,370 115,310 20,250" />
+          <path d="M 155,355 C 145,270 110,190 45,120" />
+          <path d="M 200,320 C 175,220 155,140 165,40" />
+          <path d="M 110,235 C 75,210 35,205 5,225" />
+          <path d="M 200,520 C 155,585 110,670 30,760" />
+          <path d="M 150,605 C 130,695 105,785 55,860" />
+          <path d="M 200,650 C 175,740 160,820 175,900" />
+          <!-- Ornamental Swirls -->
+          <path d="M 90,150 C 60,120 20,140 30,170 C 40,195 75,180 65,160" />
+          <path d="M 95,430 C 55,410 25,445 45,475 C 62,495 90,475 75,455" />
+          <path d="M 125,730 C 85,710 55,745 75,775 C 92,795 120,775 105,755" />
+        </g>
+
+        <!-- Ribbed Paisleys / Leaves -->
+        <g fill="url(#botanicalGold)" opacity="0.82">
+          <!-- Top Center Leaf -->
+          <path d="M 200,190 C 165,215 150,265 200,315 Z" />
+          <path d="M 198,210 L 172,240 M 198,230 L 168,260 M 198,250 L 172,280" stroke="#180e04" stroke-width="1.5" />
+          <!-- Top Outer Leaf -->
+          <path d="M 45,120 C 20,85 5,45 35,15 C 65,35 70,80 45,120 Z" />
+          <path d="M 40,30 L 25,65 M 45,50 L 28,85 M 48,70 L 32,100" stroke="#180e04" stroke-width="1.5" />
+          <!-- Bottom Large Ribbed Leaf -->
+          <path d="M 150,785 C 105,765 55,785 35,835 C 75,860 125,835 150,785 Z" />
+          <path d="M 55,825 L 95,785 M 75,832 L 115,792 M 95,835 L 132,800" stroke="#180e04" stroke-width="1.6" />
+          <!-- Mid Foliage Sprigs -->
+          <ellipse cx="120" cy="285" rx="16" ry="7" transform="rotate(-35 120 285)" />
+          <ellipse cx="85" cy="260" rx="15" ry="6" transform="rotate(-25 85 260)" />
+          <ellipse cx="50" cy="242" rx="14" ry="6" transform="rotate(-15 50 242)" />
+          <ellipse cx="145" cy="545" rx="16" ry="7" transform="rotate(35 145 545)" />
+          <ellipse cx="115" cy="585" rx="15" ry="6" transform="rotate(25 115 585)" />
+          <ellipse cx="80" cy="615" rx="14" ry="6" transform="rotate(15 80 615)" />
+        </g>
+
+        <!-- Engraved Gold Dahlias / Flowers on Gate -->
+        <g transform="translate(115, 28) scale(1.1)" fill="url(#botanicalGold)" opacity="0.88">
+          <ellipse cx="0" cy="-16" rx="5" ry="12" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(36)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(72)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(108)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(144)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(180)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(216)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(252)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(288)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(324)" />
+          <circle cx="0" cy="0" r="8" fill="#231406" stroke="url(#botanicalGold)" stroke-width="2" />
+        </g>
+
+        <g transform="translate(22, 680) scale(1.15)" fill="url(#botanicalGold)" opacity="0.88">
+          <ellipse cx="0" cy="-16" rx="5" ry="12" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(36)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(72)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(108)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(144)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(180)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(216)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(252)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(288)" />
+          <ellipse cx="0" cy="-16" rx="5" ry="12" transform="rotate(324)" />
+          <circle cx="0" cy="0" r="8" fill="#231406" stroke="url(#botanicalGold)" stroke-width="2" />
+        </g>
+
+        <!-- Decorative Gold Seed Dots -->
+        <g fill="#c99322" opacity="0.75">
+          <circle cx="140" cy="110" r="3" />
+          <circle cx="132" cy="125" r="2.5" />
+          <circle cx="122" cy="138" r="2" />
+          <circle cx="70" cy="340" r="3.5" />
+          <circle cx="58" cy="352" r="2.5" />
+          <circle cx="48" cy="364" r="2" />
+          <circle cx="155" cy="710" r="3" />
+          <circle cx="145" cy="725" r="2.5" />
+        </g>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="invitation-wrapper" id="invitationWrapper">
+
+    <!-- =======================================================
+         PAGE 1: ORNATE DARK & GOLD GATES + GOLD COIN SEAL
+         ======================================================= -->
+    <div class="gate-overlay" id="gateOverlay">
+      
+      <!-- Left Gate Door -->
+      <div class="gate-door gate-left">
+        <svg class="gate-pattern-svg" viewBox="0 0 200 900" preserveAspectRatio="xMaxYMid slice">
+          <use href="#doorFoliageHalf" />
+        </svg>
+      </div>
+
+      <!-- Right Gate Door (Mirrored) -->
+      <div class="gate-door gate-right">
+        <svg class="gate-pattern-svg" viewBox="0 0 200 900" preserveAspectRatio="xMinYMid slice">
+          <use href="#doorFoliageHalf" />
+        </svg>
+      </div>
+
+      <!-- Center Vertical Gold Seam Line -->
+      <div class="center-gold-seam"></div>
+
+      <!-- Metallic Gold Serrated Coin Seal Button -->
+      <button class="gold-seal-btn" id="openSealBtn" aria-label="Tap to Open Invitation">
+        <svg id="goldSealSvg" viewBox="0 0 220 220" width="100%" height="100%" style="position:absolute; inset:0;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Brushed Metallic Gold Gradients -->
+            <linearGradient id="goldCoinRim" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff2a6" />
+              <stop offset="25%" stop-color="#e5b842" />
+              <stop offset="50%" stop-color="#9e6b14" />
+              <stop offset="75%" stop-color="#f7d574" />
+              <stop offset="100%" stop-color="#784d08" />
+            </linearGradient>
+
+            <radialGradient id="goldCoinCenter" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#ffe885" />
+              <stop offset="40%" stop-color="#d49e2a" />
+              <stop offset="80%" stop-color="#9c6711" />
+              <stop offset="100%" stop-color="#6e4406" />
+            </radialGradient>
+
+            <linearGradient id="goldInnerBevel" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#6e4406" />
+              <stop offset="50%" stop-color="#f5cf67" />
+              <stop offset="100%" stop-color="#87560d" />
+            </linearGradient>
+
+            <filter id="starDropShadow" x="-15%" y="-15%" width="130%" height="130%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#422602" flood-opacity="0.75" />
+            </filter>
+          </defs>
+
+          <!-- Outer Double Gold Rim -->
+          <circle cx="110" cy="110" r="102" fill="url(#goldCoinRim)" stroke="#5c3804" stroke-width="2" />
+          <circle cx="110" cy="110" r="95" fill="url(#goldInnerBevel)" stroke="#fff3ad" stroke-width="1.2" />
+          <circle cx="110" cy="110" r="88" fill="#85550d" />
+
+          <!-- 36-Point Serrated Gold Stamp Inner Polygon (Populated by JS for precision) -->
+          <polygon id="serratedGoldStar" fill="url(#goldCoinCenter)" stroke="#ffeb99" stroke-width="1" filter="url(#starDropShadow)" />
+
+          <!-- Glossy Specular Highlight -->
+          <ellipse cx="88" cy="72" rx="42" ry="22" transform="rotate(-25 88 72)" fill="rgba(255, 255, 255, 0.22)" />
+        </svg>
+
+        <span class="seal-label">TAP<br>TO<br>OPEN</span>
+      </button>
+    </div>
+
+    <!-- =======================================================
+         PAGE 2: SUNFLOWER & ARCH INVITATION CARD
+         ======================================================= -->
+    <div class="inner-page">
+
+      <!-- Floating Gold Shimmer Canvas -->
+      <canvas id="gold-dust-canvas"></canvas>
+
+      <!-- Mughal Pointed Arch Card Container -->
+      <div class="arch-card-wrapper">
+
+        <!-- Arch SVG Card Shape with Parchment Gradient -->
+        <svg class="arch-svg-bg" viewBox="0 0 380 780" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="brownParchmentGrad" cx="50%" cy="42%" r="70%">
+              <stop offset="0%" stop-color="#6b472c" />
+              <stop offset="55%" stop-color="#4a2f1b" />
+              <stop offset="100%" stop-color="#2e1b0e" />
+            </radialGradient>
+          </defs>
+          <!-- Mughal Pointed Arch with Scalloped Shoulders -->
+          <path d="M 190,12
+                   C 225,52 275,65 325,85
+                   C 342,92 345,115 335,132
+                   C 358,132 372,148 372,172
+                   L 372,780
+                   L 8,780
+                   L 8,172
+                   C 8,148 22,132 45,132
+                   C 35,115 38,92 55,85
+                   C 105,65 155,52 190,12 Z"
+                fill="url(#brownParchmentGrad)"
+                stroke="rgba(212, 175, 55, 0.25)"
+                stroke-width="2" />
+        </svg>
+
+        <!-- 8 Graduated Mini Sunflowers Along Top Arch -->
+        <svg class="arch-garland-svg" viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left 4 Sunflowers (Largest to Smallest) -->
+          <use href="#miniSunflower" transform="translate(42, 92) scale(1.05)" />
+          <use href="#miniSunflower" transform="translate(82, 70) scale(0.82)" />
+          <use href="#miniSunflower" transform="translate(116, 54) scale(0.64)" />
+          <use href="#miniSunflower" transform="translate(145, 43) scale(0.48)" />
+
+          <!-- Right 4 Sunflowers (Smallest to Largest) -->
+          <use href="#miniSunflower" transform="translate(235, 43) scale(0.48)" />
+          <use href="#miniSunflower" transform="translate(264, 54) scale(0.64)" />
+          <use href="#miniSunflower" transform="translate(298, 70) scale(0.82)" />
+          <use href="#miniSunflower" transform="translate(338, 92) scale(1.05)" />
+        </svg>
+
+        <!-- Top Title ("WEDDING Ceremony") -->
+        <div class="header-text-group">
+          <span class="wedding-caps">WEDDING</span>
+          <h1 class="ceremony-script">Ceremony</h1>
+        </div>
+
+        <!-- Center Large Sunflower & "KS" Monogram Medallion -->
+        <div class="sunflower-medallion">
+          
+          <!-- 24-Petal Rotating Sunflower Ring SVG -->
+          <svg class="sunflower-petals-ring" id="bigSunflowerRing" viewBox="-150 -150 300 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Populated dynamically via JS with back & front layered petals -->
+          </svg>
+
+          <!-- Stationary Dark Espresso Center Circle & "KS" Monogram -->
+          <div class="monogram-center-disc">
+            <svg class="ks-monogram-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="ksGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fff099" />
+                  <stop offset="35%" stop-color="#f5c42f" />
+                  <stop offset="70%" stop-color="#c98a14" />
+                  <stop offset="100%" stop-color="#ffdf6b" />
+                </linearGradient>
+                <filter id="ksMughalShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.6)"/>
+                </filter>
+              </defs>
+
+              <!-- Botanical Flourish Leaf Above -->
+              <path d="M 82,46 C 95,46 108,38 122,42 C 134,45 142,54 134,58 C 128,52 115,48 98,52 C 86,55 75,48 72,38 C 78,44 86,44 94,38 C 90,34 82,34 78,30 C 86,30 96,35 98,44" 
+                    fill="url(#ksGoldGrad)" />
+
+              <text x="60" y="130" font-family="'Cinzel', 'Playfair Display', serif" font-size="88" font-weight="700" fill="url(#ksGoldGrad)" text-anchor="middle" filter="url(#ksMughalShadow)">[BRIDE_INITIAL]</text>
+              <text x="100" y="115" font-family="'Great Vibes', cursive" font-size="52" fill="#ffd700" text-anchor="middle">&amp;</text>
+              <text x="140" y="140" font-family="'Cinzel', 'Playfair Display', serif" font-size="88" font-weight="700" fill="url(#ksGoldGrad)" text-anchor="middle" filter="url(#ksMughalShadow)">[GROOM_INITIAL]</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Couple Names Footer -->
+        <h2 class="couple-names-footer">
+          Karan <span class="amp">&amp;</span> Simran
+        </h2>
+
+        <div class="std-info-card">
+          <p class="std-date">[WEDDING_DATE]</p>
+          <p class="std-venue">[VENUE_NAME]</p>
+          <p class="std-msg">[SAVE_THE_DATE_MESSAGE]</p>
+          <a href="[DETAILS_URL]" class="std-cta-btn">View Wedding Details &rarr;</a>
+        </div>
+
+      </div>
+
+      <!-- Bottom-Left Golden Marigold Cluster -->
+      <svg class="corner-marigold marigold-left" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <g filter="drop-shadow(2px -2px 6px rgba(0,0,0,0.5))">
+          <circle cx="20" cy="110" r="28" fill="#d97706" />
+          <circle cx="25" cy="105" r="22" fill="#f59e0b" />
+          <circle cx="15" cy="115" r="16" fill="#fbbf24" />
+          <circle cx="58" cy="118" r="24" fill="#b45309" />
+          <circle cx="55" cy="115" r="19" fill="#f59e0b" />
+          <circle cx="52" cy="118" r="13" fill="#fde047" />
+          <circle cx="12" cy="72" r="20" fill="#d97706" />
+          <circle cx="15" cy="75" r="14" fill="#fbbf24" />
+        </g>
+      </svg>
+
+      <!-- Bottom-Right Golden Marigold Cluster -->
+      <svg class="corner-marigold marigold-right" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <g filter="drop-shadow(2px -2px 6px rgba(0,0,0,0.5))">
+          <circle cx="20" cy="110" r="28" fill="#d97706" />
+          <circle cx="25" cy="105" r="22" fill="#f59e0b" />
+          <circle cx="15" cy="115" r="16" fill="#fbbf24" />
+          <circle cx="58" cy="118" r="24" fill="#b45309" />
+          <circle cx="55" cy="115" r="19" fill="#f59e0b" />
+          <circle cx="52" cy="118" r="13" fill="#fde047" />
+          <circle cx="12" cy="72" r="20" fill="#d97706" />
+          <circle cx="15" cy="75" r="14" fill="#fbbf24" />
+        </g>
+      </svg>
+
+      <!-- Replay Button -->
+      <button class="replay-btn" id="replayBtn">Replay Opening</button>
+    </div>
+
+  </div>
+
+  <script>
+    const invitationWrapper = document.getElementById('invitationWrapper');
+    const openSealBtn = document.getElementById('openSealBtn');
+    const replayBtn = document.getElementById('replayBtn');
+    const canvas = document.getElementById('gold-dust-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 1. Generate 36-Point Serrated Gold Coin Seal Polygon
+    function buildSerratedGoldSeal() {
+      const polygon = document.getElementById('serratedGoldStar');
+      const spikes = 36;
+      const outerR = 82;
+      const innerR = 74;
+      const cx = 110;
+      const cy = 110;
+      let points = [];
+
+      for (let i = 0; i < spikes * 2; i++) {
+        const r = i % 2 === 0 ? outerR : innerR;
+        const angle = (i * Math.PI) / spikes;
+        const x = (cx + Math.cos(angle) * r).toFixed(2);
+        const y = (cy + Math.sin(angle) * r).toFixed(2);
+        points.push(`${x},${y}`);
+      }
+      polygon.setAttribute('points', points.join(' '));
+    }
+
+    // 2. Generate 28 Layered Sunflower Petals Around the Central Medallion
+    function buildBigSunflower() {
+      const svgRing = document.getElementById('bigSunflowerRing');
+      const count = 28;
+      let html = '';
+
+      // Back layer petals
+      for (let i = 0; i < count; i++) {
+        const angle = (360 / count) * i + (180 / count);
+        html += `<use href="#singleSunPetal" transform="rotate(${angle}) scale(0.95)" opacity="0.85" />`;
+      }
+      // Front layer petals
+      for (let i = 0; i < count; i++) {
+        const angle = (360 / count) * i;
+        html += `<use href="#singleSunPetal" transform="rotate(${angle})" />`;
+      }
+      svgRing.innerHTML = html;
+    }
+
+    buildSerratedGoldSeal();
+    buildBigSunflower();
+
+    // 3. Floating Gold Dust Particles
+    let animId;
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = invitationWrapper.clientWidth;
+      canvas.height = invitationWrapper.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class GoldParticle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 10;
+        this.size = Math.random() * 2.4 + 0.8;
+        this.speedY = -(Math.random() * 0.45 + 0.15);
+        this.speedX = (Math.random() - 0.5) * 0.35;
+        this.alpha = Math.random() * 0.6 + 0.2;
+        this.phase = Math.random() * Math.PI * 2;
+        this.color = Math.random() > 0.3 ? '#ffd700' : '#ffae00';
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.phase += 0.03;
+        if (this.y < -10) this.reset(false);
+      }
+
+      draw() {
+        const glowAlpha = this.alpha * (0.5 + 0.5 * Math.sin(this.phase));
+        ctx.save();
+        ctx.globalAlpha = glowAlpha;
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#ffd700';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 25; i++) {
+        particles.push(new GoldParticle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      animId = requestAnimationFrame(animateParticles);
+    }
+
+    // Open Gate Doors on Gold Seal Click
+    openSealBtn.addEventListener('click', () => {
+      invitationWrapper.classList.add('opened');
+      initParticles();
+      cancelAnimationFrame(animId);
+      animateParticles();
+    });
+
+    // Replay Animation
+    replayBtn.addEventListener('click', () => {
+      invitationWrapper.classList.remove('opened');
+      setTimeout(() => {
+        cancelAnimationFrame(animId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 600);
+    });
+  </script>
+</body>
+</html>

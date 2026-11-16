@@ -38,7 +38,37 @@ class GuestListController extends Controller
         $categories = GuestCategory::where('host_id', Auth::id())->get();
         $guestlists = $query->latest()->paginate(10)->withQueryString();
         $ceramonies = Ceramonies::where('host_id', Auth::id())->get();
-        return view('host.guestlist.index', compact('guestlists', 'ceramonies', 'categories'));
+
+        $saveDate = \App\Models\SaveDate::where('host_id', Auth::id())->latest()->first();
+        $invitation = \App\Models\Invitation::where('host_id', Auth::id())->latest()->first();
+
+        $saveDateTemplates = \App\Services\SaveDateTemplateService::getTemplates();
+        $invitationTemplates = [
+            ['id' => 'invitation/happywed.html', 'name' => 'Floral Elegance (Lavender)'],
+            ['id' => 'invitation/happywedtwo.html', 'name' => 'Golden Classic (Mughal Art)'],
+            ['id' => 'invitation/happywedsix.html', 'name' => 'Royal Saffron (Traditional)'],
+            ['id' => 'invitation/happywedseven.html', 'name' => 'Botanical Garden (Ivory & Gold)'],
+        ];
+
+        $activeSaveDateTemplate = ($saveDate && !empty($saveDate->template))
+            ? $saveDate->template
+            : 'savethedate/invitation.html';
+
+        $activeInvitationTemplate = ($invitation && !empty($invitation->selected_html_template))
+            ? $invitation->selected_html_template
+            : 'invitation/happywed.html';
+
+        return view('host.guestlist.index', compact(
+            'guestlists',
+            'ceramonies',
+            'categories',
+            'saveDate',
+            'invitation',
+            'saveDateTemplates',
+            'invitationTemplates',
+            'activeSaveDateTemplate',
+            'activeInvitationTemplate'
+        ));
     }
     public function show($id)
     {
@@ -46,16 +76,33 @@ class GuestListController extends Controller
         return view('host.guestlist.show', compact('guestlist'));
     }
 
-    public function previewTemplate()
+    public function previewTemplate(Request $request)
     {
-        $invitation = \App\Models\Invitation::where('host_id', Auth::id())->first();
-        if (!$invitation || !$invitation->selected_html_template) {
-            return response("<div style='padding:40px; text-align:center; font-family:sans-serif;'>No template has been selected or customized yet. Please go to Invitations and select a template first.</div>");
-        }
-        
+        $hostId = Auth::guard('host')->id() ?? Auth::id();
+        $invitation = \App\Models\Invitation::where('host_id', $hostId)->first();
+        $template = $request->query('template')
+            ?? ($invitation->selected_html_template ?? 'invitation/happywed.html');
+
         return redirect()->route('host.invitation.live-preview', [
-            'template' => $invitation->selected_html_template
+            'template' => $template
         ]);
+    }
+
+    public function previewSaveDate(Request $request)
+    {
+        $hostId = Auth::guard('host')->id() ?? Auth::id();
+        $invitation = \App\Models\Invitation::where('host_id', $hostId)->latest()->first();
+        $saveDate = \App\Models\SaveDate::where('host_id', $hostId)->latest()->first();
+        $template = $request->query('template')
+            ?? (($saveDate && !empty($saveDate->template)) ? $saveDate->template : 'savethedate/invitation.html');
+
+        $html = \App\Services\SaveDateTemplateService::render($template, $invitation, $saveDate);
+
+        if (!$html) {
+            return response("<div style='padding:40px; text-align:center; font-family:sans-serif;'>No Save The Date template selected. Please configure your Save The Date in Host Panel.</div>");
+        }
+
+        return response($html, 200)->header('Content-Type', 'text/html');
     }
 
     public function create()
@@ -125,21 +172,21 @@ class GuestListController extends Controller
         if (!empty($validated['category_id'])) {
             $category = GuestCategory::find($validated['category_id']);
             if ($category) {
-                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function ($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                
+
                 $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
                 $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
-                
+
                 $validated['assigned_ceremonies'] = $allCeremonyNames;
                 $validated['ceramony_id'] = $validCeremonies->first() ? $validCeremonies->first()->id : null;
             }
         }
 
         $guest = GuestList::create($validated);
-        if($request->has('family')){
-            foreach($request->family as $member){
+        if ($request->has('family')) {
+            foreach ($request->family as $member) {
                 $guest->familyMembers()->create($member);
             }
         }
@@ -149,8 +196,8 @@ class GuestListController extends Controller
     public function edit($id)
     {
         $guestlist = GuestList::with('familyMembers')
-        ->where('id', $id)
-        ->where('host_id', Auth::id())->firstOrFail();
+            ->where('id', $id)
+            ->where('host_id', Auth::id())->firstOrFail();
         $ceramonies = Ceramonies::where('host_id', Auth::id())->get();
         $categories = GuestCategory::where('host_id', Auth::id())->get();
         return view('host.guestlist.edit', compact('guestlist', 'ceramonies', 'categories', ));
@@ -207,17 +254,17 @@ class GuestListController extends Controller
         if (!empty($validated['category_id'])) {
             $category = GuestCategory::find($validated['category_id']);
             if ($category) {
-                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function($item) {
+                $ceremonyIds = collect($category->ceremony_ids ?? [])->map(function ($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                
+
                 $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
                 $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
-                
+
                 $guestlist->assigned_ceremonies = $allCeremonyNames;
                 $guestlist->ceramony_id = $validCeremonies->first() ? $validCeremonies->first()->id : null;
                 // clear ceremony_ids so it doesn't overwrite below
-                unset($request['ceremony_ids']); 
+                unset($request['ceremony_ids']);
             }
         }
 
@@ -232,24 +279,24 @@ class GuestListController extends Controller
             $guestlist->ceramony_id = null;
         }
 
-        if($request->has('family')){
+        if ($request->has('family')) {
             GuestFamilyMember::where('guest_list_id', $guestlist->id)->delete();
-           
-            foreach($request->family as $member){
+
+            foreach ($request->family as $member) {
                 $newMember = new \App\Models\GuestFamilyMember();
-            
-            // FORCE the ID here
-            $newMember->guest_list_id = $guestlist->id; 
-            
-            // Assign other fields
-            $newMember->name = $member['name'];
-            $newMember->mobile = $member['mobile'] ?? null;
-            $newMember->whatsapp_number = $member['whatsapp_number'] ?? null;
-            $newMember->relation = $member['relation'] ?? null;
-            $newMember->gender = $member['gender'] ?? null;
-            $newMember->age = $member['age'] ?? null;
-            
-            $newMember->save();
+
+                // FORCE the ID here
+                $newMember->guest_list_id = $guestlist->id;
+
+                // Assign other fields
+                $newMember->name = $member['name'];
+                $newMember->mobile = $member['mobile'] ?? null;
+                $newMember->whatsapp_number = $member['whatsapp_number'] ?? null;
+                $newMember->relation = $member['relation'] ?? null;
+                $newMember->gender = $member['gender'] ?? null;
+                $newMember->age = $member['age'] ?? null;
+
+                $newMember->save();
             }
         }
         if ($guestlist->invitation_sent) {
@@ -278,7 +325,7 @@ class GuestListController extends Controller
         $request->validate([
             'file' => 'required|mimes:csv,txt,xlsx|max:5048',
         ]);
-        
+
         // Note: For full accuracy, you should count the rows in the excel file first,
         // but for now, we enforce limits after or before based on basic checks.
         // A simple check if they are already at limit:
@@ -303,7 +350,16 @@ class GuestListController extends Controller
             'ids' => 'required|array',
             'category_id' => 'nullable|exists:guest_categories,id',
             'channels' => 'nullable|array',
+            'invitation_template' => 'nullable|string',
         ]);
+
+        if ($request->filled('invitation_template')) {
+            $invitation = \App\Models\Invitation::where('host_id', Auth::id())->first();
+            if ($invitation) {
+                $invitation->selected_html_template = $request->invitation_template;
+                $invitation->save();
+            }
+        }
 
         $invitationExists = \App\Models\Invitation::where('host_id', Auth::id())->exists();
         if (!$invitationExists) {
@@ -318,8 +374,8 @@ class GuestListController extends Controller
         if (count($selectedChannels) > 0) {
             $channelLimitMap = [
                 'whatsapp' => ['limit' => $host->effectiveWhatsappLimit(), 'sent_field' => 'whatsapp_sent_count'],
-                'sms'      => ['limit' => $host->effectiveSmsLimit(),      'sent_field' => 'sms_sent_count'],
-                'email'    => ['limit' => $host->effectiveEmailLimit(),    'sent_field' => 'email_sent_count'],
+                'sms' => ['limit' => $host->effectiveSmsLimit(), 'sent_field' => 'sms_sent_count'],
+                'email' => ['limit' => $host->effectiveEmailLimit(), 'sent_field' => 'email_sent_count'],
             ];
 
             // Count ALL selected guests that will receive an invitation
@@ -328,23 +384,27 @@ class GuestListController extends Controller
                 ->count();
 
             foreach ($selectedChannels as $channel) {
-                if (!isset($channelLimitMap[$channel])) continue;
-                
+                if (!isset($channelLimitMap[$channel]))
+                    continue;
+
                 $limit = $channelLimitMap[$channel]['limit'];
-                if ($limit <= 0) continue; // 0 means unlimited for this channel
+                if ($limit <= 0)
+                    continue; // 0 means unlimited for this channel
 
                 $sentField = $channelLimitMap[$channel]['sent_field'];
                 $alreadySent = (int) ($host->$sentField ?? 0);
                 if (($alreadySent + $newSendCount) > $limit) {
-                    return back()->with('error',
+                    return back()->with(
+                        'error',
                         ucfirst($channel) . ' limit reached! Your combined limit is ' . $limit .
-                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.');
+                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.'
+                    );
                 }
             }
         }
 
         $category = GuestCategory::find($request->category_id);
-        $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
+        $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function ($item) {
             return is_array($item) ? ($item['id'] ?? null) : $item;
         })->filter()->toArray();
         $allCeremonyNames = Ceramonies::whereIn('id', $ceremonyIds)->pluck('ceramony_name')->implode(', ');
@@ -369,10 +429,10 @@ class GuestListController extends Controller
 
             if ($request->category_id) {
                 $category = GuestCategory::find($request->category_id);
-                $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function($item) {
+                $ceremonyIds = collect($category ? ($category->ceremony_ids ?? []) : [])->map(function ($item) {
                     return is_array($item) ? ($item['id'] ?? null) : $item;
                 })->filter()->toArray();
-                
+
                 $validCeremonies = Ceramonies::whereIn('id', $ceremonyIds)->get();
                 $allCeremonyNames = $validCeremonies->pluck('ceramony_name')->implode(', ');
             } else {
@@ -386,14 +446,14 @@ class GuestListController extends Controller
             }
 
             $updateData = [
-                'send_via'        => $channelsString,
+                'send_via' => $channelsString,
                 'invitation_sent' => ($canSendInvitation && $request->has('channels')) ? true : $guest->invitation_sent,
             ];
 
             if ($request->category_id) {
-                $updateData['category_id']           = $request->category_id;
-                $updateData['assigned_ceremonies']   = $allCeremonyNames;
-                $updateData['ceramony_id']           = $validCeremonies->first() ? $validCeremonies->first()->id : null;
+                $updateData['category_id'] = $request->category_id;
+                $updateData['assigned_ceremonies'] = $allCeremonyNames;
+                $updateData['ceramony_id'] = $validCeremonies->first() ? $validCeremonies->first()->id : null;
             }
 
             $guest->update($updateData);
@@ -402,9 +462,12 @@ class GuestListController extends Controller
         // Update per-channel sent counts
         if ($actualSendCount > 0) {
             foreach ($selectedChannels as $channel) {
-                if ($channel === 'whatsapp') $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
-                if ($channel === 'sms')      $host->sms_sent_count      = ($host->sms_sent_count      ?? 0) + $actualSendCount;
-                if ($channel === 'email')    $host->email_sent_count    = ($host->email_sent_count    ?? 0) + $actualSendCount;
+                if ($channel === 'whatsapp')
+                    $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'sms')
+                    $host->sms_sent_count = ($host->sms_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'email')
+                    $host->email_sent_count = ($host->email_sent_count ?? 0) + $actualSendCount;
             }
             $host->save();
         }
@@ -420,7 +483,14 @@ class GuestListController extends Controller
         $request->validate([
             'ids' => 'required|array',
             'channels' => 'nullable|array',
+            'savedate_template' => 'nullable|string',
         ]);
+
+        if ($request->filled('savedate_template')) {
+            $saveDate = \App\Models\SaveDate::firstOrCreate(['host_id' => Auth::id()]);
+            $saveDate->template = $request->savedate_template;
+            $saveDate->save();
+        }
 
         $invitationExists = \App\Models\Invitation::where('host_id', Auth::id())->exists();
         if (!$invitationExists) {
@@ -435,8 +505,8 @@ class GuestListController extends Controller
         if (count($selectedChannels) > 0) {
             $channelLimitMap = [
                 'whatsapp' => ['limit' => $host->effectiveWhatsappLimit(), 'sent_field' => 'whatsapp_sent_count'],
-                'sms'      => ['limit' => $host->effectiveSmsLimit(),      'sent_field' => 'sms_sent_count'],
-                'email'    => ['limit' => $host->effectiveEmailLimit(),    'sent_field' => 'email_sent_count'],
+                'sms' => ['limit' => $host->effectiveSmsLimit(), 'sent_field' => 'sms_sent_count'],
+                'email' => ['limit' => $host->effectiveEmailLimit(), 'sent_field' => 'email_sent_count'],
             ];
 
             // Count ALL selected guests that will receive a Save the Date (must have a category)
@@ -446,17 +516,21 @@ class GuestListController extends Controller
                 ->count();
 
             foreach ($selectedChannels as $channel) {
-                if (!isset($channelLimitMap[$channel])) continue;
-                
+                if (!isset($channelLimitMap[$channel]))
+                    continue;
+
                 $limit = $channelLimitMap[$channel]['limit'];
-                if ($limit <= 0) continue; // 0 means unlimited for this channel
+                if ($limit <= 0)
+                    continue; // 0 means unlimited for this channel
 
                 $sentField = $channelLimitMap[$channel]['sent_field'];
                 $alreadySent = (int) ($host->$sentField ?? 0);
                 if (($alreadySent + $newSendCount) > $limit) {
-                    return back()->with('error',
+                    return back()->with(
+                        'error',
                         ucfirst($channel) . ' limit reached! Your combined limit is ' . $limit .
-                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.');
+                        ' ' . ucfirst($channel) . ' messages. You have already sent ' . $alreadySent . '.'
+                    );
                 }
             }
         }
@@ -485,9 +559,12 @@ class GuestListController extends Controller
         // Update per-channel sent counts
         if ($actualSendCount > 0) {
             foreach ($selectedChannels as $channel) {
-                if ($channel === 'whatsapp') $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
-                if ($channel === 'sms')      $host->sms_sent_count      = ($host->sms_sent_count      ?? 0) + $actualSendCount;
-                if ($channel === 'email')    $host->email_sent_count    = ($host->email_sent_count    ?? 0) + $actualSendCount;
+                if ($channel === 'whatsapp')
+                    $host->whatsapp_sent_count = ($host->whatsapp_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'sms')
+                    $host->sms_sent_count = ($host->sms_sent_count ?? 0) + $actualSendCount;
+                if ($channel === 'email')
+                    $host->email_sent_count = ($host->email_sent_count ?? 0) + $actualSendCount;
             }
             $host->save();
         }
@@ -538,18 +615,20 @@ class GuestListController extends Controller
         }
 
         // Use effective limits (package + addons)
-        $waLimit  = $host->effectiveWhatsappLimit();
+        $waLimit = $host->effectiveWhatsappLimit();
         $smsLimit = $host->effectiveSmsLimit();
-        $emLimit  = $host->effectiveEmailLimit();
+        $emLimit = $host->effectiveEmailLimit();
 
         // 3. Current Usage
-        $waSent  = (int)($host->whatsapp_sent_count ?? 0);
-        $smsSent = (int)($host->sms_sent_count ?? 0);
-        $emSent  = (int)($host->email_sent_count ?? 0);
+        $waSent = (int) ($host->whatsapp_sent_count ?? 0);
+        $smsSent = (int) ($host->sms_sent_count ?? 0);
+        $emSent = (int) ($host->email_sent_count ?? 0);
 
-        if (($waLimit > 0 && ($waSent + $newSends) > $waLimit) || 
+        if (
+            ($waLimit > 0 && ($waSent + $newSends) > $waLimit) ||
             ($smsLimit > 0 && ($smsSent + $newSends) > $smsLimit) ||
-            ($emLimit > 0 && ($emSent + $newSends) > $emLimit)) {
+            ($emLimit > 0 && ($emSent + $newSends) > $emLimit)
+        ) {
             return back()->with('error', 'Message limit reached! Please check your remaining quotas.');
         }
 
@@ -561,7 +640,7 @@ class GuestListController extends Controller
             }
 
             $invitationService->sendBulkReminders($guest, ['whatsapp']);
-            
+
             $guest->update([
                 'reminder_sent' => true,
                 'reminder_scheduled' => true

@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohit & Preksha - Wedding Invitation</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts matching the exact script, serif, and sans-serif styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courgette&family=Lobster+Two:ital,wght@0,700;1,700&family=Noto+Sans+Devanagari:wght@500;600&family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --purple-primary: #8e37b8;
+      --purple-dark: #6b218e;
+      --purple-light: #e7d4f3;
+      --text-dark: #2d2633;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #23192d;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* Script Font matching "Mohit", "Preksha", "Sangeet", "Whith Best Regards" */
+    .font-script {
+      font-family: 'Lobster Two', 'Courgette', cursive;
+      letter-spacing: 0.3px;
+    }
+
+    .font-hindi {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+    }
+
+    .font-rsvp {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Multi-layered Lavender & White Watercolor Wash Background */
+    .invitation-canvas {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      background-color: #f8f5fb;
+      background-image:
+        radial-gradient(circle at 88% 8%, rgba(209, 178, 235, 0.55) 0%, rgba(226, 203, 245, 0.25) 25%, transparent 52%),
+        radial-gradient(circle at 12% 22%, rgba(205, 170, 236, 0.6) 0%, rgba(226, 203, 245, 0.25) 28%, transparent 55%),
+        radial-gradient(circle at 85% 36%, rgba(214, 184, 240, 0.55) 0%, rgba(235, 220, 247, 0.2) 30%, transparent 55%),
+        radial-gradient(circle at 18% 49%, rgba(212, 180, 238, 0.45) 0%, transparent 45%),
+        radial-gradient(circle at 90% 62%, rgba(198, 160, 230, 0.55) 0%, rgba(224, 198, 244, 0.25) 32%, transparent 60%),
+        radial-gradient(circle at 12% 65%, rgba(204, 168, 235, 0.55) 0%, rgba(235, 218, 247, 0.2) 30%, transparent 55%),
+        radial-gradient(circle at 86% 85%, rgba(205, 170, 235, 0.6) 0%, transparent 50%),
+        radial-gradient(circle at 15% 92%, rgba(212, 180, 238, 0.55) 0%, transparent 50%),
+        linear-gradient(180deg, #f6f0fa 0%, #fcfbfe 15%, #efe3f8 30%, #faf8fc 48%, #eee0f7 66%, #fbf9fd 82%, #efe2f8 100%);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+
+    /* Subtle organic watercolor splotches overlay */
+    .watercolor-splash {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(18px);
+      opacity: 0.55;
+    }
+
+    /* Countdown white circular badges */
+    .countdown-circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(132, 68, 168, 0.15), 0 2px 5px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease;
+    }
+    .countdown-circle:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 375px) {
+      .countdown-circle {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    /* Sangeet / Event White Card */
+    .event-card {
+      background: #ffffff;
+      border-radius: 26px;
+      box-shadow: 0 12px 32px rgba(126, 58, 163, 0.14), 0 3px 10px rgba(0,0,0,0.03);
+      position: relative;
+      z-index: 10;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    /* Left & Right Carousel Arrow Buttons */
+    .carousel-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9d44c9 0%, #832cae 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(139, 49, 184, 0.45);
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      transition: all 0.2s ease;
+      z-index: 20;
+    }
+    .carousel-btn:hover {
+      transform: scale(1.08);
+      background: linear-gradient(135deg, #ab52d6 0%, #72209b 100%);
+    }
+    .carousel-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Dress Code Pill Button */
+    .dress-code-btn {
+      background: linear-gradient(90deg, #9b42c7 0%, #862eb2 100%);
+      color: #ffffff;
+      border-radius: 9999px;
+      padding: 5px 16px;
+      font-size: 10.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 10px rgba(142, 55, 184, 0.35);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .dress-code-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(142, 55, 184, 0.5);
+    }
+
+    /* =======================================================
+       LIVELY, CLEARLY VISIBLE ANIMATIONS FOR BIRDS & FLORALS
+       ======================================================= */
+    @keyframes swayFloral {
+      0%, 100% { transform: translateY(0px) rotate(-4deg) scale(1); }
+      50% { transform: translateY(-9px) rotate(5deg) scale(1.04); }
+    }
+    @keyframes swayFloralMirrored {
+      0%, 100% { transform: scaleX(-1) translateY(0px) rotate(-4deg) scale(1); }
+      50% { transform: scaleX(-1) translateY(-9px) rotate(5deg) scale(1.04); }
+    }
+    @keyframes birdPerchRight {
+      0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+      35% { transform: translateY(-10px) translateX(-4px) rotate(-4deg); }
+      70% { transform: translateY(-4px) translateX(2px) rotate(2.5deg); }
+    }
+    @keyframes birdPerchLeft {
+      0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+      40% { transform: translateY(-10px) translateX(4px) rotate(4deg); }
+      75% { transform: translateY(-4px) translateX(-2px) rotate(-2.5deg); }
+    }
+    @keyframes branchSpringRight {
+      0%, 100% { transform: scaleX(-1) rotate(-6deg) translateY(0px); }
+      35% { transform: scaleX(-1) rotate(-9deg) translateY(-4px); }
+      70% { transform: scaleX(-1) rotate(-4deg) translateY(1px); }
+    }
+    @keyframes branchSpringLeft {
+      0%, 100% { transform: rotate(0deg) translateY(0px); }
+      40% { transform: rotate(-3.5deg) translateY(-4px); }
+      75% { transform: rotate(2deg) translateY(1px); }
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1) translateY(0px); }
+      50% { transform: scale(1.07) translateY(-4px); }
+    }
+    @keyframes coupleFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+    @keyframes countdownPulse {
+      0%, 100% { transform: translateY(0px) scale(1); box-shadow: 0 6px 18px rgba(132, 68, 168, 0.15); }
+      50% { transform: translateY(-5px) scale(1.04); box-shadow: 0 12px 24px rgba(142, 55, 184, 0.28); }
+    }
+    @keyframes fallingPetal {
+      0% {
+        transform: translateY(-30px) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.75;
+      }
+      50% {
+        transform: translateY(450px) translateX(28px) rotate(180deg);
+      }
+      85% {
+        opacity: 0.75;
+      }
+      100% {
+        transform: translateY(950px) translateX(-20px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .sway-slow {
+      animation: swayFloral 3.8s ease-in-out infinite;
+      transform-origin: center bottom;
+    }
+    .sway-delayed {
+      animation: swayFloral 4.4s ease-in-out 0.9s infinite;
+      transform-origin: center bottom;
+    }
+    .sway-mirrored {
+      transform: scaleX(-1);
+      animation: swayFloralMirrored 4s ease-in-out 0.5s infinite;
+      transform-origin: center bottom;
+    }
+    .bird-right-anim {
+      animation: birdPerchRight 3.2s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
+    .bird-left-anim {
+      animation: birdPerchLeft 3.5s ease-in-out 0.4s infinite;
+      transform-origin: bottom center;
+    }
+    .branch-right-anim {
+      transform: scaleX(-1) rotate(-6deg);
+      animation: branchSpringRight 3.2s ease-in-out infinite;
+      transform-origin: center center;
+    }
+    .branch-left-anim {
+      animation: branchSpringLeft 3.5s ease-in-out 0.4s infinite;
+      transform-origin: left center;
+    }
+    .pulse-soft {
+      animation: softPulse 3.2s ease-in-out infinite;
+    }
+    .couple-anim {
+      animation: coupleFloat 3.6s ease-in-out infinite;
+    }
+    .cd-anim-1 { animation: countdownPulse 3.2s ease-in-out 0s infinite; }
+    .cd-anim-2 { animation: countdownPulse 3.2s ease-in-out 0.4s infinite; }
+    .cd-anim-3 { animation: countdownPulse 3.2s ease-in-out 0.8s infinite; }
+    .cd-anim-4 { animation: countdownPulse 3.2s ease-in-out 1.2s infinite; }
+
+    .petal {
+      position: absolute;
+      pointer-events: none;
+      z-index: 30;
+      animation: fallingPetal linear infinite;
+    }
+
+    /* Scroll Reveal Animations */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.88);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-visible {
+      opacity: 1 !important;
+      transform: translateY(0) scale(1) !important;
+    }
+
+    /* Delay utilities */
+    .delay-100 { transition-delay: 120ms; }
+    .delay-200 { transition-delay: 240ms; }
+    .delay-300 { transition-delay: 360ms; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start sm:py-6">
+
+  <!-- MAIN MOBILE-FIRST WEDDING INVITATION CONTAINER -->
+  <main class="invitation-canvas pb-10 select-none">
+
+    <!-- Floating Animated Lavender & Pink Flower Petals Overlay -->
+    <div aria-hidden="true" class="absolute inset-0 overflow-hidden pointer-events-none z-30">
+      <svg class="petal w-3.5 h-3.5 left-[12%]" style="animation-duration: 9s; animation-delay: 0s;" viewBox="0 0 24 24" fill="#d896ec"><path d="M12 2C7 7 5 14 12 22C19 14 17 7 12 2Z"/></svg>
+      <svg class="petal w-3 h-3 left-[32%]" style="animation-duration: 11s; animation-delay: 2s;" viewBox="0 0 24 24" fill="#f4acb7"><path d="M12 2C7 7 5 14 12 22C19 14 17 7 12 2Z"/></svg>
+      <svg class="petal w-4 h-4 left-[68%]" style="animation-duration: 10s; animation-delay: 1s;" viewBox="0 0 24 24" fill="#c19ee0"><path d="M12 2C7 7 5 14 12 22C19 14 17 7 12 2Z"/></svg>
+      <svg class="petal w-3 h-3 left-[85%]" style="animation-duration: 12s; animation-delay: 3.5s;" viewBox="0 0 24 24" fill="#f7cad0"><path d="M12 2C7 7 5 14 12 22C19 14 17 7 12 2Z"/></svg>
+      <svg class="petal w-3.5 h-3.5 left-[48%]" style="animation-duration: 9.5s; animation-delay: 4.5s;" viewBox="0 0 24 24" fill="#b388eb"><path d="M12 2C7 7 5 14 12 22C19 14 17 7 12 2Z"/></svg>
+    </div>
+
+    <!-- Extra Watercolor Texture Blobs for realistic hand-painted look matching the reference image -->
+    <div class="watercolor-splash w-44 h-44 rounded-full bg-purple-300 -top-6 -right-10"></div>
+    <div class="watercolor-splash w-52 h-52 rounded-full bg-purple-300 top-[210px] -left-16"></div>
+    <div class="watercolor-splash w-48 h-48 rounded-full bg-purple-300 top-[560px] -right-14"></div>
+    <div class="watercolor-splash w-56 h-56 rounded-full bg-purple-300 top-[760px] -left-16"></div>
+    <div class="watercolor-splash w-48 h-48 rounded-full bg-purple-300 bottom-[220px] -right-12"></div>
+
+    <!-- 1. Top-Right Corner Blue/Lavender Floral Cluster -->
+    <img
+      src="images/happywedsecond/FWNW16@4x 1.png"
+      alt="Top Right Floral Cluster"
+      class="absolute -top-2 -right-2 w-20 sm:w-24 h-auto object-contain pointer-events-none z-20 opacity-100 sway-slow"
+      onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot; fill=&quot;none&quot;><circle cx=&quot;75&quot; cy=&quot;20&quot; r=&quot;18&quot; fill=&quot;#89a8e0&quot; opacity=&quot;0.85&quot;/><circle cx=&quot;88&quot; cy=&quot;36&quot; r=&quot;15&quot; fill=&quot;#9b84d9&quot; opacity=&quot;0.8&quot;/><path d=&quot;M65 15 C70 5, 85 5, 90 15 C98 20, 95 35, 85 38 C75 42, 62 30, 65 15 Z&quot; fill=&quot;#6b93d6&quot; opacity=&quot;0.9&quot;/><circle cx=&quot;77&quot; cy=&quot;22&quot; r=&quot;3&quot; fill=&quot;#fff&quot;/></svg>');"
+    />
+
+    <!-- 2. Left Edge Small Lavender Flower near top -->
+    <img
+      src="images/happywedsecond/Asset 6@4x 1.png"
+      alt="Left Edge Lavender Flower"
+      class="absolute top-[74px] -left-1 w-9 sm:w-11 h-auto object-contain pointer-events-none z-20 opacity-100 sway-delayed"
+      onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 60 70&quot; fill=&quot;none&quot;><g opacity=&quot;0.95&quot;><ellipse cx=&quot;18&quot; cy=&quot;22&quot; rx=&quot;12&quot; ry=&quot;7&quot; transform=&quot;rotate(-25 18 22)&quot; fill=&quot;#9c89d4&quot;/><ellipse cx=&quot;24&quot; cy=&quot;34&quot; rx=&quot;13&quot; ry=&quot;7&quot; transform=&quot;rotate(10 24 34)&quot; fill=&quot;#b39ee3&quot;/><ellipse cx=&quot;14&quot; cy=&quot;45&quot; rx=&quot;11&quot; ry=&quot;6&quot; transform=&quot;rotate(40 14 45)&quot; fill=&quot;#8e7cc3&quot;/><circle cx=&quot;10&quot; cy=&quot;33&quot; r=&quot;4&quot; fill=&quot;#634fa2&quot;/></g></svg>');"
+    />
+
+    <!-- ==========================================
+         SECTION 1: MANGLIK TOP HEADER & GANESHA
+         ========================================== -->
+    <header class="relative z-10 pt-3 px-4 reveal-up">
+      <!-- Top 3 Invocations -->
+      <div class="grid grid-cols-3 text-center text-[8.5px] sm:text-[9.5px] font-hindi font-semibold text-gray-800 tracking-tight mb-1.5">
+        <div class="text-left pl-6">॥ जय जिनेन्द्र ॥</div>
+        <div class="text-center">॥ श्री गणेशाय नमः ॥</div>
+        <div class="text-right pr-6">॥ जय महावीर ॥</div>
+      </div>
+
+      <!-- Second Row: Left Shloka + Center Ganesha Medallion + Right Shloka -->
+      <div class="flex items-center justify-between px-1 mt-0.5">
+        <!-- Left Shloka -->
+        <div class="w-[30%] text-center font-hindi text-[7.5px] sm:text-[8px] leading-[1.35] text-gray-800 font-medium">
+          <div>मंगलम् भगवान वीरो,</div>
+          <div>मंगलम् गौतमो गणी।</div>
+        </div>
+
+        <!-- Center Ornamental Swirls + Lotus Ganesha Circle -->
+        <div class="w-[40%] flex items-center justify-center relative pulse-soft">
+          <svg class="w-40 h-16" viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Left Ornamental Filigree Swirl -->
+            <path d="M74 54 C62 54, 58 40, 48 42 C40 43, 42 55, 50 55 C55 55, 53 47, 48 48 M74 54 C60 58, 52 68, 38 65 C28 63, 28 52, 35 50 C40 49, 43 55, 38 57 M62 56 C52 62, 46 66, 30 62" stroke="#2c2233" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="33" cy="60" r="1.5" fill="#2c2233"/>
+            <circle cx="48" cy="38" r="1.3" fill="#2c2233"/>
+
+            <!-- Right Ornamental Filigree Swirl -->
+            <path d="M146 54 C158 54, 162 40, 172 42 C180 43, 178 55, 170 55 C165 55, 167 47, 172 48 M146 54 C160 58, 168 68, 182 65 C192 63, 192 52, 185 50 C180 49, 177 55, 182 57 M158 56 C168 62, 174 66, 190 62" stroke="#2c2233" stroke-width="1.3" stroke-linecap="round"/>
+            <circle cx="187" cy="60" r="1.5" fill="#2c2233"/>
+            <circle cx="172" cy="38" r="1.3" fill="#2c2233"/>
+
+            <!-- Top Lotus Leaf & Orange Bud Crest -->
+            <path d="M90 25 C82 16, 72 18, 70 25 C77 27, 84 27, 90 25 Z" fill="#179b52" stroke="#1b3a2a" stroke-width="1.2"/>
+            <path d="M130 25 C138 16, 148 18, 150 25 C143 27, 136 27, 130 25 Z" fill="#179b52" stroke="#1b3a2a" stroke-width="1.2"/>
+            <path d="M98 24 C92 14, 83 12, 82 20 C87 24, 93 25, 98 24 Z" fill="#23b564" stroke="#1b3a2a" stroke-width="1.2"/>
+            <path d="M122 24 C128 14, 137 12, 138 20 C133 24, 127 25, 122 24 Z" fill="#23b564" stroke="#1b3a2a" stroke-width="1.2"/>
+            <!-- Center Orange/Red Lotus Bud -->
+            <path d="M110 8 C102 15, 101 24, 110 27 C119 24, 118 15, 110 8 Z" fill="#ff5722" stroke="#2c2233" stroke-width="1.2"/>
+            <path d="M103 14 C97 18, 98 25, 106 26" fill="#ff8a50" stroke="#2c2233" stroke-width="1.1"/>
+            <path d="M117 14 C123 18, 122 25, 114 26" fill="#ff8a50" stroke="#2c2233" stroke-width="1.1"/>
+
+            <!-- White Circle Badge -->
+            <circle cx="110" cy="52" r="25" fill="#ffffff" stroke="#e4d3f0" stroke-width="1.5"/>
+
+            <!-- Purple Line-Art Lord Ganesha Inside Badge -->
+            <g stroke="#8e37b8" stroke-width="1.35" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M103 40 L110 31 L117 40 Z"/>
+              <path d="M105 37 L115 37"/>
+              <circle cx="110" cy="29" r="1.2" fill="#8e37b8"/>
+              <path d="M102 42 C94 40, 93 51, 101 52"/>
+              <path d="M118 42 C126 40, 127 51, 119 52"/>
+              <path d="M103 41 C103 48, 106 54, 108 58 C110 61, 115 61, 115 57 C115 55, 113 55, 112 56"/>
+              <path d="M108 43 L112 43 M108.5 45 L111.5 45"/>
+              <circle cx="110" cy="47" r="0.8" fill="#8e37b8"/>
+              <path d="M100 54 C97 60, 101 66, 109 66 C118 66, 122 60, 119 54"/>
+              <circle cx="103" cy="61" r="1.5"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Right Shloka -->
+        <div class="w-[30%] text-center font-hindi text-[7.5px] sm:text-[8px] leading-[1.35] text-gray-800 font-medium">
+          <div>वक्रतुण्ड महाकाय</div>
+          <div>सूर्यकोटि समप्रभ।</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==========================================
+         SECTION 2: GROOM & BRIDE PARENTAGE DETAILS
+         ========================================== -->
+    <section class="relative z-10 text-center mt-8 px-6">
+
+      <!-- 3. Right Edge Perched Bird + Branch Directly Underneath Its Feet (No text overlap) -->
+      <div class="absolute -top-8 -right-2 w-28 sm:w-32 h-44 pointer-events-none z-20">
+        <!-- Branch positioned lower & flush right directly under Right Bird's feet (3893 [Converted]-01 1.png) -->
+        <img
+          src="images/happywedsecond/3893 [Converted]-01 1.png"
+          alt="Right Bird Branch"
+          class="absolute top-[86px] sm:top-[96px] -right-3 w-20 sm:w-24 h-auto object-contain opacity-100 branch-right-anim"
+          onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 120 50&quot; fill=&quot;none&quot;><path d=&quot;M0 35 C35 28, 65 22, 95 35 C105 40, 112 39, 120 42&quot; stroke=&quot;#5c3a28&quot; stroke-width=&quot;2.5&quot; stroke-linecap=&quot;round&quot;/><path d=&quot;M48 26 C58 18, 66 10, 78 8&quot; stroke=&quot;#5c3a28&quot; stroke-width=&quot;1.8&quot; stroke-linecap=&quot;round&quot;/></svg>');"
+        />
+        <!-- Right Bird Perched on the Branch (QmR7fO@4x 1.png) -->
+        <img
+          src="images/happywedsecond/QmR7fO@4x 1.png"
+          alt="Perched Bird Right"
+          class="absolute top-0 -right-1 w-24 sm:w-28 h-auto object-contain opacity-100 bird-right-anim"
+          onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 130 160&quot; fill=&quot;none&quot;><path d=&quot;M84 58 C72 28, 66 12, 82 6 C94 14, 105 35, 108 58 Z&quot; fill=&quot;#84c7d0&quot; opacity=&quot;0.85&quot;/><path d=&quot;M102 64 C115 55, 125 52, 130 60 C125 72, 114 78, 104 78 Z&quot; fill=&quot;#5c4638&quot;/><path d=&quot;M108 98 L126 136 L114 138 L98 102 Z&quot; fill=&quot;#b8c4cc&quot;/><path d=&quot;M62 60 C75 56, 94 64, 106 84 C112 95, 108 106, 96 106 C80 106, 68 90, 62 74 Z&quot; fill=&quot;#7fd1c7&quot;/><path d=&quot;M52 56 C58 48, 72 48, 78 56 C78 65, 68 72, 58 68 C52 65, 50 60, 52 56 Z&quot; fill=&quot;#f5d042&quot;/><path d=&quot;M51 56 C58 55, 66 56, 73 60 C66 61, 57 60, 51 58 Z&quot; fill=&quot;#1f1f1f&quot;/><path d=&quot;M52 56 C42 58, 34 61, 29 64 C36 63, 44 61, 53 59 Z&quot; fill=&quot;#2b2b2b&quot;/><path d=&quot;M84 102 L75 124 M92 105 L86 126&quot; stroke=&quot;#4a3525&quot; stroke-width=&quot;1.6&quot;/></svg>');"
+        />
+      </div>
+
+      <!-- Groom Block -->
+      <div class="reveal-up">
+        <h2 class="font-script text-[26px] sm:text-[28px] text-[#8e37b8] leading-tight">
+          Mohit
+        </h2>
+        <div class="mt-2 space-y-1 text-[10px] sm:text-[10.8px] text-gray-800 font-normal tracking-tight leading-relaxed">
+          <p>(G S/o Lt. Smt. Gattu Devi &amp; Lt. Shri Chatur Singh Dudheria )</p>
+          <p>(S/o Smt. Saroj Devi &amp; Shri Jagat Sight Sigh Dudheria)</p>
+        </div>
+      </div>
+
+      <!-- Ornamental Purple Divider -->
+      <div class="my-5 flex items-center justify-center reveal-scale">
+        <svg class="w-48 h-4" viewBox="0 0 200 16" fill="none">
+          <line x1="15" y1="8" x2="82" y2="8" stroke="#8e37b8" stroke-width="1"/>
+          <circle cx="32" cy="8" r="2" fill="#8e37b8"/>
+          <path d="M82 8 C86 3, 92 3, 95 8 C92 13, 86 13, 82 8 Z" stroke="#8e37b8" stroke-width="1"/>
+          <path d="M100 3 L105 8 L100 13 L95 8 Z" fill="#8e37b8" opacity="0.25" stroke="#8e37b8" stroke-width="1"/>
+          <path d="M118 8 C114 3, 108 3, 105 8 C108 13, 114 13, 118 8 Z" stroke="#8e37b8" stroke-width="1"/>
+          <circle cx="168" cy="8" r="2" fill="#8e37b8"/>
+          <line x1="118" y1="8" x2="185" y2="8" stroke="#8e37b8" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- 4. Left Edge Blue Hydrangea Blossom -->
+      <img
+        src="images/happywedsecond/FWNW16@4x 1.png"
+        alt="Left Edge Blue Blossom"
+        class="absolute top-[115px] -left-3 w-12 sm:w-14 h-auto object-contain pointer-events-none z-20 opacity-100 sway-slow"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 50 80&quot; fill=&quot;none&quot;><circle cx=&quot;14&quot; cy=&quot;28&quot; r=&quot;10&quot; fill=&quot;#74a9e8&quot; opacity=&quot;0.85&quot;/><circle cx=&quot;22&quot; cy=&quot;40&quot; r=&quot;11&quot; fill=&quot;#8bbbf0&quot; opacity=&quot;0.9&quot;/><circle cx=&quot;12&quot; cy=&quot;52&quot; r=&quot;10&quot; fill=&quot;#6497db&quot; opacity=&quot;0.85&quot;/><circle cx=&quot;18&quot; cy=&quot;35&quot; r=&quot;3&quot; fill=&quot;#e6f0ff&quot;/></svg>');"
+      />
+
+      <!-- Bride Block -->
+      <div class="reveal-up delay-100">
+        <h2 class="font-script text-[26px] sm:text-[28px] text-[#8e37b8] leading-tight">
+          Preksha
+        </h2>
+        <div class="mt-2 space-y-1 text-[10px] sm:text-[10.8px] text-gray-800 font-normal tracking-tight leading-relaxed">
+          <p>(G S/o Lt. Smt. Gattu Devi &amp; Lt. Shri Chatur Singh Dudheria )</p>
+          <p>(S/o Smt. Saroj Devi &amp; Shri Jagat Sight Sigh Dudheria)</p>
+        </div>
+      </div>
+
+      <!-- 5. Detailed Multi-Petal Pink Watercolor Peony Rose on Right below Bride info -->
+      <svg
+        class="absolute -bottom-16 right-4 w-20 sm:w-24 h-20 sm:h-24 pointer-events-none z-20 sway-delayed"
+        viewBox="0 0 100 100" fill="none">
+       
+      </svg>
+    </section>
+
+    <!-- ==========================================
+         SECTION 3: COUPLE HERO & COUNTDOWN TIMER
+         ========================================== -->
+    <section class="relative z-10 text-center mt-16 px-4">
+
+      <!-- 6. Left Edge Perched Bird + Branch Underneath It (Kept in exact suitable position) -->
+      <div class="absolute -top-10 -left-2 w-32 sm:w-36 h-36 pointer-events-none z-20">
+        <!-- Branch directly under Left Bird (3893 [Converted]-01 1.png) -->
+        <img
+          src="images/happywedsecond/3893 [Converted]-01 1.png"
+          alt="Left Bird Branch"
+          class="absolute bottom-3 -left-1 w-28 sm:w-32 h-auto object-contain opacity-100 branch-left-anim"
+          onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 140 55&quot; fill=&quot;none&quot;><path d=&quot;M0 35 C25 32, 45 18, 72 28 C95 36, 112 30, 134 42&quot; stroke=&quot;#543422&quot; stroke-width=&quot;2.4&quot; stroke-linecap=&quot;round&quot;/><path d=&quot;M0 20 C16 18, 28 10, 38 4&quot; stroke=&quot;#543422&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/></svg>');"
+        />
+        <!-- Left Bird Perched on the Branch (LQ9FCD@4x 1.png) -->
+        <img
+          src="images/happywedsecond/LQ9FCD@4x 1.png"
+          alt="Perched Bird Left"
+          class="absolute top-0 left-0 w-24 sm:w-28 h-auto object-contain opacity-100 bird-left-anim"
+          onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 150 140&quot; fill=&quot;none&quot;><path d=&quot;M44 74 L12 108 L22 112 L52 78 Z&quot; fill=&quot;#7fa99b&quot;/><path d=&quot;M58 38 C72 42, 76 58, 66 72 C58 84, 44 84, 40 74 C36 62, 46 44, 58 38 Z&quot; fill=&quot;#df9b4b&quot;/><path d=&quot;M62 46 C72 52, 71 66, 60 76 C52 82, 45 79, 45 72 C46 62, 54 50, 62 46 Z&quot; fill=&quot;#76bfb8&quot;/><circle cx=&quot;62&quot; cy=&quot;34&quot; r=&quot;9&quot; fill=&quot;#f5c842&quot;/><path d=&quot;M54 31 L67 35&quot; stroke=&quot;#1a1a1a&quot; stroke-width=&quot;2.5&quot; stroke-linecap=&quot;round&quot;/><path d=&quot;M55 30 L39 18 L57 27 Z&quot; fill=&quot;#222222&quot;/><path d=&quot;M58 76 L64 87 M64 73 L72 87&quot; stroke=&quot;#3d2618&quot; stroke-width=&quot;1.5&quot;/></svg>');"
+        />
+      </div>
+
+      <!-- Small Intro Dummy Text -->
+      <p class="max-w-[210px] mx-auto text-[8.5px] sm:text-[9px] text-gray-700 leading-[1.45] reveal-up">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      </p>
+
+      <!-- Big Couple Title -->
+      <div class="mt-4 mb-6 reveal-scale delay-100">
+        <h1 class="font-script text-[44px] sm:text-[48px] text-[#8e37b8] leading-[1.08] drop-shadow-sm pulse-soft">
+          Mohit<br />
+          <span class="text-[40px] sm:text-[44px]">&amp; Preksha</span>
+        </h1>
+      </div>
+
+      <!-- 7. Right Edge Lavender Line-Art Chrysanthemum Flower (Asset 12@3x.png) -->
+      <img
+        src="images/happywedsecond/Asset 12@3x.png"
+        alt="Right Edge Lavender Flower"
+        class="absolute top-[90px] -right-2 w-24 sm:w-28 h-auto object-contain pointer-events-none z-10 opacity-100 sway-slow"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 110 110&quot; fill=&quot;none&quot;><g stroke=&quot;#7b5ea7&quot; stroke-width=&quot;1.1&quot; fill=&quot;#e6daf5&quot; fill-opacity=&quot;0.55&quot;><ellipse cx=&quot;55&quot; cy=&quot;25&quot; rx=&quot;8&quot; ry=&quot;22&quot;/><ellipse cx=&quot;55&quot; cy=&quot;85&quot; rx=&quot;8&quot; ry=&quot;22&quot;/><ellipse cx=&quot;25&quot; cy=&quot;55&quot; rx=&quot;22&quot; ry=&quot;8&quot;/><ellipse cx=&quot;85&quot; cy=&quot;55&quot; rx=&quot;22&quot; ry=&quot;8&quot;/><ellipse cx=&quot;34&quot; cy=&quot;34&quot; rx=&quot;8&quot; ry=&quot;22&quot; transform=&quot;rotate(-45 34 34)&quot;/><ellipse cx=&quot;76&quot; cy=&quot;76&quot; rx=&quot;8&quot; ry=&quot;22&quot; transform=&quot;rotate(-45 76 76)&quot;/><ellipse cx=&quot;76&quot; cy=&quot;34&quot; rx=&quot;8&quot; ry=&quot;22&quot; transform=&quot;rotate(45 76 34)&quot;/><ellipse cx=&quot;34&quot; cy=&quot;76&quot; rx=&quot;8&quot; ry=&quot;22&quot; transform=&quot;rotate(45 34 76)&quot;/><circle cx=&quot;55&quot; cy=&quot;55&quot; r=&quot;10&quot; fill=&quot;#bca4e3&quot;/></g></svg>');"
+      />
+
+      <!-- Left Edge Small Purple Jasmine Sprigs -->
+      <svg class="absolute top-[145px] -left-2 w-20 h-24 pointer-events-none z-10 opacity-95 sway-delayed" viewBox="0 0 80 100" fill="none">
+        <g fill="#9583c9" opacity="0.85">
+          <ellipse cx="18" cy="25" rx="10" ry="4" transform="rotate(-30 18 25)"/>
+          <ellipse cx="28" cy="35" rx="10" ry="4" transform="rotate(15 28 35)"/>
+          <ellipse cx="15" cy="45" rx="10" ry="4" transform="rotate(45 15 45)"/>
+          <ellipse cx="38" cy="58" rx="11" ry="4" transform="rotate(-20 38 58)"/>
+          <ellipse cx="45" cy="70" rx="11" ry="4" transform="rotate(25 45 70)"/>
+          <ellipse cx="28" cy="75" rx="10" ry="4" transform="rotate(60 28 75)"/>
+        </g>
+        <path d="M0 35 Q25 50 40 72" stroke="#6f5b9e" stroke-width="1.2" fill="none"/>
+      </svg>
+
+      <!-- 4 White Circular Countdown Badges -->
+      <div class="relative z-10 flex items-center justify-center gap-3 sm:gap-4 my-2 reveal-up delay-200">
+        <!-- Days -->
+        <div class="countdown-circle cd-anim-1">
+          <span id="cd-days" class="text-[16px] sm:text-[17px] font-semibold text-[#8e37b8] leading-none">344</span>
+          <span class="text-[8.5px] text-gray-600 mt-1 font-medium">Day</span>
+        </div>
+        <!-- Hours -->
+        <div class="countdown-circle cd-anim-2">
+          <span id="cd-hours" class="text-[16px] sm:text-[17px] font-semibold text-[#8e37b8] leading-none">09</span>
+          <span class="text-[8.5px] text-gray-600 mt-1 font-medium">Hours</span>
+        </div>
+        <!-- Minutes -->
+        <div class="countdown-circle cd-anim-3">
+          <span id="cd-minutes" class="text-[16px] sm:text-[17px] font-semibold text-[#8e37b8] leading-none">34</span>
+          <span class="text-[8.5px] text-gray-600 mt-1 font-medium">Minutes</span>
+        </div>
+        <!-- Seconds -->
+        <div class="countdown-circle cd-anim-4">
+          <span id="cd-seconds" class="text-[16px] sm:text-[17px] font-semibold text-[#8e37b8] leading-none">46</span>
+          <span class="text-[8.5px] text-gray-600 mt-1 font-medium">Seconds</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 4: SANGEET / EVENT CAROUSEL CARD
+         ========================================== -->
+    <section class="relative z-10 mt-12 px-7 reveal-scale">
+
+      <!-- Decorative subtle floral sprigs behind top-left & bottom-right of card (IuNf7o@4x 1.png) -->
+      <img
+        src="images/happywedsecond/IuNf7o@4x 1.png"
+        alt="Card Top Left Floral Accent"
+        class="absolute -top-6 left-5 w-14 sm:w-16 h-auto object-contain pointer-events-none z-0 opacity-100 sway-slow"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 50 50&quot; fill=&quot;none&quot;><path d=&quot;M25 5 L25 45 M5 25 L45 25 M11 11 L39 39 M39 11 L11 39&quot; stroke=&quot;#8a79b8&quot; stroke-width=&quot;1.4&quot;/><circle cx=&quot;25&quot; cy=&quot;25&quot; r=&quot;5&quot; fill=&quot;#d8cbf2&quot;/></svg>');"
+      />
+      <img
+        src="images/happywedsecond/IuNf7o@4x 1.png"
+        alt="Card Bottom Right Floral Accent"
+        class="absolute -bottom-6 right-5 w-14 sm:w-16 h-auto object-contain pointer-events-none z-0 opacity-100 sway-mirrored"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 60 60&quot; fill=&quot;none&quot;><path d=&quot;M30 8 L30 52 M8 30 L52 30 M14 14 L46 46 M46 14 L14 46&quot; stroke=&quot;#8a79b8&quot; stroke-width=&quot;1.4&quot;/><circle cx=&quot;30&quot; cy=&quot;30&quot; r=&quot;6&quot; fill=&quot;#d8cbf2&quot;/></svg>');"
+      />
+
+      <!-- Card Wrapper with Left & Right Overlapping Purple Buttons -->
+      <div class="relative flex items-center">
+
+        <!-- Left Previous Event Button -->
+        <button
+          id="prevEventBtn"
+          aria-label="Previous Event"
+          class="carousel-btn absolute -left-4 top-1/2 -translate-y-1/2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+
+        <!-- White Rounded Card -->
+        <div id="eventCardContainer" class="event-card w-full py-5 px-4 sm:px-6 flex items-center justify-between gap-2">
+
+          <!-- Left Column: Cute Indian Wedding Couple Cartoon SVG -->
+          <div class="w-[46%] flex justify-center items-center couple-anim">
+            <svg class="w-36 h-44 sm:w-40 sm:h-48" viewBox="0 0 180 215" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Ground Shadow -->
+              <ellipse cx="92" cy="204" rx="58" ry="6" fill="#e2dce8"/>
+
+              <!-- ==================== GROOM (Right) ==================== -->
+              <g id="groom-illustration">
+                <!-- Legs / Churidar -->
+                <rect x="104" y="156" width="9" height="40" rx="4" fill="#701c24"/>
+                <rect x="119" y="156" width="9" height="40" rx="4" fill="#701c24"/>
+                <!-- Groom Shoes (Mojari) -->
+                <path d="M101 196 C101 192, 113 192, 113 196 L113 199 L101 199 Z" fill="#2c2220"/>
+                <path d="M119 196 C119 192, 131 192, 131 196 L131 199 L119 199 Z" fill="#2c2220"/>
+
+                <!-- Groom Maroon Sherwani Coat -->
+                <path d="M92 84 C92 78, 138 78, 138 84 L142 162 L90 162 Z" fill="#8b222c"/>
+                <!-- Sherwani Collar -->
+                <path d="M105 76 L125 76 L128 84 L102 84 Z" fill="#63141c"/>
+                <!-- Golden Buttons Down Center -->
+                <circle cx="115" cy="92" r="1.5" fill="#f3c65f"/>
+                <circle cx="115" cy="100" r="1.5" fill="#f3c65f"/>
+                <circle cx="115" cy="108" r="1.5" fill="#f3c65f"/>
+                <circle cx="115" cy="116" r="1.5" fill="#f3c65f"/>
+                <circle cx="115" cy="124" r="1.5" fill="#f3c65f"/>
+
+                <!-- Embroidered Stole / Dupatta draped on Groom's Left Shoulder -->
+                <path d="M123 80 L137 82 L139 154 L123 154 Z" fill="#b83743"/>
+                <!-- Gold Jaal Pattern on Stole -->
+                <path d="M125 88 L135 96 M135 88 L125 96 M125 104 L135 112 M135 104 L125 112 M125 120 L135 128 M135 120 L125 128 M125 136 L135 144 M135 136 L125 144" stroke="#f5cb6c" stroke-width="1"/>
+                <rect x="123" y="149" width="16" height="4" fill="#f5cb6c"/>
+
+                <!-- Groom Arms -->
+                <path d="M93 84 C84 96, 84 114, 95 122" stroke="#8b222c" stroke-width="9" stroke-linecap="round"/>
+                <path d="M136 85 C146 98, 145 114, 131 122" stroke="#8b222c" stroke-width="9" stroke-linecap="round"/>
+                <!-- Groom Hands -->
+                <circle cx="128" cy="123" r="4.5" fill="#f2c29b"/>
+
+                <!-- Groom Neck -->
+                <rect x="110" y="68" width="10" height="10" fill="#eab58c"/>
+
+                <!-- Groom Head -->
+                <rect x="91" y="25" width="48" height="45" rx="20" fill="#f4c59f"/>
+                <!-- Groom Ears -->
+                <circle cx="91" cy="50" r="4.5" fill="#eab58c"/>
+                <circle cx="139" cy="50" r="4.5" fill="#eab58c"/>
+
+                <!-- Groom Hair -->
+                <path d="M90 42 C88 22, 105 14, 122 16 C138 18, 144 30, 140 44 C136 33, 128 28, 114 29 C100 30, 94 35, 90 42 Z" fill="#3b2316"/>
+
+                <!-- Groom Eyes & Eyebrows -->
+                <path d="M99 41 Q104 38 109 41" stroke="#3b2316" stroke-width="2" stroke-linecap="round"/>
+                <path d="M121 41 Q126 38 131 41" stroke="#3b2316" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="104" cy="46" r="3" fill="#2b1911"/>
+                <circle cx="126" cy="46" r="3" fill="#2b1911"/>
+                <circle cx="103" cy="45" r="0.9" fill="#ffffff"/>
+                <circle cx="125" cy="45" r="0.9" fill="#ffffff"/>
+
+                <!-- Groom Beard & Mustache -->
+                <path d="M91 49 C91 64, 102 71, 115 71 C128 71, 139 64, 139 49 L135 49 C133 57, 126 60, 115 60 C104 60, 97 57, 95 49 Z" fill="#3b2316"/>
+                <path d="M104 57 C109 54, 121 54, 126 57 C121 60, 109 60, 104 57 Z" fill="#3b2316"/>
+                <!-- Smile -->
+                <path d="M111 59 Q115 62 119 59" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+              </g>
+
+              <!-- ==================== BRIDE (Left) ==================== -->
+              <g id="bride-illustration">
+                <!-- Sheer Red Dupatta Veil cascading from head -->
+                <path d="M40 42 C28 65, 22 135, 18 190 L94 190 L86 45 Z" fill="#a8202c" opacity="0.88"/>
+                <path d="M40 42 C28 65, 22 135, 18 190" stroke="#f0c265" stroke-width="2.5"/>
+
+                <!-- Bride Lehenga Skirt (Rich Red with Gold Kalidar Embroidery) -->
+                <path d="M44 126 L26 198 C48 204, 76 204, 96 198 L78 126 Z" fill="#b82532"/>
+                <!-- Gold Vertical Panel Lines on Lehenga -->
+                <line x1="50" y1="126" x2="38" y2="199" stroke="#f0c265" stroke-width="1" opacity="0.7"/>
+                <line x1="58" y1="126" x2="54" y2="201" stroke="#f0c265" stroke-width="1" opacity="0.7"/>
+                <line x1="65" y1="126" x2="70" y2="201" stroke="#f0c265" stroke-width="1" opacity="0.7"/>
+                <line x1="72" y1="126" x2="85" y2="199" stroke="#f0c265" stroke-width="1" opacity="0.7"/>
+                <!-- Heavy Gold Zari Bottom Border -->
+                <path d="M27 190 C48 196, 76 196, 95 190 L96 198 C76 204, 48 204, 26 198 Z" fill="#e8b252"/>
+                <path d="M29 184 C48 190, 75 190, 93 184" stroke="#f5cf7b" stroke-width="2" stroke-dasharray="3 3"/>
+                <!-- Gold Butti Dots on Skirt -->
+                <circle cx="46" cy="155" r="1.5" fill="#f5cf7b"/>
+                <circle cx="62" cy="150" r="1.5" fill="#f5cf7b"/>
+                <circle cx="75" cy="158" r="1.5" fill="#f5cf7b"/>
+                <circle cx="42" cy="172" r="1.5" fill="#f5cf7b"/>
+                <circle cx="58" cy="170" r="1.5" fill="#f5cf7b"/>
+                <circle cx="78" cy="174" r="1.5" fill="#f5cf7b"/>
+
+                <!-- Bride Blouse (Choli) & Midriff -->
+                <rect x="47" y="114" width="28" height="12" fill="#f4c59f"/>
+                <path d="M44 90 C44 85, 78 85, 78 90 L76 117 L46 117 Z" fill="#b82532"/>
+                <!-- Draped Saree/Lehenga Pallu across waist -->
+                <path d="M44 102 L77 92 L76 116 L45 122 Z" fill="#d13442" stroke="#f0c265" stroke-width="1.2"/>
+
+                <!-- Bride Necklace / Gold Jewellery -->
+                <path d="M53 85 C57 93, 65 93, 69 85" stroke="#f5cb6c" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="61" cy="91" r="2" fill="#ffffff"/>
+
+                <!-- Bride Arms & Hands with Red Chooda Bangles -->
+                <path d="M45 92 C37 104, 42 118, 55 120" stroke="#f4c59f" stroke-width="7" stroke-linecap="round"/>
+                <path d="M77 92 C85 104, 80 118, 66 120" stroke="#f4c59f" stroke-width="7" stroke-linecap="round"/>
+                <!-- Bangles -->
+                <line x1="46" y1="115" x2="51" y2="121" stroke="#b82532" stroke-width="3"/>
+                <line x1="75" y1="115" x2="70" y2="121" stroke="#b82532" stroke-width="3"/>
+                <circle cx="61" cy="120" r="4" fill="#f4c59f"/>
+
+                <!-- Bride Head -->
+                <rect x="39" y="40" width="44" height="42" rx="19" fill="#f6cba8"/>
+                <!-- Bride Hair & Maang Tikka -->
+                <path d="M39 56 C39 38, 50 34, 61 34 C72 34, 83 38, 83 56 C77 46, 69 43, 61 43 C53 43, 45 46, 39 56 Z" fill="#3b2316"/>
+                <!-- Red Dupatta Border Over Head -->
+                <path d="M37 52 C38 34, 50 31, 61 31 C72 31, 84 34, 85 52" stroke="#a8202c" stroke-width="4" fill="none"/>
+                <path d="M38 50 C40 35, 50 32, 61 32 C72 32, 82 35, 84 50" stroke="#f5cb6c" stroke-width="1.5" stroke-dasharray="2 2" fill="none"/>
+                <!-- Maang Tikka on Forehead -->
+                <line x1="61" y1="34" x2="61" y2="47" stroke="#f5cb6c" stroke-width="1.5"/>
+                <circle cx="61" cy="48" r="2.5" fill="#f5cb6c"/>
+                <!-- Jhumka Earrings -->
+                <circle cx="38" cy="64" r="3" fill="#f5cb6c"/>
+                <circle cx="84" cy="64" r="3" fill="#f5cb6c"/>
+
+                <!-- Bride Eyes, Blush & Smile -->
+                <path d="M46 55 Q51 52 55 55" stroke="#3b2316" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M67 55 Q71 52 76 55" stroke="#3b2316" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="51" cy="60" r="2.8" fill="#2b1911"/>
+                <circle cx="71" cy="60" r="2.8" fill="#2b1911"/>
+                <circle cx="50" cy="59" r="0.8" fill="#ffffff"/>
+                <circle cx="70" cy="59" r="0.8" fill="#ffffff"/>
+                <!-- Rosy Cheeks -->
+                <circle cx="46" cy="65" r="3.5" fill="#f29b9b" opacity="0.55"/>
+                <circle cx="76" cy="65" r="3.5" fill="#f29b9b" opacity="0.55"/>
+                <!-- Cute Smile -->
+                <path d="M58 68 Q61 71 64 68" stroke="#c95b5b" stroke-width="1.6" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Right Column: Event Title, Date/Time, Venue & Dress Code Button -->
+          <div class="w-[54%] text-left pl-1 pr-1">
+            <!-- Event Name ("Sangeet") -->
+            <h3 id="eventTitle" class="font-script text-[27px] sm:text-[30px] text-[#8e37b8] leading-tight mb-3">
+              Sangeet
+            </h3>
+
+            <!-- Date & Time Row -->
+            <div class="flex items-start gap-2 mb-2.5">
+              <!-- Purple Calendar Icon -->
+              <svg class="w-3.5 h-3.5 text-[#8e37b8] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span id="eventDate" class="text-[10.5px] sm:text-[11px] text-gray-800 font-medium leading-snug">
+                July 19, 2021 | 10:00 AM
+              </span>
+            </div>
+
+            <!-- Location Venue Row -->
+            <div class="flex items-start gap-2 mb-4">
+              <!-- Purple Map Pin Icon -->
+              <svg class="w-3.5 h-3.5 text-[#8e37b8] shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/>
+                <circle cx="12" cy="10" r="2.5"/>
+              </svg>
+              <span id="eventVenue" class="text-[10.5px] sm:text-[11px] text-gray-800 font-normal leading-snug">
+                Taj Mahal Palace Hotel,<br/>Colaba, Mumbai
+              </span>
+            </div>
+
+            <!-- Dress Code Pill Button -->
+            <button id="dressCodeBtn" type="button" class="dress-code-btn">
+              <span>Dress Code</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Next Event Button -->
+        <button
+          id="nextEventBtn"
+          aria-label="Next Event"
+          class="carousel-btn absolute -right-4 top-1/2 -translate-y-1/2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+      </div>
+
+      <!-- Small Indicator Dots under Card -->
+      <div class="flex justify-center gap-1.5 mt-3" id="carouselDots">
+        <span class="w-2 h-2 rounded-full bg-[#8e37b8] transition-all"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-300 transition-all"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-purple-300 transition-all"></span>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 5: COMPLIMENTS & SHARING HAPPINESS
+         ========================================== -->
+    <section class="relative z-10 text-center mt-10 px-8">
+
+      <!-- 8A. Left Edge Green Leafy Lavender Floral Sprig -->
+      <img
+        src="images/happywedsecond/Asset 7@4x 2.png"
+        alt="Left Floral Sprig"
+        class="absolute top-[75px] -left-2 w-14 sm:w-16 h-auto object-contain pointer-events-none z-20 opacity-100 sway-slow"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 80 120&quot; fill=&quot;none&quot;><path d=&quot;M0 30 Q25 55 30 95&quot; stroke=&quot;#789c4a&quot; stroke-width=&quot;1.8&quot; fill=&quot;none&quot;/><path d=&quot;M12 42 C22 36, 32 40, 26 48 C20 52, 14 48, 12 42 Z&quot; fill=&quot;#8cb359&quot;/><ellipse cx=&quot;18&quot; cy=&quot;82&quot; rx=&quot;14&quot; ry=&quot;8&quot; transform=&quot;rotate(-15 18 82)&quot; fill=&quot;#9f95d9&quot; opacity=&quot;0.95&quot;/><ellipse cx=&quot;38&quot; cy=&quot;78&quot; rx=&quot;12&quot; ry=&quot;6&quot; transform=&quot;rotate(-25 38 78)&quot; fill=&quot;#887ec7&quot; opacity=&quot;0.95&quot;/></svg>');"
+      />
+
+      <!-- 8B. Right Edge Green Leafy Lavender Floral Sprig (Mirrored horizontally) -->
+      <img
+        src="images/happywedsecond/Asset 7@4x 2.png"
+        alt="Right Floral Sprig"
+        class="absolute top-[25px] -right-2 w-14 sm:w-16 h-auto object-contain pointer-events-none z-20 opacity-100 sway-mirrored"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 80 120&quot; fill=&quot;none&quot;><path d=&quot;M0 30 Q25 55 30 95&quot; stroke=&quot;#789c4a&quot; stroke-width=&quot;1.8&quot; fill=&quot;none&quot;/><path d=&quot;M12 42 C22 36, 32 40, 26 48 C20 52, 14 48, 12 42 Z&quot; fill=&quot;#8cb359&quot;/><ellipse cx=&quot;18&quot; cy=&quot;82&quot; rx=&quot;14&quot; ry=&quot;8&quot; transform=&quot;rotate(-15 18 82)&quot; fill=&quot;#9f95d9&quot; opacity=&quot;0.95&quot;/><ellipse cx=&quot;38&quot; cy=&quot;78&quot; rx=&quot;12&quot; ry=&quot;6&quot; transform=&quot;rotate(-25 38 78)&quot; fill=&quot;#887ec7&quot; opacity=&quot;0.95&quot;/></svg>');"
+      />
+
+      <!-- Block 1: With Best Compliments -->
+      <div class="reveal-up">
+        <h4 class="text-[10.5px] sm:text-[11px] font-medium text-[#8e37b8] mb-1.5">
+          With Best Compliments
+        </h4>
+        <p class="text-[7.5px] sm:text-[8px] text-gray-700 leading-[1.5] max-w-[290px] mx-auto">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+        </p>
+      </div>
+
+      <!-- Ornamental Divider 1 -->
+      <div class="my-4 flex items-center justify-center reveal-scale">
+        <svg class="w-44 h-3.5" viewBox="0 0 200 16" fill="none">
+          <line x1="20" y1="8" x2="82" y2="8" stroke="#8e37b8" stroke-width="0.9"/>
+          <circle cx="35" cy="8" r="1.8" fill="#8e37b8"/>
+          <path d="M82 8 C86 3, 92 3, 95 8 C92 13, 86 13, 82 8 Z" stroke="#8e37b8" stroke-width="0.9"/>
+          <path d="M100 4 L104 8 L100 12 L96 8 Z" fill="#8e37b8" opacity="0.3" stroke="#8e37b8" stroke-width="0.9"/>
+          <path d="M118 8 C114 3, 108 3, 105 8 C108 13, 114 13, 118 8 Z" stroke="#8e37b8" stroke-width="0.9"/>
+          <circle cx="165" cy="8" r="1.8" fill="#8e37b8"/>
+          <line x1="118" y1="8" x2="180" y2="8" stroke="#8e37b8" stroke-width="0.9"/>
+        </svg>
+      </div>
+
+      <!-- Block 2: Sharing The Happiness -->
+      <div class="reveal-up delay-100">
+        <h4 class="text-[10.5px] sm:text-[11px] font-medium text-[#8e37b8] mb-1.5">
+          Sharing The Happiness
+        </h4>
+        <p class="text-[7.5px] sm:text-[8px] text-gray-700 leading-[1.5] max-w-[290px] mx-auto">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+        </p>
+      </div>
+
+      <!-- Ornamental Divider 2 -->
+      <div class="my-4 flex items-center justify-center reveal-scale">
+        <svg class="w-44 h-3.5" viewBox="0 0 200 16" fill="none">
+          <line x1="20" y1="8" x2="82" y2="8" stroke="#8e37b8" stroke-width="0.9"/>
+          <circle cx="35" cy="8" r="1.8" fill="#8e37b8"/>
+          <path d="M82 8 C86 3, 92 3, 95 8 C92 13, 86 13, 82 8 Z" stroke="#8e37b8" stroke-width="0.9"/>
+          <path d="M100 4 L104 8 L100 12 L96 8 Z" fill="#8e37b8" opacity="0.3" stroke="#8e37b8" stroke-width="0.9"/>
+          <path d="M118 8 C114 3, 108 3, 105 8 C108 13, 114 13, 118 8 Z" stroke="#8e37b8" stroke-width="0.9"/>
+          <circle cx="165" cy="8" r="1.8" fill="#8e37b8"/>
+          <line x1="118" y1="8" x2="180" y2="8" stroke="#8e37b8" stroke-width="0.9"/>
+        </svg>
+      </div>
+
+      <!-- Block 3: Sharing The Happiness -->
+      <div class="reveal-up delay-200">
+        <h4 class="text-[10.5px] sm:text-[11px] font-medium text-[#8e37b8] mb-1.5">
+          Sharing The Happiness
+        </h4>
+        <p class="text-[7.5px] sm:text-[8px] text-gray-700 leading-[1.5] max-w-[290px] mx-auto">
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+        </p>
+      </div>
+
+      <!-- White Horizontal Bar Pill Divider -->
+      <div class="w-28 h-[3px] bg-white rounded-full mx-auto mt-7 shadow-sm reveal-scale"></div>
+    </section>
+
+    <!-- ==========================================
+         SECTION 6: FOOTER & FLORAL R.S.V.P
+         ========================================== -->
+    <footer class="relative z-10 text-center mt-8 pt-2 pb-4 px-4 reveal-up">
+
+      <!-- 9A. Bottom-Left Corner Rich Floral Bouquet in Blue Vase -->
+      <img
+        src="images/happywedsecond/Asset 2@4x 1.png"
+        alt="Bottom Left Floral Vase"
+        class="absolute -bottom-10 -left-2 w-24 sm:w-28 h-auto object-contain pointer-events-none z-20 opacity-100 sway-slow"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 110 190&quot; fill=&quot;none&quot;><path d=&quot;M22 45 C15 35, 28 24, 38 34 C46 26, 56 38, 46 48 C52 56, 38 66, 30 56 C20 62, 12 52, 22 45 Z&quot; fill=&quot;#b82979&quot;/><circle cx=&quot;34&quot; cy=&quot;46&quot; r=&quot;5&quot; fill=&quot;#f7cad0&quot;/><path d=&quot;M58 42 C65 34, 76 38, 72 47 C68 54, 56 50, 58 42 Z&quot; fill=&quot;#d9386a&quot;/><path d=&quot;M12 72 C28 68, 42 74, 48 82 C34 86, 18 82, 12 72 Z&quot; fill=&quot;#9c6b3b&quot;/><circle cx=&quot;18&quot; cy=&quot;128&quot; r=&quot;24&quot; fill=&quot;#3a6bc4&quot; opacity=&quot;0.9&quot;/><circle cx=&quot;24&quot; cy=&quot;152&quot; r=&quot;26&quot; fill=&quot;#2d54a3&quot; opacity=&quot;0.95&quot;/></svg>');"
+      />
+
+      <!-- 9B. Bottom-Right Corner Rich Floral Bouquet in Blue Vase (Mirrored horizontally) -->
+      <img
+        src="images/happywedsecond/Asset 2@4x 1.png"
+        alt="Bottom Right Floral Vase"
+        class="absolute -bottom-10 -right-2 w-24 sm:w-28 h-auto object-contain pointer-events-none z-20 opacity-100 sway-mirrored"
+        onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 110 190&quot; fill=&quot;none&quot;><path d=&quot;M22 45 C15 35, 28 24, 38 34 C46 26, 56 38, 46 48 C52 56, 38 66, 30 56 C20 62, 12 52, 22 45 Z&quot; fill=&quot;#b82979&quot;/><circle cx=&quot;34&quot; cy=&quot;46&quot; r=&quot;5&quot; fill=&quot;#f7cad0&quot;/><path d=&quot;M58 42 C65 34, 76 38, 72 47 C68 54, 56 50, 58 42 Z&quot; fill=&quot;#d9386a&quot;/><path d=&quot;M12 72 C28 68, 42 74, 48 82 C34 86, 18 82, 12 72 Z&quot; fill=&quot;#9c6b3b&quot;/><circle cx=&quot;18&quot; cy=&quot;128&quot; r=&quot;24&quot; fill=&quot;#3a6bc4&quot; opacity=&quot;0.9&quot;/><circle cx=&quot;24&quot; cy=&quot;152&quot; r=&quot;26&quot; fill=&quot;#2d54a3&quot; opacity=&quot;0.95&quot;/></svg>');"
+      />
+
+      <!-- "Whith Best Regards" (exact spelling & cursive style from image) -->
+      <h3 class="font-script text-[20px] sm:text-[22px] text-[#8e37b8]">
+        Whith Best Regards
+      </h3>
+
+      <!-- Family Name -->
+      <p class="mt-1 text-[13px] sm:text-[14px] font-medium text-gray-800 tracking-tight">
+        Gaget singh dudheria &amp; Family
+      </p>
+
+      <!-- Custom Floral "R . S . V . P" SVG Typography with Pink Roses on each letter -->
+      <div class="my-5 flex justify-center">
+        <svg class="w-64 sm:w-72 h-16" viewBox="0 0 320 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Letter R -->
+          <text x="18" y="60" class="font-rsvp" font-size="54" font-weight="700" fill="none" stroke="#1f1f1f" stroke-width="1.6">R</text>
+          <path d="M25 18 L25 60 M22 18 L38 18 C48 18, 48 36, 36 38 L52 60" stroke="#1f1f1f" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Pink Rose on R -->
+          <g transform="translate(16, 30)">
+            <circle cx="10" cy="10" r="9" fill="#f497ad"/>
+            <circle cx="10" cy="10" r="5.5" fill="#e05378"/>
+            <path d="M7 9 Q10 6 13 10" stroke="#fff" stroke-width="1.2" fill="none"/>
+            <path d="M2 14 L-3 18 M18 6 L23 2" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- Hollow Dot 1 -->
+          <circle cx="76" cy="56" r="4.5" stroke="#1f1f1f" stroke-width="1.8" fill="none"/>
+
+          <!-- Letter S -->
+          <text x="98" y="60" class="font-rsvp" font-size="54" font-weight="700" fill="none" stroke="#1f1f1f" stroke-width="1.8">S</text>
+          <!-- Pink Rose on S -->
+          <g transform="translate(103, 27)">
+            <circle cx="11" cy="11" r="9.5" fill="#f497ad"/>
+            <circle cx="11" cy="11" r="6" fill="#e05378"/>
+            <circle cx="18" cy="17" r="5" fill="#f7b2c4"/>
+            <path d="M8 10 Q11 7 14 11" stroke="#fff" stroke-width="1.2" fill="none"/>
+            <path d="M3 5 L-2 1 M19 21 L25 25" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- Hollow Dot 2 -->
+          <circle cx="152" cy="56" r="4.5" stroke="#1f1f1f" stroke-width="1.8" fill="none"/>
+
+          <!-- Letter V -->
+          <text x="172" y="60" class="font-rsvp" font-size="54" font-weight="700" fill="none" stroke="#1f1f1f" stroke-width="1.8">V</text>
+          <!-- Pink Rose on V -->
+          <g transform="translate(182, 28)">
+            <circle cx="10" cy="11" r="9" fill="#f497ad"/>
+            <circle cx="10" cy="11" r="5.5" fill="#e05378"/>
+            <circle cx="4" cy="18" r="5" fill="#f7b2c4"/>
+            <path d="M7 10 Q10 7 13 11" stroke="#fff" stroke-width="1.2" fill="none"/>
+            <path d="M16 4 L21 0 M3 22 L-1 27" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- Hollow Dot 3 -->
+          <circle cx="234" cy="56" r="4.5" stroke="#1f1f1f" stroke-width="1.8" fill="none"/>
+
+          <!-- Letter P -->
+          <text x="255" y="60" class="font-rsvp" font-size="54" font-weight="700" fill="none" stroke="#1f1f1f" stroke-width="1.8">P</text>
+          <!-- Pink Rose on P -->
+          <g transform="translate(258, 28)">
+            <circle cx="11" cy="11" r="9" fill="#f497ad"/>
+            <circle cx="11" cy="11" r="5.5" fill="#e05378"/>
+            <circle cx="18" cy="6" r="5" fill="#f7b2c4"/>
+            <path d="M8 10 Q11 7 14 11" stroke="#fff" stroke-width="1.2" fill="none"/>
+            <path d="M3 17 L-2 22 M21 14 L26 17" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Contact Phone Numbers -->
+      <div class="space-y-1.5 text-[10px] sm:text-[10.8px] text-gray-800 font-medium">
+        <p>
+          <a href="tel:+915212555456" class="hover:text-[#8e37b8] transition-colors">
+            Jagat Dudheria - +91 52125 55456
+          </a>
+        </p>
+        <p>
+          <a href="tel:+915212555456" class="hover:text-[#8e37b8] transition-colors">
+            Jagat Dudheria - +91 52125 55456
+          </a>
+        </p>
+      </div>
+    </footer>
+
+    <!-- ==========================================
+         DRESS CODE MODAL (Interactive Popup)
+         ========================================== -->
+    <div
+      id="dressModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-xs px-4">
+      <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center shadow-2xl border border-purple-100 relative animate-fadeIn">
+        <button
+          id="closeModalBtn"
+          aria-label="Close modal"
+          class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-purple-50 text-[#8e37b8] flex items-center justify-center hover:bg-purple-100">
+          ✕
+        </button>
+        <div class="w-12 h-12 rounded-full bg-purple-100 text-[#8e37b8] flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+        </div>
+        <h4 id="modalTitle" class="font-script text-2xl text-[#8e37b8]">Sangeet Dress Code</h4>
+        <p id="modalDescription" class="text-xs text-gray-600 mt-2 leading-relaxed">
+           Traditional Glamour &amp; Indo-Western Sparkle! Shades of Royal Purple, Wine, Gold, or Midnight Blue are warmly encouraged.
+        </p>
+        <button
+          id="modalOkBtn"
+          class="mt-5 w-full py-2 rounded-full bg-gradient-to-r from-[#9b42c7] to-[#862eb2] text-white text-xs font-medium shadow-md hover:opacity-95">
+          Got It, Excited!
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================
+       JAVASCRIPT: LIVE COUNTDOWN & EVENT CAROUSEL
+       ========================================== -->
+  <script>
+    // 1. Live Countdown Timer initialized to exact values in screenshot:
+    //    344 Days, 09 Hours, 34 Minutes, 46 Seconds
+    (function initCountdown() {
+      let totalSeconds =
+        (344 * 24 * 3600) +
+        (9 * 3600) +
+        (34 * 60) +
+        46;
+
+      const daysEl = document.getElementById('cd-days');
+      const hoursEl = document.getElementById('cd-hours');
+      const minutesEl = document.getElementById('cd-minutes');
+      const secondsEl = document.getElementById('cd-seconds');
+
+      function pad(num) {
+        return String(num).padStart(2, '0');
+      }
+
+      function updateTimer() {
+        if (totalSeconds <= 0) return;
+        totalSeconds--;
+
+        const days = Math.floor(totalSeconds / (24 * 3600));
+        const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        daysEl.textContent = days;
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+        secondsEl.textContent = pad(seconds);
+      }
+
+      setInterval(updateTimer, 1000);
+    })();
+
+    // 2. Interactive Wedding Events Carousel (Defaults to Sangeet from screenshot)
+    (function initCarousel() {
+      const events = [
+        {
+          title: 'Sangeet',
+          date: 'July 19, 2021 | 10:00 AM',
+          venue: 'Taj Mahal Palace Hotel,<br/>Colaba, Mumbai',
+          dressCode: 'Traditional Glamour & Indo-Western Sparkle! Shades of Royal Purple, Maroon, or Gold are warmly encouraged.'
+        },
+        {
+          title: 'Haldi & Mehendi',
+          date: 'July 20, 2021 | 11:30 AM',
+          venue: 'Poolside Lawns, Taj Mahal<br/>Palace, Mumbai',
+          dressCode: 'Vibrant Sunshine Yellows, Lime Greens & Floral Pastels for a joyful daytime celebration.'
+        },
+        {
+          title: 'Shubh Vivah',
+          date: 'July 20, 2021 | 07:15 PM',
+          venue: 'Grand Ballroom, Taj Mahal<br/>Palace, Mumbai',
+          dressCode: 'Traditional Indian Ethnic Wear — Rich Silk Sarees, Lehengas, and Classic Sherwanis or Bandhgalas.'
+        }
+      ];
+
+      let currentIndex = 0;
+
+      const cardContainer = document.getElementById('eventCardContainer');
+      const titleEl = document.getElementById('eventTitle');
+      const dateEl = document.getElementById('eventDate');
+      const venueEl = document.getElementById('eventVenue');
+      const dotsContainer = document.getElementById('carouselDots');
+      const prevBtn = document.getElementById('prevEventBtn');
+      const nextBtn = document.getElementById('nextEventBtn');
+
+      // Modal elements
+      const dressCodeBtn = document.getElementById('dressCodeBtn');
+      const dressModal = document.getElementById('dressModal');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const modalOkBtn = document.getElementById('modalOkBtn');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDescription = document.getElementById('modalDescription');
+
+      function renderEvent(index) {
+        cardContainer.style.opacity = '0.4';
+        cardContainer.style.transform = 'scale(0.98)';
+
+        setTimeout(() => {
+          const ev = events[index];
+          titleEl.textContent = ev.title;
+          dateEl.textContent = ev.date;
+          venueEl.innerHTML = ev.venue;
+
+          // Update indicator dots
+          Array.from(dotsContainer.children).forEach((dot, idx) => {
+            if (idx === index) {
+              dot.className = 'w-2 h-2 rounded-full bg-[#8e37b8] transition-all';
+            } else {
+              dot.className = 'w-1.5 h-1.5 rounded-full bg-purple-300 transition-all';
+            }
+          });
+
+          cardContainer.style.opacity = '1';
+          cardContainer.style.transform = 'scale(1)';
+        }, 160);
+      }
+
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + events.length) % events.length;
+        renderEvent(currentIndex);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % events.length;
+        renderEvent(currentIndex);
+      });
+
+      // Dress code modal handlers
+      dressCodeBtn.addEventListener('click', () => {
+        const ev = events[currentIndex];
+        modalTitle.textContent = ev.title + ' Dress Code';
+        modalDescription.textContent = ev.dressCode;
+        dressModal.classList.remove('hidden');
+        dressModal.classList.add('flex');
+      });
+
+      function closeModal() {
+        dressModal.classList.add('hidden');
+        dressModal.classList.remove('flex');
+      }
+
+      closeModalBtn.addEventListener('click', closeModal);
+      modalOkBtn.addEventListener('click', closeModal);
+      dressModal.addEventListener('click', (e) => {
+        if (e.target === dressModal) closeModal();
+      });
+    })();
+
+    // 3. Smooth Scroll Reveal Animation Observer for all sections
+    (function initScrollAnimations() {
+      const revealEls = document.querySelectorAll('.reveal-up, .reveal-scale');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('reveal-visible');
+            }
+          });
+        }, { threshold: 0.12 });
+
+        revealEls.forEach((el) => observer.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('reveal-visible'));
+      }
+    })();
+  </script>
+</body>
+</html>

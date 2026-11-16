@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Wedding Invitation | Parminder Kaur &amp; Raj Kumar</title>
+
+  <!-- Google Fonts for Traditional Punjabi Royal Wedding Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Great+Vibes&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Noto+Serif+Gurmukhi:wght@500;600;700;800&family=Marcellus&display=swap" rel="stylesheet">
+
+  <!-- Canvas Confetti for Celebration Feedback -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      /* Exact golden saffron turmeric color palette sampled from user design */
+      --bg-gold-light: #fdc368;
+      --bg-gold: #f7b557;
+      --bg-gold-dark: #eea844;
+      --bg-gold-deep: #e09832;
+
+      /* Rich deep burgundy / maroon-brown ink color matching the graphic assets */
+      --text-maroon: #3c1a22;
+      --text-maroon-dark: #2a1117;
+      --text-maroon-muted: #552834;
+      
+      --card-border: #3c1a22;
+      --card-bg-glass: rgba(255, 255, 255, 0.12);
+      --card-bg-glass-strong: rgba(255, 255, 255, 0.24);
+      
+      --btn-bg: #ffffff;
+      --btn-active-green: #236838;
+      --btn-active-red: #88222b;
+      
+      --radius-box: 12px;
+      --container-max-width: 440px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #241a16;
+      background-image: 
+        radial-gradient(circle at 50% 0%, #3a2b24 0%, #17110e 100%);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-maroon);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px 10px 100px; /* offset for single fixed bottom RSVP footer */
+    }
+
+    /* Top Sticky Quick Navigation Pills */
+    .nav-pill-bar {
+      width: 100%;
+      max-width: var(--container-max-width);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 14px;
+      z-index: 100;
+      position: sticky;
+      top: 10px;
+    }
+    .nav-pill {
+      background: rgba(36, 26, 22, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(247, 181, 87, 0.45);
+      color: #f7b557;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 13px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .nav-pill:hover,
+    .nav-pill.active {
+      background: #f7b557;
+      color: #241a16;
+      border-color: #f7b557;
+      transform: translateY(-1px);
+    }
+
+    /* MAIN UNIFIED INVITATION CANVAS CONTAINER */
+    .invite-container {
+      width: 100%;
+      max-width: var(--container-max-width);
+      background: radial-gradient(circle at 50% 12%, var(--bg-gold-light) 0%, var(--bg-gold) 40%, var(--bg-gold-dark) 75%, var(--bg-gold) 100%);
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ALL SECTIONS COMMON STYLING */
+    .invite-section {
+      width: 100%;
+      position: relative;
+      padding: 38px 24px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      scroll-margin-top: 55px;
+    }
+
+    /* Side Floral Ornaments & Dotted Borders (Exact Assets & Placement) */
+    .side-flower-left {
+      position: absolute;
+      left: -2px;
+      width: 52px;
+      height: auto;
+      pointer-events: none;
+      z-index: 3;
+      object-fit: contain;
+    }
+    .side-flower-right {
+      position: absolute;
+      right: -2px;
+      width: 74px;
+      height: auto;
+      pointer-events: none;
+      z-index: 3;
+      object-fit: contain;
+    }
+
+    /* Side Dotted Guide Lines */
+    .side-dotted-line {
+      position: absolute;
+      width: 2px;
+      background-image: linear-gradient(to bottom, var(--text-maroon) 40%, transparent 40%);
+      background-size: 2px 13px;
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .side-dotted-left {
+      left: 14px;
+    }
+    .side-dotted-right {
+      right: 14px;
+    }
+
+    /* =========================================
+       SECTION 1: COVER / ANAND KARAJ ANNOUNCEMENT
+       ========================================= */
+    .section-cover {
+      padding-top: 36px;
+      padding-bottom: 34px;
+    }
+
+    .top-flourish-img {
+      width: 175px;
+      height: auto;
+      margin: 0 auto 8px;
+      display: block;
+      filter: contrast(130%) brightness(95%);
+    }
+
+    .ik-onkar-header {
+      width: 44px;
+      height: auto;
+      margin: 2px auto 8px;
+      display: block;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.12));
+    }
+
+    .gurmukhi-verse {
+      font-family: 'Noto Serif Gurmukhi', serif;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      font-weight: 700;
+      color: var(--text-maroon);
+      margin-bottom: 18px;
+      padding: 0 8px;
+      letter-spacing: 0.2px;
+    }
+    .gurmukhi-verse .verse-title {
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-bottom: 3px;
+      display: block;
+      letter-spacing: 0.5px;
+    }
+
+    /* Circular Laurel Monogram Wreath (P & R) */
+    .monogram-wreath-wrapper {
+      width: 172px;
+      height: 172px;
+      margin: 4px auto 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .monogram-wreath-wrapper svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 4px rgba(60, 26, 34, 0.08));
+    }
+
+    .label-wedding {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--text-maroon-muted);
+      margin-bottom: 8px;
+    }
+
+    .couple-names-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .couple-name-text {
+      font-family: 'Cinzel', 'Marcellus', serif;
+      font-size: 1.84rem;
+      font-weight: 800;
+      line-height: 1.22;
+      color: var(--text-maroon);
+      letter-spacing: 0.5px;
+      text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+    }
+    .names-ampersand-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 3px 0 5px;
+      width: 190px;
+    }
+    .names-ampersand-divider svg {
+      width: 100%;
+      height: 20px;
+    }
+
+    /* =========================================
+       SECTION 2: DAY 1 - WEDNESDAY 11 NOVEMBER 2026
+       ========================================= */
+    .section-day1 {
+      padding-top: 36px;
+      padding-bottom: 34px;
+    }
+
+    .date-header-group {
+      margin-bottom: 22px;
+      text-align: center;
+    }
+    .date-prefix {
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-maroon-muted);
+      margin-bottom: 4px;
+    }
+    .date-primary {
+      font-family: 'Cinzel', 'Montserrat', serif;
+      font-size: 2.1rem;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--text-maroon);
+      letter-spacing: 1px;
+    }
+
+    /* Event Timeline Cards */
+    .timeline-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .timeline-item {
+      width: 100%;
+      background: var(--card-bg-glass);
+      border: 1.6px solid var(--card-border);
+      border-radius: var(--radius-box);
+      padding: 11px 14px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(60, 26, 34, 0.05);
+      backdrop-filter: blur(2px);
+      transition: all 0.2s ease;
+    }
+    .timeline-item:hover {
+      background: var(--card-bg-glass-strong);
+      transform: translateY(-1px);
+    }
+    .timeline-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-maroon);
+      margin-bottom: 3px;
+      letter-spacing: 0.2px;
+    }
+    .timeline-time {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-maroon-dark);
+      letter-spacing: 0.5px;
+    }
+
+    /* Venue Display Card */
+    .venue-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card-bg-glass);
+      border: 1.6px solid var(--card-border);
+      border-radius: var(--radius-box);
+      padding: 13px 16px;
+      text-align: left;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 2px 6px rgba(60, 26, 34, 0.06);
+      transition: all 0.2s ease;
+    }
+    .venue-item:hover {
+      background: var(--card-bg-glass-strong);
+      transform: translateY(-1px);
+    }
+    .venue-icon-container {
+      width: 44px;
+      height: 44px;
+      border: 1.6px solid var(--card-border);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .venue-icon-container svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--text-maroon);
+    }
+    .venue-text-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .venue-heading {
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-maroon);
+      margin-bottom: 2px;
+    }
+    .venue-place-name {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--text-maroon-dark);
+      line-height: 1.25;
+    }
+    .venue-address-line {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-maroon-muted);
+      line-height: 1.35;
+    }
+
+    /* =========================================
+       SECTION 3: DAY 2 - THURSDAY 12 NOVEMBER 2026
+       ========================================= */
+    .section-day2 {
+      padding-top: 36px;
+      padding-bottom: 34px;
+    }
+
+    .save-the-date-ik {
+      width: 38px;
+      height: auto;
+      margin: 0 auto 6px;
+      display: block;
+    }
+    .save-the-date-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--text-maroon);
+      margin-bottom: 8px;
+    }
+
+    /* Elegant Curved Arch Wave Divider */
+    .save-the-date-wave-wrap {
+      width: 100%;
+      max-width: 340px;
+      margin: 2px auto 18px;
+      display: flex;
+      justify-content: center;
+    }
+    .save-the-date-wave-wrap svg {
+      width: 100%;
+      height: 28px;
+    }
+
+    /* =========================================
+       SECTION 4: RSVP, FAMILY & COUPLE ART
+       ========================================= */
+    .section-rsvp {
+      padding-top: 36px;
+      padding-bottom: 38px;
+    }
+
+    .rsvp-wreath-wrap {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px;
+    }
+    .rsvp-wreath-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .rsvp-title-main {
+      font-family: 'Cinzel', serif;
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--text-maroon);
+      margin-bottom: 2px;
+    }
+    .rsvp-family-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.1rem;
+      color: var(--text-maroon);
+      margin-bottom: 14px;
+    }
+    .compliments-label {
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-maroon);
+      margin-bottom: 2px;
+    }
+    .compliments-sub {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-maroon-muted);
+      margin-bottom: 8px;
+    }
+    .contact-links-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-maroon);
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      text-decoration: none;
+    }
+    .contact-links-row a {
+      color: var(--text-maroon);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--text-maroon);
+    }
+
+    /* Authentic Indian Wedding Couple Silhouette Illustration */
+    .couple-art-container {
+      width: 100%;
+      max-width: 250px;
+      margin: 4px auto 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .couple-art-container img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(60, 26, 34, 0.12));
+    }
+
+    /* =========================================
+       COMMON FIXED BOTTOM RSVP ACTION BAR
+       ========================================= */
+    .rsvp-footer-fixed {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 -4px 22px rgba(0, 0, 0, 0.28);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      padding: 10px 14px 12px;
+      border-top: 2px solid #ecd3a7;
+    }
+    .rsvp-footer-inner {
+      width: 100%;
+      max-width: var(--container-max-width);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .rsvp-btn {
+      font-family: 'Montserrat', sans-serif;
+      border: 1.5px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 4px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Status Readout Box */
+    .btn-status-box {
+      background: #fffcf7;
+      cursor: default;
+    }
+    .status-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .status-text {
+      font-size: 0.64rem;
+      font-weight: 800;
+      color: var(--text-maroon);
+      letter-spacing: 0.2px;
+      line-height: 1;
+    }
+    .status-current {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #9c5c0a;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* Action Buttons */
+    .btn-action-main {
+      font-size: 0.7rem;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-maroon);
+    }
+    .btn-action-sub {
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: #63432b;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.2px;
+    }
+
+    .rsvp-btn:hover {
+      background: #faf3e8;
+      border-color: #2b1117;
+      transform: translateY(-1px);
+    }
+    .rsvp-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* ACTIVE STATES FOR ACCEPTED / DECLINED */
+    .rsvp-btn.selected-accept {
+      background: var(--btn-active-green) !important;
+      border-color: #174825 !important;
+    }
+    .rsvp-btn.selected-accept .btn-action-main,
+    .rsvp-btn.selected-accept .btn-action-sub {
+      color: #ffffff !important;
+    }
+
+    .rsvp-btn.selected-decline {
+      background: var(--btn-active-red) !important;
+      border-color: #5c141a !important;
+    }
+    .rsvp-btn.selected-decline .btn-action-main,
+    .rsvp-btn.selected-decline .btn-action-sub {
+      color: #ffffff !important;
+    }
+
+    /* Toast Notification */
+    .toast-popup {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-120px);
+      background: var(--text-maroon);
+      color: #ffffff;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 9999;
+      white-space: nowrap;
+      border: 1px solid rgba(247, 181, 87, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast-popup.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Floating Sound / Music Button */
+    .music-fab {
+      position: fixed;
+      bottom: 74px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #f7b557;
+      border: 2px solid var(--text-maroon);
+      color: var(--text-maroon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.2s ease;
+    }
+    .music-fab:hover {
+      transform: scale(1.08);
+      background: #fdc368;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 8px 6px 94px;
+      }
+      .invite-section {
+        padding: 30px 18px 26px;
+      }
+      .couple-name-text {
+        font-size: 1.68rem;
+      }
+      .date-primary {
+        font-size: 1.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Toast Notification -->
+  <div id="toastNotification" class="toast-popup">
+    <span id="toastIcon">✨</span>
+    <span id="toastMessage">RSVP Updated!</span>
+  </div>
+
+  <!-- Ambient Wedding Music Sound Toggle -->
+  <button class="music-fab" id="musicBtn" title="Toggle Wedding Melody" onclick="toggleAudio()">
+    <svg id="musicIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+    </svg>
+  </button>
+
+  <!-- Top Sticky Quick Jump Navigation (Sections 1 to 4) -->
+  <nav class="nav-pill-bar">
+    <a href="#section1" class="nav-pill active">Cover</a>
+    <a href="#section2" class="nav-pill">11 Nov</a>
+    <a href="#section3" class="nav-pill">12 Nov</a>
+    <a href="#section4" class="nav-pill">RSVP</a>
+  </nav>
+
+  <!-- UNIFIED MOBILE INVITATION CONTAINER -->
+  <main class="invite-container">
+
+    <!-- =============================================================
+         SECTION 1: COVER (Parminder Kaur & Raj Kumar)
+         ============================================================= -->
+    <section class="invite-section section-cover" id="section1">
+      
+      <!-- Side Floral Motifs & Dotted Guides from Image Assets -->
+      <img src="images/happywedsix/Group-2.png" alt="Floral Motif" class="side-flower-left" style="top: 75px;" />
+      <img src="images/happywedsix/Group-3.png" alt="Floral Motif" class="side-flower-right" style="top: 75px;" />
+      <div class="side-dotted-line side-dotted-left" style="top: 230px; height: 350px;"></div>
+      <div class="side-dotted-line side-dotted-right" style="top: 230px; height: 350px;"></div>
+
+      <!-- Top Flourish Ornament -->
+      <img src="images/happywedsix/Group 64@2x.png" alt="Ornate Flourish" class="top-flourish-img" />
+
+      <!-- Ek Onkar Symbol Graphic -->
+      <img src="images/happywedsix/ੴ.png" alt="ੴ" class="ik-onkar-header" />
+
+      <!-- Punjabi Gurbani Hymn -->
+      <div class="gurmukhi-verse">
+        <span class="verse-title">॥ ੴ ਸ੍ਰੀ ਵਾਹਿਗੁਰੂ ਜੀ ਕੀ ਫ਼ਤਹਿ ॥</span>
+        ਸਤਿਗੁਰ ਪ੍ਰਸਾਦਿ ਕਰਿ ਆਪਿ ਬਿਰਾਜੈ ਅਰਦਾਸਿ ਸੇਵਕ ਕੀ ਪੂਰਨ ਹੋਈ ॥<br>
+        ਲਖ ਖੁਸੀਆ ਪਾਤਿਸਾਹੀਆ ਜੇ ਸਤਿਗੁਰੁ ਨਦਰਿ ਕਰੇਇ ॥
+      </div>
+
+      <!-- Botanical Laurel Wreath Monogram (P & R) -->
+      <div class="monogram-wreath-wrapper">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="wreathGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+              <stop offset="70%" stop-color="rgba(255,255,255,0.08)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Soft radial backdrop -->
+          <circle cx="100" cy="100" r="92" fill="url(#wreathGlow)"/>
+          <!-- Outer circular decorative dotted/hairline rings -->
+          <circle cx="100" cy="100" r="88" fill="none" stroke="#3c1a22" stroke-width="1.3" stroke-dasharray="3 3.5" opacity="0.55"/>
+          <circle cx="100" cy="100" r="94" fill="none" stroke="#3c1a22" stroke-width="0.8" opacity="0.35"/>
+          
+          <!-- Left Laurel Branch -->
+          <path d="M 98 184 C 42 180, 10 135, 12 96 C 14 58, 45 18, 98 15" fill="none" stroke="#3c1a22" stroke-width="1.6" opacity="0.85"/>
+          <!-- Right Laurel Branch -->
+          <path d="M 102 184 C 158 180, 190 135, 188 96 C 186 58, 155 18, 102 15" fill="none" stroke="#3c1a22" stroke-width="1.6" opacity="0.85"/>
+
+          <!-- Foliage Leaves Left -->
+          <path d="M 22 135 Q 12 128, 20 120 Q 28 128, 22 135 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 12 105 Q 3 98, 11 90 Q 20 98, 12 105 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 18 72 Q 10 62, 22 58 Q 28 68, 18 72 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 38 42 Q 32 30, 44 30 Q 48 40, 38 42 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 68 22 Q 68 10, 80 14 Q 78 24, 68 22 Z" fill="#3c1a22" opacity="0.8"/>
+
+          <!-- Foliage Leaves Right -->
+          <path d="M 178 135 Q 188 128, 180 120 Q 172 128, 178 135 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 188 105 Q 197 98, 189 90 Q 180 98, 188 105 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 182 72 Q 190 62, 178 58 Q 172 68, 182 72 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 162 42 Q 168 30, 156 30 Q 152 40, 162 42 Z" fill="#3c1a22" opacity="0.8"/>
+          <path d="M 132 22 Q 132 10, 120 14 Q 122 24, 132 22 Z" fill="#3c1a22" opacity="0.8"/>
+
+          <!-- Central Botanical Leaves & Ampersand Sprig -->
+          <path d="M 94 65 Q 100 80, 106 95 Q 100 115, 95 130" fill="none" stroke="#3c1a22" stroke-width="1.2" opacity="0.6"/>
+          <path d="M 98 75 Q 106 72, 102 66 Q 96 68, 98 75 Z" fill="#3c1a22" opacity="0.6"/>
+          <path d="M 104 88 Q 112 85, 108 79 Q 102 81, 104 88 Z" fill="#3c1a22" opacity="0.6"/>
+          <path d="M 95 105 Q 87 108, 91 114 Q 97 112, 95 105 Z" fill="#3c1a22" opacity="0.6"/>
+
+          <!-- Capital Letter P with 6-pointed star in upper bowl -->
+          <text x="64" y="122" font-family="'Cinzel', serif" font-size="64" font-weight="800" fill="#3c1a22" text-anchor="middle">P</text>
+          <!-- 6-Pointed Star Accent in P -->
+          <path d="M 66 84 L 67 87 L 70 88 L 67 89 L 66 92 L 65 89 L 62 88 L 65 87 Z" fill="#3c1a22" opacity="0.9"/>
+
+          <!-- Italic Flourish Ampersand -->
+          <text x="100" y="112" font-family="'Great Vibes', cursive" font-size="34" fill="#552834" text-anchor="middle">&amp;</text>
+
+          <!-- Capital Letter R -->
+          <text x="136" y="122" font-family="'Cinzel', serif" font-size="64" font-weight="800" fill="#3c1a22" text-anchor="middle">R</text>
+        </svg>
+      </div>
+
+      <p class="label-wedding">Wedding</p>
+
+      <!-- Bride & Groom Names -->
+      <div class="couple-names-wrap">
+        <div class="couple-name-text">Parminder Kaur</div>
+        <div class="names-ampersand-divider">
+          <svg viewBox="0 0 160 24" fill="none">
+            <path d="M 15 12 C 30 12, 40 6, 55 12 C 62 15, 66 12, 70 12" stroke="#3c1a22" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="2.2" fill="#3c1a22"/>
+            <text x="80" y="18" text-anchor="middle" font-family="'Great Vibes', cursive" font-size="22" font-weight="bold" fill="#3c1a22">&amp;</text>
+            <path d="M 90 12 C 94 12, 98 15, 105 12 C 120 6, 130 12, 145 12" stroke="#3c1a22" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="148" cy="12" r="2.2" fill="#3c1a22"/>
+          </svg>
+        </div>
+        <div class="couple-name-text">Raj Kumar</div>
+      </div>
+
+    </section>
+
+
+    <!-- =============================================================
+         SECTION 2: DAY 1 - WEDNESDAY 11 NOVEMBER 2026 (Program & Venue)
+         ============================================================= -->
+    <section class="invite-section section-day1" id="section2">
+      
+      <!-- Floral Motifs & Side Dotted Lines -->
+      <img src="images/happywedsix/Group-2.png" alt="Floral Motif" class="side-flower-left" style="top: 220px;" />
+      <img src="images/happywedsix/Group-3.png" alt="Floral Motif" class="side-flower-right" style="top: 320px;" />
+      <div class="side-dotted-line side-dotted-left" style="top: 100px; height: 440px;"></div>
+      <div class="side-dotted-line side-dotted-right" style="top: 100px; height: 440px;"></div>
+
+      <!-- Date Header -->
+      <div class="date-header-group">
+        <div class="date-prefix">On Wednesday</div>
+        <div class="date-primary">11 NOVEMBER<br>2026</div>
+      </div>
+
+      <!-- 4 Timeline Events -->
+      <div class="timeline-container">
+        <div class="timeline-item">
+          <div class="timeline-title">Sri Sukhmani Sahib Ji Path</div>
+          <div class="timeline-time">10:00 AM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Kirtan</div>
+          <div class="timeline-time">11:30 AM TO 12:30 PM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Guru Ka Langar</div>
+          <div class="timeline-time">01:00 PM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">DJ Night</div>
+          <div class="timeline-time">08:00 PM</div>
+        </div>
+      </div>
+
+      <!-- Venue Card -->
+      <a href="https://maps.google.com/?q=Village+Kharochian+Near+Banga+Distt+SBS+Nagar" target="_blank" rel="noopener noreferrer" class="venue-item" title="Click to view on Google Maps">
+        <div class="venue-icon-container">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+        </div>
+        <div class="venue-text-col">
+          <span class="venue-heading">Venue</span>
+          <span class="venue-place-name">At Village Kharochian,</span>
+          <span class="venue-address-line">Near Banga, Distt SBS Nagar</span>
+        </div>
+      </a>
+
+    </section>
+
+
+    <!-- =============================================================
+         SECTION 3: DAY 2 - THURSDAY 12 NOVEMBER 2026 (Save The Date)
+         ============================================================= -->
+    <section class="invite-section section-day2" id="section3">
+      
+      <!-- Floral Motifs & Side Dotted Lines -->
+      <img src="images/happywedsix/Group-3.png" alt="Floral Motif" class="side-flower-right" style="top: 25px;" />
+      <img src="images/happywedsix/Group-2.png" alt="Floral Motif" class="side-flower-left" style="bottom: 80px;" />
+      <div class="side-dotted-line side-dotted-left" style="top: 130px; height: 380px;"></div>
+      <div class="side-dotted-line side-dotted-right" style="top: 130px; height: 380px;"></div>
+
+      <!-- Ek Onkar Symbol Graphic -->
+      <img src="images/happywedsix/ੴ.png" alt="ੴ" class="save-the-date-ik" />
+
+      <div class="save-the-date-title">Save The Date</div>
+
+      <!-- Arch Wave Divider -->
+      <div class="save-the-date-wave-wrap">
+        <svg viewBox="0 0 360 36" fill="none">
+          <path d="M 10 28 C 90 28, 125 20, 155 10 C 170 4, 190 4, 205 10 C 235 20, 270 28, 350 28" stroke="#3c1a22" stroke-width="3" stroke-linecap="round"/>
+          <path d="M 10 34 C 90 34, 125 26, 155 16 C 170 10, 190 10, 205 16 C 235 26, 270 34, 350 34" stroke="#3c1a22" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+        </svg>
+      </div>
+
+      <!-- Date Header -->
+      <div class="date-header-group">
+        <div class="date-prefix">On Thursday</div>
+        <div class="date-primary">12 NOVEMBER<br>2026</div>
+      </div>
+
+      <!-- 3 Timeline Events -->
+      <div class="timeline-container">
+        <div class="timeline-item">
+          <div class="timeline-title">Reception of Baraat</div>
+          <div class="timeline-time">10:00 AM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Lunch</div>
+          <div class="timeline-time">01:30 PM</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Doli</div>
+          <div class="timeline-time">04:00 PM</div>
+        </div>
+      </div>
+
+      <!-- Venue Card -->
+      <a href="https://maps.google.com/?q=Shri+Guru+Ravidass+Palace+Near+Banga+Distt+SBS+Nagar" target="_blank" rel="noopener noreferrer" class="venue-item" title="Click to view on Google Maps">
+        <div class="venue-icon-container">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+          </svg>
+        </div>
+        <div class="venue-text-col">
+          <span class="venue-heading">Venue</span>
+          <span class="venue-place-name">Shri Guru Ravidass Palace</span>
+          <span class="venue-address-line">Near Banga, Distt SBS Nagar</span>
+        </div>
+      </a>
+
+    </section>
+
+
+    <!-- =============================================================
+         SECTION 4: RSVP, BEST COMPLIMENTS & COUPLE ILLUSTRATION
+         ============================================================= -->
+    <section class="invite-section section-rsvp" id="section4">
+      
+      <!-- Side Floral Motifs -->
+      <img src="images/happywedsix/Group-2.png" alt="Floral Motif" class="side-flower-left" style="bottom: 70px;" />
+      <img src="images/happywedsix/Group-3.png" alt="Floral Motif" class="side-flower-right" style="top: 180px;" />
+      <div class="side-dotted-line side-dotted-right" style="bottom: 90px; height: 160px;"></div>
+
+      <!-- Compact Monogram Wreath (P & R) -->
+      <div class="rsvp-wreath-wrap">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="88" fill="rgba(255,255,255,0.2)" stroke="#3c1a22" stroke-width="1.3" stroke-dasharray="3 3.5" opacity="0.6"/>
+          <!-- Branches -->
+          <path d="M 98 184 C 42 180, 10 135, 12 96 C 14 58, 45 18, 98 15" fill="none" stroke="#3c1a22" stroke-width="1.6" opacity="0.85"/>
+          <path d="M 102 184 C 158 180, 190 135, 188 96 C 186 58, 155 18, 102 15" fill="none" stroke="#3c1a22" stroke-width="1.6" opacity="0.85"/>
+          <!-- Monogram Letters -->
+          <text x="64" y="122" font-family="'Cinzel', serif" font-size="64" font-weight="800" fill="#3c1a22" text-anchor="middle">P</text>
+          <text x="100" y="112" font-family="'Great Vibes', cursive" font-size="34" fill="#552834" text-anchor="middle">&amp;</text>
+          <text x="136" y="122" font-family="'Cinzel', serif" font-size="64" font-weight="800" fill="#3c1a22" text-anchor="middle">R</text>
+        </svg>
+      </div>
+
+      <h2 class="rsvp-title-main">RSVP</h2>
+      <div class="rsvp-family-name">All Bali Family</div>
+
+      <div class="compliments-label">Best Compliments</div>
+      <div class="compliments-sub">All Relatives &amp; Friends</div>
+
+      <!-- Phone contact links -->
+      <div class="contact-links-row">
+        <span>M:</span>
+        <a href="tel:7692927722">7692927722</a>,
+        <a href="tel:9878651034">9878651034</a>
+      </div>
+
+      <!-- Wedding Couple Illustration from User Assets -->
+      <div class="couple-art-container">
+        <img src="images/happywedsix/wedding couple Illutraction 1.png" alt="Indian Wedding Couple" onerror="this.src='images/wedding couple Illutraction 1.png'" />
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- SINGLE COMMON FIXED BOTTOM RSVP FOOTER -->
+  <footer class="rsvp-footer-fixed">
+    <div class="rsvp-footer-inner">
+      
+      <!-- Current Status Readout -->
+      <div class="rsvp-btn btn-status-box" id="statusBox">
+        <div class="status-badge-row">
+          <span class="status-text">YOUR RSVP:</span>
+          <svg id="statusIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3c1a22" stroke-width="2.2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="status-current" id="statusText">PENDING</div>
+      </div>
+
+      <!-- Accept Button -->
+      <button class="rsvp-btn" id="btnAccept" onclick="updateRsvp('ACCEPTED')">
+        <span class="btn-action-main">ACCEPT</span>
+        <span class="btn-action-sub">WITH PLEASURE</span>
+      </button>
+
+      <!-- Decline Button -->
+      <button class="rsvp-btn" id="btnDecline" onclick="updateRsvp('DECLINED')">
+        <span class="btn-action-main">DECLINE</span>
+        <span class="btn-action-sub">WITH REGRET</span>
+      </button>
+
+    </div>
+  </footer>
+
+  <script>
+    // Audio synthesizer for ambient wedding celebration melody
+    let audioCtx = null;
+    let isPlayingAudio = false;
+    let soundInterval = null;
+
+    function toggleAudio() {
+      const musicBtn = document.getElementById('musicBtn');
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (isPlayingAudio) {
+        clearInterval(soundInterval);
+        isPlayingAudio = false;
+        musicBtn.style.background = '#f7b557';
+        musicBtn.style.color = '#3c1a22';
+        showToast('Melody Muted', '🔇');
+      } else {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        isPlayingAudio = true;
+        musicBtn.style.background = '#236838';
+        musicBtn.style.color = '#ffffff';
+        playTraditionalChimeSequence();
+        soundInterval = setInterval(playTraditionalChimeSequence, 9000);
+        showToast('Wedding Melody Playing', '🎶');
+      }
+    }
+
+    function playTraditionalChimeSequence() {
+      if (!audioCtx || !isPlayingAudio) return;
+      const notes = [293.66, 329.63, 392.00, 440.00, 587.33, 659.25]; // Warm traditional Raag notes
+      notes.forEach((freq, idx) => {
+        setTimeout(() => {
+          if (!isPlayingAudio) return;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 1.3);
+        }, idx * 360);
+      });
+    }
+
+    // Common Footer RSVP Manager
+    let currentRsvp = localStorage.getItem('wedding_rsvp_status') || 'PENDING';
+
+    function initRsvp() {
+      applyRsvpState(currentRsvp, false);
+    }
+
+    function updateRsvp(status) {
+      currentRsvp = status;
+      localStorage.setItem('wedding_rsvp_status', status);
+      applyRsvpState(status, true);
+    }
+
+    function applyRsvpState(status, shouldNotify) {
+      const statusText = document.getElementById('statusText');
+      const statusIcon = document.getElementById('statusIcon');
+      const btnAccept = document.getElementById('btnAccept');
+      const btnDecline = document.getElementById('btnDecline');
+
+      // Reset active button classes
+      btnAccept.classList.remove('selected-accept');
+      btnDecline.classList.remove('selected-decline');
+
+      if (status === 'ACCEPTED') {
+        statusText.innerText = 'ACCEPTED';
+        statusText.style.color = '#236838';
+        btnAccept.classList.add('selected-accept');
+        statusIcon.innerHTML = '<path d="M20 6L9 17l-5-5" stroke="#236838" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
+        
+        if (shouldNotify) {
+          triggerCelebrationConfetti();
+          showToast('Accepted with pleasure! Looking forward to seeing you.', '🎉');
+        }
+      } else if (status === 'DECLINED') {
+        statusText.innerText = 'DECLINED';
+        statusText.style.color = '#88222b';
+        btnDecline.classList.add('selected-decline');
+        statusIcon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18" stroke="#88222b" stroke-width="2.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="#88222b" stroke-width="2.5"/>';
+        
+        if (shouldNotify) {
+          showToast('Declined with regret. You will be dearly missed!', '💌');
+        }
+      } else {
+        statusText.innerText = 'PENDING';
+        statusText.style.color = '#9c5c0a';
+        statusIcon.innerHTML = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>';
+      }
+    }
+
+    function showToast(message, icon = '✨') {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIco = document.getElementById('toastIcon');
+
+      toastMsg.textContent = message;
+      toastIco.textContent = icon;
+      toast.classList.add('visible');
+
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3400);
+    }
+
+    function triggerCelebrationConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 70,
+          spread: 70,
+          origin: { y: 0.8 },
+          colors: ['#f7b557', '#fdc368', '#3c1a22', '#236838', '#ffffff']
+        });
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#f7b557', '#e09832', '#3c1a22']
+          });
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#f7b557', '#e09832', '#3c1a22']
+          });
+        }, 250);
+      }
+    }
+
+    // Highlight navigation pill on scroll
+    const sections = document.querySelectorAll('.invite-section');
+    const navPills = document.querySelectorAll('.nav-pill');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navPills.forEach(pill => {
+            if (pill.getAttribute('href') === `#${id}`) {
+              pill.classList.add('active');
+            } else {
+              pill.classList.remove('active');
+            }
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(sec => observer.observe(sec));
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initRsvp);
+  </script>
+</body>
+</html>

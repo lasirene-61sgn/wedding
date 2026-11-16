@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arjun &amp; Diya — Our Itinerary</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Body/UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Google Material Symbols Outlined (matches Figma icon set: menu, mail, calendar_today, calendar_month, auto_awesome, location_on, etc.) -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0"
+  />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: '#FCFBF7',
+            ivorySoft: '#F8F6EF',
+            goldPrimary: '#8A6D1B',
+            goldButton: '#7D610E',
+            goldButtonHover: '#664F0B',
+            goldBorder: '#E6D6A6',
+            goldLine: '#EAE2CE',
+            forestDark: '#2E533E',
+            forestText: '#3A614A',
+            forestMuted: '#4A6E58',
+            mintCard: '#BCE8CE',
+            mintPill: '#BCE8CE',
+            charcoal: '#1E1D1A',
+            bodyMuted: '#5C584F',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            card: '0 4px 20px -2px rgba(138, 109, 27, 0.06), 0 1px 4px rgba(0, 0, 0, 0.02)',
+            cardHover: '0 10px 28px -4px rgba(138, 109, 27, 0.12), 0 2px 6px rgba(0, 0, 0, 0.03)',
+            nav: '0 -2px 16px rgba(30, 29, 26, 0.04)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Base Page Styling */
+    html {
+      scroll-behavior: smooth;
+      background-color: #FCFBF7;
+      color: #1E1D1A;
+    }
+
+    body {
+      background-color: #FCFBF7;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: 84px; /* Space for fixed bottom navigation bar */
+    }
+
+    /* Material Symbols Rendering */
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      user-select: none;
+      line-height: 1;
+    }
+    .material-symbols-filled {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    /* Hero Gradient Fade matching Figma screenshot */
+    .hero-fade-overlay {
+      background: linear-gradient(
+        180deg,
+        rgba(252, 251, 247, 0.02) 0%,
+        rgba(252, 251, 247, 0.08) 42%,
+        rgba(252, 251, 247, 0.72) 72%,
+        rgba(252, 251, 247, 0.96) 90%,
+        #FCFBF7 100%
+      );
+    }
+
+    /* Subtle entrance animation for timeline milestones */
+    .timeline-reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .timeline-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FCFBF7;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DFC882;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-mintCard selection:text-forestDark">
+
+  <!-- ==================== 1. TOP HEADER BAR ==================== -->
+  <header class="sticky top-0 z-40 w-full bg-ivory/95 backdrop-blur-md border-b border-goldLine/40 transition-all">
+    <div class="max-w-5xl mx-auto px-4 sm:px-8 h-14 sm:h-16 flex items-center justify-between relative">
+      <!-- Left Menu Button (Matches Figma 'menu' trigger in gold) -->
+      <button
+        id="menuBtn"
+        type="button"
+        aria-label="Open wedding menu"
+        class="inline-flex items-center gap-1.5 text-goldPrimary hover:text-goldButtonHover p-2 -ml-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-goldBorder"
+      >
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+        <span class="hidden sm:inline text-xs font-medium tracking-wider uppercase">Menu</span>
+      </button>
+
+      <!-- Centered Brand Wordmark: 'Arjun & Diya' -->
+      <a
+        href="#top"
+        class="absolute left-1/2 -translate-x-1/2 font-serif font-bold text-xl sm:text-2xl tracking-tight text-goldPrimary hover:opacity-90 transition-opacity whitespace-nowrap"
+      >
+        Arjun &amp; Diya
+      </a>
+
+      <!-- Subtle Quick-RSVP Trigger on Desktop (keeps header balanced while staying minimal) -->
+      <button
+        type="button"
+        onclick="openModal('rsvpModal')"
+        class="text-xs font-semibold uppercase tracking-[0.12em] text-forestText hover:text-forestDark px-2.5 py-1.5 rounded-md hover:bg-mintCard/40 transition-colors"
+      >
+        RSVP
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== 2. HERO BANNER ==================== -->
+  <section id="top" class="relative w-full overflow-hidden">
+    <!-- Palace Archway Image Container -->
+    <div class="relative w-full h-[270px] sm:h-[360px] md:h-[430px] lg:h-[470px] bg-[#D89B5B]">
+      <img
+        src="https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1800&q=85"
+        onerror="this.onerror=null;this.src='https://placehold.co/1600x700/D99B52/FCFBF7?text=The+Royal+Palace+%26+Orchards';"
+        alt="Royal sandstone palace arches in warm sunlight"
+        class="w-full h-full object-cover object-center scale-[1.01]"
+      />
+      <!-- Warm atmospheric tint & smooth cream bottom fade -->
+      <div class="absolute inset-0 bg-amber-950/10 pointer-events-none"></div>
+      <div class="absolute inset-0 hero-fade-overlay pointer-events-none"></div>
+
+      <!-- Centered Page Title: 'Our Itinerary' -->
+      <div class="absolute inset-x-0 bottom-4 sm:bottom-8 md:bottom-10 flex flex-col items-center justify-end px-4 text-center">
+        <h1 class="font-serif font-bold text-3xl sm:text-4xl md:text-[44px] text-charcoal tracking-tight leading-tight drop-shadow-[0_1px_1px_rgba(252,251,247,0.8)]">
+          Our Itinerary
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. MAIN CONTENT VIEWS (TABBED) ==================== -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-12">
+
+    <!-- VIEW A: EVENTS / ITINERARY TIMELINE (Default Active View matching Figma) -->
+    <div id="view-events" class="tab-view block">
+
+      <!-- Vertical Timeline Container -->
+      <div class="relative max-w-4xl mx-auto">
+
+        <!-- Vertical Center Line (Desktop/Tablet: center; Mobile: left rail at 20px) -->
+        <div
+          aria-hidden="true"
+          class="absolute top-3 bottom-3 left-[19px] md:left-1/2 md:-translate-x-1/2 w-[1px] bg-goldLine"
+        ></div>
+
+        <!-- ==================== MILESTONE 1: THE BEGINNING / SAVE THE DATE ==================== -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 mb-14 md:mb-20">
+
+          <!-- Left Column (Desktop Date Label) -->
+          <div class="hidden md:flex justify-end pr-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              THE BEGINNING
+            </span>
+          </div>
+
+          <!-- Center Milestone Badge (Forest Green Rounded Square) -->
+          <div class="relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">favorite</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Event Card - exact Figma match) -->
+          <div class="md:pl-4">
+            <!-- Mobile Date Label -->
+            <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+              THE BEGINNING
+            </span>
+
+            <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 max-w-md group">
+              <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                <img
+                  src="images/happywed/Rectangle 3717.png"
+                  alt="Save the Date &amp; Engagement Celebration"
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.style.display='none'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                  SAVE THE DATE
+                </span>
+              </div>
+              <div class="p-5 sm:p-6">
+                <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                  Save the Date
+                </h2>
+                <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                  Arjun &amp; Diya are tying the knot! Mark your calendars for a weekend of love, laughter, and celebration.
+                </p>
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                  <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                  <span>The Royal Palace &amp; Orchards</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ==================== MILESTONE 2: FRIDAY, NOV 14 (LEFT LABEL, RIGHT CARD) ==================== -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 mb-14 md:mb-20">
+
+          <!-- Left Column (Desktop Date Label) -->
+          <div class="hidden md:flex justify-end pr-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              FRIDAY, NOV 14
+            </span>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">spa</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Card) -->
+          <div class="md:pl-4">
+            <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+              FRIDAY, NOV 14
+            </span>
+
+            <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 max-w-md group">
+              <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                <img
+                  src="images/happywed/Rectangle 3721.png"
+                  alt="Royal Mehendi &amp; High Tea"
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.style.display='none'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                  WELCOME &amp; MEHENDI
+                </span>
+                <span class="absolute bottom-3 right-3 text-[11px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded">
+                  3:30 PM
+                </span>
+              </div>
+              <div class="p-5 sm:p-6">
+                <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                  Royal Mehendi &amp; High Tea
+                </h2>
+                <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                  Kick off the festivities under sunlit marigold canopies with intricate henna artistry, folk melodies, and artisanal chai.
+                </p>
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                  <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                  <span>The Zenana Courtyard</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ==================== MILESTONE 3: FRIDAY, NOV 14 (LEFT CARD, RIGHT LABEL) ==================== -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 mb-14 md:mb-20">
+
+          <!-- Left Column (Desktop Card) -->
+          <div class="order-2 md:order-1 md:pr-4 flex md:justify-end">
+            <div class="w-full max-w-md">
+              <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+                FRIDAY, NOV 14
+              </span>
+
+              <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 group">
+                <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                  <img
+                    src="images/happywed/Rectangle 3721 (3).png"
+                    alt="Starlight Sangeet Night"
+                    class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    onerror="this.style.display='none'"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                  <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                    SANGEET &amp; COCKTAILS
+                  </span>
+                  <span class="absolute bottom-3 right-3 text-[11px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded">
+                    7:30 PM
+                  </span>
+                </div>
+                <div class="p-5 sm:p-6">
+                  <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                    Starlight Sangeet Night
+                  </h2>
+                  <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                    An evening of spirited family performances, craft cocktails, and dancing beneath the palace domes.
+                  </p>
+                  <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                    <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                    <span>Durbar Hall &amp; Terrace</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="order-1 md:order-2 relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">celebration</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Desktop Date Label) -->
+          <div class="hidden md:flex md:order-3 justify-start pl-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              FRIDAY, NOV 14
+            </span>
+          </div>
+        </div>
+
+        <!-- ==================== MILESTONE 4: SATURDAY, NOV 15 (LEFT LABEL, RIGHT CARD) ==================== -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 mb-14 md:mb-20">
+
+          <!-- Left Column (Desktop Date Label) -->
+          <div class="hidden md:flex justify-end pr-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              SATURDAY, NOV 15
+            </span>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">temple_hindu</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Card) -->
+          <div class="md:pl-4">
+            <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+              SATURDAY, NOV 15
+            </span>
+
+            <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 max-w-md group">
+              <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                <img
+                  src="images/happywedtwo/Rectangle 3721 (4).png"
+                  alt="Baraat &amp; Sacred Pheras"
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.style.display='none'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                  THE WEDDING CEREMONY
+                </span>
+                <span class="absolute bottom-3 right-3 text-[11px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded">
+                  4:30 PM
+                </span>
+              </div>
+              <div class="p-5 sm:p-6">
+                <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                  Baraat &amp; Sacred Pheras
+                </h2>
+                <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                  Join the royal Baraat procession followed by sunset pheras by the lotus reflection pool and a grand celebratory feast.
+                </p>
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                  <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                  <span>The Lotus Pavilion</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- ==================== MILESTONE 5: SUNDAY, NOV 16 (LEFT CARD, RIGHT LABEL) ==================== -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6">
+
+          <!-- Left Column (Desktop Card) -->
+          <div class="order-2 md:order-1 md:pr-4 flex md:justify-end">
+            <div class="w-full max-w-md">
+              <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+                SUNDAY, NOV 16
+              </span>
+
+              <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 group">
+                <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                  <img
+                    src="images/happywedtwo/Rectangle 3721 (5).png"
+                    alt="Orchard Farewell Brunch"
+                    class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    onerror="this.style.display='none'"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                  <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                    FAREWELL &amp; DEPARTURE
+                  </span>
+                  <span class="absolute bottom-3 right-3 text-[11px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded">
+                    10:30 AM
+                  </span>
+                </div>
+                <div class="p-5 sm:p-6">
+                  <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                    Orchard Farewell Brunch
+                  </h2>
+                  <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                    Gather one last time in the mango orchards for fresh pastries, regional delicacies, and warm send-offs before departure.
+                  </p>
+                  <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                    <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                    <span>The Royal Orchards</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="order-1 md:order-2 relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">brunch_dining</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Desktop Date Label) -->
+          <div class="hidden md:flex md:order-3 justify-start pl-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              SUNDAY, NOV 16
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW B: INVITATION TAB (Interactive preview when user taps 'Invitation' in bottom bar) -->
+    <div id="view-invitation" class="tab-view hidden max-w-xl mx-auto">
+      <div class="bg-white border border-goldBorder rounded-xl p-7 sm:p-10 text-center shadow-card">
+        <span class="material-symbols-outlined text-goldPrimary text-3xl mb-3">auto_awesome</span>
+        <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-goldPrimary mb-2">
+          TOGETHER WITH THEIR FAMILIES
+        </p>
+        <h2 class="font-serif font-bold text-3xl sm:text-4xl text-charcoal mb-3">
+          Arjun &amp; Diya
+        </h2>
+        <p class="text-sm text-bodyMuted leading-relaxed mb-6">
+          Cordially invite you to grace the auspicious occasion of their wedding celebrations at
+          <span class="font-semibold text-forestDark">The Royal Palace &amp; Orchards, Jaipur</span>.
+        </p>
+        <div class="border-y border-goldLine py-4 mb-6 text-xs uppercase tracking-[0.16em] text-forestText font-semibold">
+          November 14 – 16 • Royal Palace Grounds
+        </div>
+        <button
+          type="button"
+          onclick="switchTab('events')"
+          class="bg-goldButton hover:bg-goldButtonHover text-white text-xs font-semibold uppercase tracking-[0.14em] px-6 py-3 rounded-md transition-colors"
+        >
+          Explore Full Itinerary
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW C: CALENDAR TAB (Interactive schedule summary & .ics download) -->
+    <div id="view-calendar" class="tab-view hidden max-w-xl mx-auto">
+      <div class="bg-white border border-goldBorder rounded-xl p-6 sm:p-8 shadow-card">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-goldPrimary">NOVEMBER 2026</p>
+            <h2 class="font-serif font-bold text-2xl text-charcoal">Weekend at a Glance</h2>
+          </div>
+          <button
+            type="button"
+            onclick="downloadCalendarInvite()"
+            class="inline-flex items-center gap-1.5 bg-mintCard hover:bg-mintCard/80 text-forestDark text-xs font-semibold px-3.5 py-2 rounded-lg transition-colors"
+          >
+            <span class="material-symbols-outlined text-[16px]">event_available</span>
+            <span>Add to Calendar</span>
+          </button>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div class="p-3.5 rounded-lg bg-ivory border border-goldLine flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-charcoal">Fri, Nov 14 • Mehendi &amp; Sangeet</p>
+              <p class="text-xs text-bodyMuted">3:30 PM – Late • Zenana Courtyard &amp; Durbar Hall</p>
+            </div>
+            <span class="text-xs font-semibold text-forestText">Day 1</span>
+          </div>
+          <div class="p-3.5 rounded-lg bg-ivory border border-goldLine flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-charcoal">Sat, Nov 15 • Baraat &amp; Wedding Pheras</p>
+              <p class="text-xs text-bodyMuted">4:30 PM onwards • The Lotus Pavilion</p>
+            </div>
+            <span class="text-xs font-semibold text-forestText">Day 2</span>
+          </div>
+          <div class="p-3.5 rounded-lg bg-ivory border border-goldLine flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-charcoal">Sun, Nov 16 • Orchard Farewell Brunch</p>
+              <p class="text-xs text-bodyMuted">10:30 AM – 1:30 PM • The Royal Orchards</p>
+            </div>
+            <span class="text-xs font-semibold text-forestText">Day 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW D: MOODBOARD TAB (Attire & Palette Guide) -->
+    <div id="view-moodboard" class="tab-view hidden max-w-2xl mx-auto">
+      <div class="bg-white border border-goldBorder rounded-xl p-6 sm:p-8 shadow-card">
+        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-goldPrimary mb-1">ATTIRE &amp; AESTHETIC</p>
+        <h2 class="font-serif font-bold text-2xl text-charcoal mb-2">Celebration Moodboard</h2>
+        <p class="text-xs sm:text-sm text-bodyMuted mb-6">
+          Inspired by sandstone palaces, royal emeralds, and warm marigold sunsets.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div class="p-3 rounded-lg border border-goldLine bg-[#FCFBF7] text-center">
+            <div class="w-full h-14 rounded-md bg-[#E8D8A6] mb-2"></div>
+            <p class="text-xs font-semibold text-charcoal">Champagne Gold</p>
+            <p class="text-[10px] text-bodyMuted">Mehendi</p>
+          </div>
+          <div class="p-3 rounded-lg border border-goldLine bg-[#FCFBF7] text-center">
+            <div class="w-full h-14 rounded-md bg-[#2E533E] mb-2"></div>
+            <p class="text-xs font-semibold text-charcoal">Palace Emerald</p>
+            <p class="text-[10px] text-bodyMuted">Sangeet Night</p>
+          </div>
+          <div class="p-3 rounded-lg border border-goldLine bg-[#FCFBF7] text-center">
+            <div class="w-full h-14 rounded-md bg-[#C87D4B] mb-2"></div>
+            <p class="text-xs font-semibold text-charcoal">Sandstone Ochre</p>
+            <p class="text-[10px] text-bodyMuted">Wedding Pheras</p>
+          </div>
+          <div class="p-3 rounded-lg border border-goldLine bg-[#FCFBF7] text-center">
+            <div class="w-full h-14 rounded-md bg-[#BCE8CE] mb-2"></div>
+            <p class="text-xs font-semibold text-charcoal">Orchard Sage</p>
+            <p class="text-[10px] text-bodyMuted">Sunday Brunch</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. BOTTOM CTA CARD ('Celebrating our Story') ==================== -->
+    <section aria-labelledby="cta-heading" class="mt-20 sm:mt-24 max-w-[780px] mx-auto">
+      <div class="bg-mintCard rounded-xl px-6 py-11 sm:px-12 sm:py-14 text-center shadow-sm">
+        <!-- Sparkle Icon -->
+        <div class="flex justify-center mb-3">
+          <span class="material-symbols-outlined text-[26px] sm:text-[28px] text-forestDark">
+            auto_awesome
+          </span>
+        </div>
+
+        <!-- Serif Heading -->
+        <h2 id="cta-heading" class="font-serif font-bold text-2xl sm:text-[28px] text-forestDark mb-2.5 tracking-tight">
+          Celebrating our Story
+        </h2>
+
+        <!-- Subtitle -->
+        <p class="text-xs sm:text-[13px] text-forestMuted max-w-md mx-auto leading-relaxed mb-7">
+          We can’t wait to share these moments with you. Please let us know if you can attend by Nov 1st.
+        </p>
+
+        <!-- Action Buttons: Solid Gold 'RSVP NOW' & Outlined Green 'TRAVEL GUIDE' -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-3.5">
+          <button
+            type="button"
+            onclick="openModal('rsvpModal')"
+            class="w-full sm:w-auto min-w-[140px] bg-goldButton hover:bg-goldButtonHover text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.14em] px-6 py-3 rounded-md shadow-sm transition-all active:scale-[0.99]"
+          >
+            RSVP NOW
+          </button>
+
+          <button
+            type="button"
+            onclick="openModal('travelModal')"
+            class="w-full sm:w-auto min-w-[140px] bg-transparent hover:bg-forestDark/5 text-forestDark border border-forestDark/45 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.14em] px-6 py-3 rounded-md transition-all active:scale-[0.99]"
+          >
+            TRAVEL GUIDE
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 5. FIXED BOTTOM NAVIGATION BAR ==================== -->
+  <nav
+    aria-label="Primary wedding navigation"
+    class="fixed bottom-0 inset-x-0 z-40 bg-ivory/95 backdrop-blur-md border-t border-goldLine/70 shadow-nav"
+  >
+    <div class="max-w-3xl mx-auto px-2 sm:px-6 h-[68px] grid grid-cols-4 items-center">
+
+      <!-- Tab 1: Invitation -->
+      <button
+        type="button"
+        data-tab="invitation"
+        onclick="switchTab('invitation')"
+        class="nav-item group flex flex-col items-center justify-center gap-1 py-1.5 text-bodyMuted hover:text-forestDark transition-colors focus:outline-none"
+      >
+        <span class="nav-pill px-4 py-1 rounded-full transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">mail</span>
+        </span>
+        <span class="text-[10px] sm:text-[11px] font-medium tracking-wide">Invitation</span>
+      </button>
+
+      <!-- Tab 2: Events (Default Active State matching Figma screenshot with Mint Pill) -->
+      <button
+        type="button"
+        data-tab="events"
+        onclick="switchTab('events')"
+        class="nav-item active group flex flex-col items-center justify-center gap-1 py-1.5 text-forestDark transition-colors focus:outline-none"
+      >
+        <span class="nav-pill bg-mintPill px-4 py-1 rounded-full transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px] text-forestDark">calendar_today</span>
+        </span>
+        <span class="text-[10px] sm:text-[11px] font-semibold tracking-wide text-forestDark">Events</span>
+      </button>
+
+      <!-- Tab 3: Calendar -->
+      <button
+        type="button"
+        data-tab="calendar"
+        onclick="switchTab('calendar')"
+        class="nav-item group flex flex-col items-center justify-center gap-1 py-1.5 text-bodyMuted hover:text-forestDark transition-colors focus:outline-none"
+      >
+        <span class="nav-pill px-4 py-1 rounded-full transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+        </span>
+        <span class="text-[10px] sm:text-[11px] font-medium tracking-wide">Calendar</span>
+      </button>
+
+      <!-- Tab 4: Moodboard -->
+      <button
+        type="button"
+        data-tab="moodboard"
+        onclick="switchTab('moodboard')"
+        class="nav-item group flex flex-col items-center justify-center gap-1 py-1.5 text-bodyMuted hover:text-forestDark transition-colors focus:outline-none"
+      >
+        <span class="nav-pill px-4 py-1 rounded-full transition-colors flex items-center justify-center">
+          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+        </span>
+        <span class="text-[10px] sm:text-[11px] font-medium tracking-wide">Moodboard</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ==================== SLIDE-OUT MENU DRAWER ==================== -->
+  <div id="menuDrawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+    <div id="menuBackdrop" class="fixed inset-0 bg-charcoal/40 backdrop-blur-xs transition-opacity"></div>
+    <aside class="relative w-72 max-w-[82vw] h-full bg-ivory border-r border-goldBorder p-6 flex flex-col justify-between shadow-2xl">
+      <div>
+        <div class="flex items-center justify-between pb-5 border-b border-goldLine">
+          <span class="font-serif font-bold text-xl text-goldPrimary">Arjun &amp; Diya</span>
+          <button
+            id="closeMenuBtn"
+            type="button"
+            aria-label="Close menu"
+            class="p-1.5 rounded-lg text-bodyMuted hover:text-charcoal hover:bg-goldLine/40"
+          >
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+
+        <ul class="mt-6 space-y-2 text-sm font-medium">
+          <li>
+            <button onclick="switchTab('invitation'); closeMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-charcoal hover:bg-mintCard/50 transition-colors">
+              <span class="material-symbols-outlined text-forestText text-[20px]">mail</span>
+              <span>Digital Invitation</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchTab('events'); closeMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-mintCard/60 text-forestDark font-semibold">
+              <span class="material-symbols-outlined text-forestDark text-[20px]">calendar_today</span>
+              <span>Our Itinerary</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchTab('calendar'); closeMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-charcoal hover:bg-mintCard/50 transition-colors">
+              <span class="material-symbols-outlined text-forestText text-[20px]">calendar_month</span>
+              <span>Weekend Schedule</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchTab('moodboard'); closeMenu();" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-charcoal hover:bg-mintCard/50 transition-colors">
+              <span class="material-symbols-outlined text-forestText text-[20px]">auto_awesome</span>
+              <span>Attire &amp; Moodboard</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="closeMenu(); openModal('travelModal');" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-charcoal hover:bg-mintCard/50 transition-colors">
+              <span class="material-symbols-outlined text-forestText text-[20px]">flight_takeoff</span>
+              <span>Travel &amp; Stay Guide</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="pt-4 border-t border-goldLine">
+        <button
+          type="button"
+          onclick="closeMenu(); openModal('rsvpModal');"
+          class="w-full bg-goldButton hover:bg-goldButtonHover text-white text-xs font-bold uppercase tracking-[0.14em] py-3 rounded-md transition-colors"
+        >
+          RSVP by Nov 1st
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ==================== INTERACTIVE RSVP MODAL ==================== -->
+  <div id="rsvpModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div onclick="closeModal('rsvpModal')" class="fixed inset-0 bg-charcoal/45 backdrop-blur-xs"></div>
+    <div class="relative z-10 w-full max-w-md bg-ivory border border-goldBorder rounded-xl p-6 sm:p-7 shadow-2xl">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-goldPrimary">KINDLY RESPOND BY NOV 1ST</p>
+          <h3 class="font-serif font-bold text-2xl text-charcoal">RSVP to our Wedding</h3>
+        </div>
+        <button onclick="closeModal('rsvpModal')" class="p-1 text-bodyMuted hover:text-charcoal rounded-lg">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="rsvpForm" onsubmit="handleRsvpSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-charcoal mb-1">Full Name</label>
+          <input
+            type="text"
+            required
+            placeholder="e.g., Aarav Sharma"
+            class="w-full px-3.5 py-2.5 text-sm bg-white border border-goldBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-forestText"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-charcoal mb-1">Attendance</label>
+            <select class="w-full px-3 py-2.5 text-sm bg-white border border-goldBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-forestText">
+              <option value="yes">Joyfully Accepts</option>
+              <option value="no">Regretfully Declines</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-charcoal mb-1">Guests</label>
+            <select class="w-full px-3 py-2.5 text-sm bg-white border border-goldBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-forestText">
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-charcoal mb-1">Dietary Preferences / Note</label>
+          <textarea
+            rows="2"
+            placeholder="Jain, vegan, allergies, or a warm wish for the couple..."
+            class="w-full px-3.5 py-2 text-sm bg-white border border-goldBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-forestText"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-goldButton hover:bg-goldButtonHover text-white text-xs font-bold uppercase tracking-[0.14em] py-3 rounded-md transition-colors"
+        >
+          Confirm RSVP
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== TRAVEL GUIDE MODAL ==================== -->
+  <div id="travelModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div onclick="closeModal('travelModal')" class="fixed inset-0 bg-charcoal/45 backdrop-blur-xs"></div>
+    <div class="relative z-10 w-full max-w-md bg-ivory border border-goldBorder rounded-xl p-6 sm:p-7 shadow-2xl">
+      <div class="flex items-start justify-between mb-4">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-goldPrimary">GUEST CONCIERGE</p>
+          <h3 class="font-serif font-bold text-2xl text-charcoal">Travel &amp; Stay Guide</h3>
+        </div>
+        <button onclick="closeModal('travelModal')" class="p-1 text-bodyMuted hover:text-charcoal rounded-lg">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs sm:text-sm text-bodyMuted">
+        <div class="p-3.5 bg-white border border-goldLine rounded-lg">
+          <p class="font-semibold text-forestDark flex items-center gap-1.5 mb-1">
+            <span class="material-symbols-outlined text-[18px]">flight_land</span>
+            Nearest Airport
+          </p>
+          <p>Jaipur International Airport (JAI) — 35 mins scenic drive to The Royal Palace &amp; Orchards. Complimentary airport transfers provided.</p>
+        </div>
+
+        <div class="p-3.5 bg-white border border-goldLine rounded-lg">
+          <p class="font-semibold text-forestDark flex items-center gap-1.5 mb-1">
+            <span class="material-symbols-outlined text-[18px]">hotel</span>
+            Palace Accommodations
+          </p>
+          <p>Check-in opens Friday, Nov 14 at 12:00 PM. Mention code <span class="font-semibold text-goldPrimary">ARJUNDIYA26</span> at the concierge desk.</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onclick="closeModal('travelModal')"
+        class="mt-5 w-full bg-forestDark hover:bg-forestText text-white text-xs font-bold uppercase tracking-[0.14em] py-3 rounded-md transition-colors"
+      >
+        Got It
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION (Replaces alert()) ==================== -->
+  <div
+    id="toastBanner"
+    role="status"
+    class="fixed top-20 left-1/2 -translate-x-1/2 z-50 hidden items-center gap-2 bg-forestDark text-ivory text-xs font-medium px-4 py-2.5 rounded-full shadow-lg"
+  >
+    <span class="material-symbols-outlined text-[16px] text-mintCard">check_circle</span>
+    <span id="toastText">RSVP confirmed!</span>
+  </div>
+
+  <!-- ==================== JAVASCRIPT INTERACTIVITY ==================== -->
+  <script>
+    // 1. Scroll Reveal Observer for Timeline Milestones
+    document.addEventListener('DOMContentLoaded', () => {
+      const revealEls = document.querySelectorAll('.timeline-reveal');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12 }
+      );
+      revealEls.forEach((el) => observer.observe(el));
+    });
+
+    // 2. Bottom Navigation Tab Switching (Default: 'events')
+    function switchTab(tabName) {
+      // Toggle view containers
+      document.querySelectorAll('.tab-view').forEach((view) => {
+        view.classList.add('hidden');
+        view.classList.remove('block');
+      });
+      const activeView = document.getElementById(`view-${tabName}`);
+      if (activeView) {
+        activeView.classList.remove('hidden');
+        activeView.classList.add('block');
+      }
+
+      // Update active mint pill styling in fixed bottom nav
+      document.querySelectorAll('.nav-item').forEach((btn) => {
+        const pill = btn.querySelector('.nav-pill');
+        const label = btn.querySelector('span:last-child');
+        const isTarget = btn.getAttribute('data-tab') === tabName;
+
+        if (isTarget) {
+          btn.classList.add('active', 'text-forestDark');
+          btn.classList.remove('text-bodyMuted');
+          pill.classList.add('bg-mintPill');
+          label.classList.add('font-semibold', 'text-forestDark');
+          label.classList.remove('font-medium');
+        } else {
+          btn.classList.remove('active', 'text-forestDark');
+          btn.classList.add('text-bodyMuted');
+          pill.classList.remove('bg-mintPill');
+          label.classList.remove('font-semibold', 'text-forestDark');
+          label.classList.add('font-medium');
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 3. Slide-out Menu Drawer Logic
+    const menuBtn = document.getElementById('menuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const menuDrawer = document.getElementById('menuDrawer');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+
+    function openMenu() {
+      menuDrawer.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      menuDrawer.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    menuBtn.addEventListener('click', openMenu);
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuBackdrop.addEventListener('click', closeMenu);
+
+    // 4. Modal Open/Close Helpers
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // 5. Non-blocking Toast Message
+    function showToast(message) {
+      const toast = document.getElementById('toastBanner');
+      const toastText = document.getElementById('toastText');
+      toastText.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 3400);
+    }
+
+    // 6. RSVP Submission Handler
+    function handleRsvpSubmit(e) {
+      e.preventDefault();
+      closeModal('rsvpModal');
+      e.target.reset();
+      showToast('Thank you! Your RSVP has been recorded.');
+    }
+
+    // 7. Download .ics Calendar File
+    function downloadCalendarInvite() {
+      const icsContent = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Arjun & Diya Wedding//EN',
+        'BEGIN:VEVENT',
+        'DTSTART:20261114T100000Z',
+        'DTEND:20261116T080000Z',
+        'SUMMARY:Arjun & Diya Wedding Weekend',
+        'LOCATION:The Royal Palace & Orchards, Jaipur',
+        'DESCRIPTION:Weekend of love, laughter, and celebration.',
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ].join('\r\n');
+
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Arjun-and-Diya-Wedding.ics';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Wedding calendar invite downloaded!');
+    }
+  </script>
+</body>
+</html>

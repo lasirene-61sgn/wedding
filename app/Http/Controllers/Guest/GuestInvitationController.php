@@ -168,6 +168,16 @@ class GuestInvitationController extends Controller
         // Prioritize the actual Invitation's wedding date over an arbitrary ceremony date
         $weddingDate = $invitation->wedding_date ?? $ceremony->ceramony_date ?? null;
 
+        // Render selected Save The Date HTML template if available
+        $selectedTemplate = ($saveDateData && !empty($saveDateData->template)) 
+            ? $saveDateData->template 
+            : 'savethedate/invitation.html';
+
+        $renderedHtml = \App\Services\SaveDateTemplateService::render($selectedTemplate, $invitation, $saveDateData, $invite);
+        if ($renderedHtml) {
+            return response($renderedHtml, 200)->header('Content-Type', 'text/html');
+        }
+
         return view('guest.save_the_date', compact('invite', 'saveDateData', 'weddingDate', 'invitation'));
     }
 

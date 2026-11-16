@@ -300,7 +300,9 @@ class InvitationController extends Controller
             public_path('uploads/' . $cleanTemplate),
             public_path('uploads/host_templates/' . basename($cleanTemplate)),
             storage_path('app/public/' . $cleanTemplate),
-            base_path($cleanTemplate)
+            base_path($cleanTemplate),
+            base_path('invitation/' . basename($cleanTemplate)),
+            public_path('invitation/' . basename($cleanTemplate)),
         ];
 
         // Prioritize the user's custom template IF they are previewing their currently saved template
@@ -323,6 +325,14 @@ class InvitationController extends Controller
         }
 
         $html = file_get_contents($path);
+
+        // Ensure base tag is present pointing to root URL for asset resolution (images/...)
+        $baseUrl = url('/') . '/';
+        if (preg_match('/<base\s+[^>]*href=["\'][^"\']*["\'][^>]*>/i', $html)) {
+            $html = preg_replace('/<base\s+[^>]*href=["\'][^"\']*["\'][^>]*>/i', '<base href="' . $baseUrl . '">', $html);
+        } elseif (str_contains($html, '<head>')) {
+            $html = str_replace('<head>', "<head>\n  <base href=\"{$baseUrl}\">", $html);
+        }
 
         // Text & Name variables
         $bride = $request->input('bride_name', $invitation->bride_name ?? 'Bride Name');
@@ -535,10 +545,331 @@ class InvitationController extends Controller
         $originalHtml = $html;
         $html = str_replace(array_keys($replacements), array_values($replacements), $html);
 
+        // Replace common template hardcoded demo couple names with host couple names
+        $coupleAmp = htmlspecialchars($bride) . ' &amp; ' . htmlspecialchars($groom);
+        $couplePlain = $bride . ' & ' . $groom;
+        $legacyReplacements = [
+            'Mohit &amp; Preksha' => $coupleAmp,
+            'Mohit & Preksha'     => $couplePlain,
+            'Mohit'               => htmlspecialchars($groom),
+            'Preksha'             => htmlspecialchars($bride),
+            'Karan <span class="amp">&amp;</span> Simran' => $coupleAmp,
+            'Karan &amp; Simran' => $coupleAmp,
+            'Karan & Simran'     => $couplePlain,
+            'Aarav &amp; Ananya' => $coupleAmp,
+            'Aarav & Ananya'     => $couplePlain,
+            'Parminder Kaur &amp; Raj Kumar' => $coupleAmp,
+            'Parminder Kaur & Raj Kumar'     => $couplePlain,
+            'Parminder &amp; Raj'            => $coupleAmp,
+            'Parminder & Raj'                => $couplePlain,
+            'Parminder'                      => htmlspecialchars($bride),
+            'Raj Kumar'                      => htmlspecialchars($groom),
+            'Raj'                            => htmlspecialchars($groom),
+            'Arjun &amp; Diya'               => $coupleAmp,
+            'Arjun & Diya'                   => $couplePlain,
+            'Arjun'                          => htmlspecialchars($groom),
+            'Diya'                           => htmlspecialchars($bride),
+            'The Royal Palace &amp; Orchards, Jaipur' => htmlspecialchars($venueName . ($venueAddress ? ', ' . $venueAddress : '')),
+            'The Royal Palace &amp; Orchards'        => htmlspecialchars($venueName),
+            'The Royal Palace & Orchards'            => htmlspecialchars($venueName),
+            'November 14 – 16 • Royal Palace Grounds' => $date . ' • ' . htmlspecialchars($venueName),
+        ];
+        $html = str_replace(array_keys($legacyReplacements), array_values($legacyReplacements), $html);
+
+        // Format host parent strings or hide demo parent text if not configured
+        $groomParentsText = trim(($groomMother ? 'Smt. ' . $groomMother : '') . ($groomMother && $groomFather ? ' & ' : '') . ($groomFather ? 'Shri ' . $groomFather : ''));
+        $groomParentsHtml = $groomParentsText ? '<p>(S/o ' . htmlspecialchars($groomParentsText) . ')</p>' : '';
+        $brideParentsText = trim(($brideMother ? 'Smt. ' . $brideMother : '') . ($brideMother && $brideFather ? ' & ' : '') . ($brideFather ? 'Shri ' . $brideFather : ''));
+        $brideParentsHtml = $brideParentsText ? '<p>(D/o ' . htmlspecialchars($brideParentsText) . ')</p>' : '';
+
+        // Replace demo parent sections in templates (e.g. Dudheria family lines)
+        $parentDemoPatterns = [
+            '/<p>\s*\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<\/p>\s*<p>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)<\/p>/si' => $groomParentsHtml,
+            '/\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<br>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)/si' => $groomParentsText ? htmlspecialchars($groomParentsText) : '',
+        ];
+        foreach ($parentDemoPatterns as $pat => $rep) {
+            $html = preg_replace($pat, $rep, $html, 1);
+        }
+        // Second block is Bride parents
+        if ($brideParentsHtml) {
+            $html = preg_replace('/<p>\s*\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<\/p>\s*<p>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)<\/p>/si', $brideParentsHtml, $html, 1);
+            $html = preg_replace('/\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<br>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)/si', htmlspecialchars($brideParentsText), $html, 1);
+        } else {
+            $html = preg_replace('/<p>\s*\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<\/p>\s*<p>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)<\/p>/si', '', $html, 1);
+            $html = preg_replace('/\(G\s*S\/o\s*Lt\.\s*Smt\.\s*Gattu\s*Devi.*?\)<br>\s*\(S\/o\s*Smt\.\s*Saroj\s*Devi.*?\)/si', '', $html, 1);
+        }
+
+        // Clean demo family names and RSVP phone numbers
+        $hostPhone = htmlspecialchars($invitation->groom_number ?? $invitation->bride_number ?? (Auth::user()->mobile_number ?? ''));
+        $familyTitle = htmlspecialchars($bride) . ' &amp; ' . htmlspecialchars($groom) . ' Families';
+        $familyReplacements = [
+            'Gaget singh dudheria &amp; Family' => $familyTitle,
+            'Gaget singh dudheria & Family'     => htmlspecialchars($bride) . ' & ' . htmlspecialchars($groom) . ' Families',
+            'Jagat Singh Dudheria &amp; Family' => $familyTitle,
+            'Jagat Singh Dudheria & Family'     => htmlspecialchars($bride) . ' & ' . htmlspecialchars($groom) . ' Families',
+            'Jagat Dudheria'                    => htmlspecialchars($groom),
+            'Chatur Dudheria'                   => htmlspecialchars($bride),
+            'Dudheria &amp; Kothari Families, Relatives &amp; Near and Dear Friends' => $familyTitle . ', Relatives &amp; Near and Dear Friends',
+            'Dudheria'                          => htmlspecialchars($groom) . ' & ' . htmlspecialchars($bride),
+            'dudheria'                          => strtolower($groom),
+            '+91 52125 55456'                   => $hostPhone ?: '+91 98765 43210',
+            '+91 92723 93496'                   => $hostPhone ?: '+91 98765 43210',
+            '+91 92723 93497'                   => $hostPhone ?: '+91 98765 43210',
+        ];
+        $html = str_replace(array_keys($familyReplacements), array_values($familyReplacements), $html);
+
+        // Replace generic dummy Lorem Ipsum paragraphs with wedding invitation blessing
+        $warmInvite = "We cordially invite you and your family to join us in celebrating our wedding festivities and shower your gracious blessings upon us.";
+        $html = str_replace([
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,",
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+        ], $warmInvite, $html);
+
+        // Dynamic Ceremonies injection into template interactive events / carousels
+        $ceremoniesHandledInTemplate = false;
+        if ($ceremonies->count() > 0) {
+            // 1. Check for happywed.html carousel (const events = [...])
+            $eventsOne = [];
+            foreach ($ceremonies as $c) {
+                $cDate = $c->ceramony_date ? \Carbon\Carbon::parse($c->ceramony_date)->format('F d, Y') : $date;
+                $cTime = $c->ceramony_time ? \Carbon\Carbon::parse($c->ceramony_time)->format('h:i A') : $time;
+                $eventsOne[] = [
+                    'title'     => $c->ceramony_name,
+                    'date'      => $cDate . ' | ' . $cTime,
+                    'venue'     => $venueName . ($venueAddress ? ',<br/>' . $venueAddress : ''),
+                    'dressCode' => 'Traditional Festive Formal. We warmly look forward to celebrating with you!'
+                ];
+            }
+            $jsonOne = json_encode($eventsOne, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+            if (preg_match('/const\s+events\s*=\s*\[\s*\{.*?\}\s*\];/s', $html)) {
+                $html = preg_replace('/const\s+events\s*=\s*\[\s*\{.*?\}\s*\];/s', 'const events = ' . $jsonOne . ';', $html);
+                if (!empty($eventsOne[0])) {
+                    $first = $eventsOne[0];
+                    $html = preg_replace('/(<h3\s+id="eventTitle"[^>]*>).*?(<\/h3>)/s', '$1' . htmlspecialchars($first['title']) . '$2', $html);
+                    $html = preg_replace('/(<span\s+id="eventDate"[^>]*>).*?(<\/span>)/s', '$1' . htmlspecialchars($first['date']) . '$2', $html);
+                    $html = preg_replace('/(<span\s+id="eventVenue"[^>]*>).*?(<\/span>)/s', '$1' . $first['venue'] . '$2', $html);
+                }
+                $ceremoniesHandledInTemplate = true;
+            }
+
+            // 2. Check for happywedtwo.html slider (const WEDDING_EVENTS = [...])
+            $eventsTwo = [];
+            foreach ($ceremonies as $idx => $c) {
+                $cDate = $c->ceramony_date ? \Carbon\Carbon::parse($c->ceramony_date)->format('F d, Y') : $date;
+                $cTime = $c->ceramony_time ? \Carbon\Carbon::parse($c->ceramony_time)->format('h:i A') : $time;
+                $eventsTwo[] = [
+                    'title'      => $c->ceramony_name,
+                    'datetime'   => $cDate . ' | ' . $cTime,
+                    'venue'      => $venueName . ($venueAddress ? ',<br>' . $venueAddress : ''),
+                    'inviteCode' => 'CEREMONY-' . ($idx + 1)
+                ];
+            }
+            $jsonTwo = json_encode($eventsTwo, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+            if (preg_match('/const\s+WEDDING_EVENTS\s*=\s*\[\s*\{.*?\}\s*\];/s', $html)) {
+                $html = preg_replace('/const\s+WEDDING_EVENTS\s*=\s*\[\s*\{.*?\}\s*\];/s', 'const WEDDING_EVENTS = ' . $jsonTwo . ';', $html);
+                if (!empty($eventsTwo[0])) {
+                    $firstTwo = $eventsTwo[0];
+                    $html = preg_replace('/(<h3\s+id="event-title"[^>]*>).*?(<\/h3>)/s', '$1' . htmlspecialchars($firstTwo['title']) . '$2', $html);
+                    $html = preg_replace('/(<p\s+id="event-datetime"[^>]*>).*?(<\/p>)/s', '$1' . htmlspecialchars($firstTwo['datetime']) . '$2', $html);
+                    $html = preg_replace('/(<p\s+id="event-venue"[^>]*>).*?(<\/p>)/s', '$1' . $firstTwo['venue'] . '$2', $html);
+                }
+                $ceremoniesHandledInTemplate = true;
+            }
+
+            // 3. Check for happywedseven.html timeline (#view-events)
+            if (str_contains($html, 'id="view-events"')) {
+                $timelineHtml = "\n      <div class=\"relative max-w-4xl mx-auto\">\n";
+                $timelineHtml .= "        <div aria-hidden=\"true\" class=\"absolute top-3 bottom-3 left-[19px] md:left-1/2 md:-translate-x-1/2 w-[1px] bg-goldLine\"></div>\n";
+
+                $defaultImgs = [
+                    asset('images/happywed/Rectangle 3717.png'),
+                    asset('images/happywed/Rectangle 3721.png'),
+                    asset('images/happywed/Rectangle 3721 (3).png'),
+                    asset('images/happywedtwo/Rectangle 3721 (4).png'),
+                    asset('images/happywedtwo/Rectangle 3721 (5).png'),
+                ];
+
+                $calendarItemsHtml = '';
+
+                foreach ($ceremonies as $idx => $c) {
+                    $cDateRaw = $c->ceramony_date ? \Carbon\Carbon::parse($c->ceramony_date) : null;
+                    $cDateLabel = $cDateRaw ? strtoupper($cDateRaw->format('l, M d')) : strtoupper($date);
+                    $cDateCal = $cDateRaw ? $cDateRaw->format('D, M d') : $date;
+                    $cTimeFormatted = $c->ceramony_time ? \Carbon\Carbon::parse($c->ceramony_time)->format('h:i A') : $time;
+                    $cName = $c->ceramony_name;
+                    $cNameLower = strtolower($cName);
+
+                    // Image selection based on host upload or matching ceremony theme
+                    if (!empty($c->ceramony_image)) {
+                        $cImg = asset('storage/' . $c->ceramony_image);
+                    } else {
+                        if (str_contains($cNameLower, 'mehendi') || str_contains($cNameLower, 'mehndi')) {
+                            $cImg = asset('images/happywed/Rectangle 3721.png');
+                        } elseif (str_contains($cNameLower, 'haldi')) {
+                            $cImg = asset('images/happywed/Rectangle 3718.png');
+                        } elseif (str_contains($cNameLower, 'sangeet') || str_contains($cNameLower, 'cocktail') || str_contains($cNameLower, 'dance') || str_contains($cNameLower, 'music')) {
+                            $cImg = asset('images/happywed/Rectangle 3721 (3).png');
+                        } elseif (str_contains($cNameLower, 'wedding') || str_contains($cNameLower, 'phera') || str_contains($cNameLower, 'vivah') || str_contains($cNameLower, 'shaadi') || str_contains($cNameLower, 'marriage') || str_contains($cNameLower, 'mandap') || str_contains($cNameLower, 'baraat')) {
+                            $cImg = asset('images/happywedtwo/Rectangle 3721 (4).png');
+                        } elseif (str_contains($cNameLower, 'engagement') || str_contains($cNameLower, 'ring') || str_contains($cNameLower, 'roka') || str_contains($cNameLower, 'shagun') || str_contains($cNameLower, 'save the date')) {
+                            $cImg = asset('images/happywed/Rectangle 3717.png');
+                        } elseif (str_contains($cNameLower, 'reception')) {
+                            $cImg = asset('images/happywed/Rectangle 3717.png');
+                        } elseif (str_contains($cNameLower, 'brunch') || str_contains($cNameLower, 'lunch') || str_contains($cNameLower, 'dinner') || str_contains($cNameLower, 'farewell') || str_contains($cNameLower, 'breakfast')) {
+                            $cImg = asset('images/happywedtwo/Rectangle 3721 (5).png');
+                        } elseif (str_contains($cNameLower, 'pooja') || str_contains($cNameLower, 'puja') || str_contains($cNameLower, 'vidhi') || str_contains($cNameLower, 'hastamelap')) {
+                            $cImg = asset('images/happywed/Rectangle 3719.png');
+                        } else {
+                            $cImg = $defaultImgs[$idx % count($defaultImgs)];
+                        }
+                    }
+
+                    // Icon & Category Name
+                    if (str_contains($cNameLower, 'mehendi') || str_contains($cNameLower, 'mehndi')) {
+                        $cIcon = 'spa';
+                        $cCategory = 'WELCOME &amp; MEHENDI';
+                    } elseif (str_contains($cNameLower, 'haldi')) {
+                        $cIcon = 'spa';
+                        $cCategory = 'AUSPICIOUS HALDI';
+                    } elseif (str_contains($cNameLower, 'sangeet') || str_contains($cNameLower, 'cocktail') || str_contains($cNameLower, 'dance')) {
+                        $cIcon = 'celebration';
+                        $cCategory = 'SANGEET &amp; CELEBRATION';
+                    } elseif (str_contains($cNameLower, 'wedding') || str_contains($cNameLower, 'phera') || str_contains($cNameLower, 'vivah') || str_contains($cNameLower, 'mandap') || str_contains($cNameLower, 'baraat')) {
+                        $cIcon = 'temple_hindu';
+                        $cCategory = 'THE WEDDING CEREMONY';
+                    } elseif (str_contains($cNameLower, 'engagement') || str_contains($cNameLower, 'ring') || str_contains($cNameLower, 'save the date')) {
+                        $cIcon = 'favorite';
+                        $cCategory = 'THE ENGAGEMENT';
+                    } elseif (str_contains($cNameLower, 'reception')) {
+                        $cIcon = 'celebration';
+                        $cCategory = 'GRAND RECEPTION';
+                    } elseif (str_contains($cNameLower, 'brunch') || str_contains($cNameLower, 'lunch') || str_contains($cNameLower, 'dinner') || str_contains($cNameLower, 'farewell')) {
+                        $cIcon = 'brunch_dining';
+                        $cCategory = 'FEAST &amp; FAREWELL';
+                    } else {
+                        $cIcon = 'celebration';
+                        $cCategory = 'CEREMONY CELEBRATION';
+                    }
+
+                    $isEven = ($idx % 2 === 0);
+                    $mbClass = ($idx === $ceremonies->count() - 1) ? '' : 'mb-14 md:mb-20';
+
+                    $cardHtml = '
+            <article class="bg-white/95 border border-goldBorder rounded-xl overflow-hidden shadow-card hover:shadow-cardHover transition-all duration-300 max-w-md group">
+              <div class="relative w-full h-44 sm:h-48 overflow-hidden bg-amber-50">
+                <img
+                  src="' . htmlspecialchars($cImg) . '"
+                  alt="' . htmlspecialchars($cName) . '"
+                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.style.display=\'none\'"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none"></div>
+                <span class="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.15em] text-white bg-forestDark/85 backdrop-blur-sm px-2.5 py-1 rounded shadow-sm">
+                  ' . $cCategory . '
+                </span>
+                ' . ($cTimeFormatted ? '<span class="absolute bottom-3 right-3 text-[11px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded">' . htmlspecialchars($cTimeFormatted) . '</span>' : '') . '
+              </div>
+              <div class="p-5 sm:p-6">
+                <h2 class="font-serif font-bold text-xl sm:text-[22px] text-charcoal mb-2 leading-snug">
+                  ' . htmlspecialchars($cName) . '
+                </h2>
+                <p class="text-xs sm:text-[13px] leading-relaxed text-bodyMuted mb-4">
+                  Join us to celebrate the auspicious ' . htmlspecialchars($cName) . ' of ' . $coupleAmp . ' and bless the couple with your gracious presence.
+                </p>
+                <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-forestText">
+                  <span class="material-symbols-outlined text-[16px] text-forestText">location_on</span>
+                  <span>' . htmlspecialchars($venueName) . '</span>
+                </div>
+              </div>
+            </article>';
+
+                    if ($isEven) {
+                        // Left Label, Right Card
+                        $timelineHtml .= '
+        <!-- MILESTONE ' . ($idx + 1) . ' -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 ' . $mbClass . '">
+          <!-- Left Column (Desktop Date Label) -->
+          <div class="hidden md:flex justify-end pr-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              ' . $cDateLabel . '
+            </span>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">' . $cIcon . '</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Card) -->
+          <div class="md:pl-4">
+            <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+              ' . $cDateLabel . '
+            </span>
+            ' . $cardHtml . '
+          </div>
+        </div>' . "\n";
+                    } else {
+                        // Left Card, Right Label
+                        $timelineHtml .= '
+        <!-- MILESTONE ' . ($idx + 1) . ' -->
+        <div class="timeline-reveal relative grid grid-cols-[40px_1fr] md:grid-cols-[1fr_56px_1fr] items-center gap-x-4 md:gap-x-6 ' . $mbClass . '">
+          <!-- Left Column (Desktop Card) -->
+          <div class="order-2 md:order-1 md:pr-4 flex md:justify-end">
+            <div class="w-full max-w-md">
+              <span class="block md:hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-forestText mb-2">
+                ' . $cDateLabel . '
+              </span>
+              ' . $cardHtml . '
+            </div>
+          </div>
+
+          <!-- Center Milestone Badge -->
+          <div class="order-1 md:order-2 relative z-10 flex justify-center">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-forestDark text-ivory flex items-center justify-center shadow-sm ring-4 ring-ivory">
+              <span class="material-symbols-outlined text-[18px] sm:text-[20px]">' . $cIcon . '</span>
+            </div>
+          </div>
+
+          <!-- Right Column (Desktop Date Label) -->
+          <div class="hidden md:flex md:order-3 justify-start pl-4">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.16em] text-forestText">
+              ' . $cDateLabel . '
+            </span>
+          </div>
+        </div>' . "\n";
+                    }
+
+                    // Calendar items
+                    $calendarItemsHtml .= '
+          <div class="p-3.5 rounded-lg bg-ivory border border-goldLine flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-charcoal">' . $cDateCal . ' • ' . htmlspecialchars($cName) . '</p>
+              <p class="text-xs text-bodyMuted">' . htmlspecialchars($cTimeFormatted) . ' • ' . htmlspecialchars($venueName) . '</p>
+            </div>
+            <span class="text-xs font-semibold text-forestText">Event ' . ($idx + 1) . '</span>
+          </div>';
+                }
+
+                $timelineHtml .= "      </div>\n    ";
+
+                // Replace vertical timeline inside #view-events
+                $html = preg_replace('/(<div\s+id="view-events"[^>]*>).*?(<\/div>\s*<!--\s*VIEW B:)/s', '$1' . $timelineHtml . '$2', $html);
+
+                // Also replace Calendar view entries if present
+                if (!empty($calendarItemsHtml)) {
+                    $html = preg_replace('/(<div\s+id="view-calendar"[^>]*>.*?<div\s+class="space-y-3\s+text-sm">).*?(<\/div>\s*<\/div>\s*<\/div>\s*<!--\s*VIEW D:)/s', '$1' . $calendarItemsHtml . "\n        $2", $html);
+                }
+
+                $ceremoniesHandledInTemplate = true;
+            }
+        }
+
         // Auto-inject missing dynamic content if placeholders weren't present in the template ONLY for Ceremonies
         $autoInject = '';
-        if ($ceremoniesHtml && !str_contains($originalHtml, '[CEREMONIES]')) {
-            $autoInject .= '<div class="injected-section injected-ceremonies"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Other Ceremonies</h3>' . $ceremoniesHtml . '</div>';
+        if ($ceremoniesHtml && !$ceremoniesHandledInTemplate && !str_contains($originalHtml, '[CEREMONIES]')) {
+            $autoInject .= '<div class="injected-section injected-ceremonies"><h3 style="color:' . $replacements['[TITLE_COLOR]'] . '">Ceremonies</h3>' . $ceremoniesHtml . '</div>';
         }
 
         if ($autoInject !== '') {

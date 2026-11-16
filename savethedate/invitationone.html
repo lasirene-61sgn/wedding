@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RP - Wedding Invitation</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy-dark: #071330;
+      --navy-mid: #0d214f;
+      --royal-blue: #2357b5;
+      --sky-blue: #4a8df8;
+      --gold-light: #fbe69b;
+      --gold-mid: #d4af37;
+      --gold-dark: #997415;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #050b1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Responsive Mobile/Card Viewport Container */
+    .invitation-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 430px;
+      height: 100dvh;
+      max-height: 932px;
+      background: var(--navy-dark);
+      overflow: hidden;
+      box-shadow: 0 25px 65px rgba(0, 0, 0, 0.75);
+    }
+
+    /* Desktop aspect-ratio framing */
+    @media (min-width: 480px) {
+      .invitation-wrapper {
+        height: 92dvh;
+        border-radius: 18px;
+      }
+    }
+
+    /* =======================================================
+       SHARED SVG DEFINITIONS (HIDDEN)
+       ======================================================= */
+    .svg-defs {
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    /* =======================================================
+       PAGE 2: INNER NAVY & WHITE CARD (UNDERNEATH)
+       ======================================================= */
+    .inner-page {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, var(--navy-mid) 0%, var(--navy-dark) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: clamp(28px, 7vw, 42px) clamp(24px, 6vw, 36px);
+      z-index: 1;
+    }
+
+    /* Subtle Geometric Lattice Pattern Overlay */
+    .navy-pattern-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    /* White Inner Card with Gold Foil Border */
+    .white-card-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      box-shadow: 
+        0 18px 45px rgba(0, 0, 0, 0.55),
+        inset 0 0 25px rgba(212, 175, 55, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: all 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s;
+    }
+
+    .invitation-wrapper.opened .white-card-frame {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Glittering Distressed Gold Foil Border SVG */
+    .gold-foil-border {
+      position: absolute;
+      inset: -6px;
+      width: calc(100% + 12px);
+      height: calc(100% + 12px);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Top & Bottom Botanical Blue Bellflower Clusters */
+    .bouquet-top {
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 82%;
+      max-width: 280px;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1) 0.7s;
+    }
+
+    .bouquet-bottom {
+      position: absolute;
+      bottom: -2px;
+      right: 0;
+      width: 82%;
+      max-width: 280px;
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s cubic-bezier(0.22, 1, 0.36, 1) 0.7s;
+    }
+
+    .invitation-wrapper.opened .bouquet-top {
+      opacity: 1;
+      transform: translateY(0);
+      animation: swayTop 5.5s ease-in-out infinite alternate 1.7s;
+    }
+
+    .invitation-wrapper.opened .bouquet-bottom {
+      opacity: 1;
+      transform: translateY(0);
+      animation: swayBottom 5.5s ease-in-out infinite alternate 1.7s;
+    }
+
+    @keyframes swayTop {
+      0% { transform: rotate(0deg) translateY(0); }
+      100% { transform: rotate(1.8deg) translateY(3px); }
+    }
+
+    @keyframes swayBottom {
+      0% { transform: rotate(0deg) translateY(0); }
+      100% { transform: rotate(1.8deg) translateY(-3px); }
+    }
+
+    /* Large Corner Hibiscus/Blue Petals Overlapping Frame */
+    .corner-flower-tr {
+      position: absolute;
+      top: -12px;
+      right: -15px;
+      width: clamp(120px, 34vw, 155px);
+      height: clamp(120px, 34vw, 155px);
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(25px, -25px) rotate(12deg);
+      transition: all 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+    }
+
+    .corner-flower-bl {
+      position: absolute;
+      bottom: -15px;
+      left: -18px;
+      width: clamp(125px, 35vw, 160px);
+      height: clamp(125px, 35vw, 160px);
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-25px, 25px) rotate(-12deg);
+      transition: all 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+    }
+
+    .invitation-wrapper.opened .corner-flower-tr,
+    .invitation-wrapper.opened .corner-flower-bl {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    /* Center Typography & Monogram Content */
+    .card-center-content {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .invite-subtitle {
+      color: #2b56a5;
+      font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+      font-weight: 500;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.8s ease 0.9s;
+    }
+
+    .invite-script-title {
+      font-family: 'Great Vibes', cursive;
+      color: #3b74d4;
+      font-size: clamp(2rem, 7vw, 2.55rem);
+      font-weight: 400;
+      margin-bottom: clamp(18px, 4vh, 30px);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.8s ease 1.05s;
+    }
+
+    .rp-monogram-box {
+      width: clamp(175px, 50vw, 225px);
+      height: clamp(135px, 38vw, 175px);
+      filter: drop-shadow(2px 4px 6px rgba(13, 33, 79, 0.22));
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s;
+    }
+
+    .invitation-wrapper.opened .invite-subtitle,
+    .invitation-wrapper.opened .invite-script-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .invitation-wrapper.opened .rp-monogram-box {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* =======================================================
+       PAGE 1: EMBOSSED DAMASK ENVELOPE & BLUE WAX SEAL
+       ======================================================= */
+    .envelope-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      pointer-events: auto;
+      perspective: 1200px;
+      transition: visibility 0s 1.6s;
+    }
+
+    .invitation-wrapper.opened .envelope-overlay {
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    /* Bottom/Main Envelope Pocket */
+    .envelope-pocket {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #f3f1ed 0%, #e5e2dc 50%, #d8d4cd 100%);
+      z-index: 1;
+      transition: transform 1.3s cubic-bezier(0.77, 0, 0.175, 1) 0.15s, opacity 1.1s ease 0.3s;
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Pocket V-Groove Diagonal Shadow Lines */
+    .envelope-pocket::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: 
+        linear-gradient(135deg, transparent 48%, rgba(0,0,0,0.07) 50%, transparent 52%),
+        linear-gradient(-135deg, transparent 48%, rgba(0,0,0,0.07) 50%, transparent 52%);
+      pointer-events: none;
+    }
+
+    /* Top Triangular V-Flap */
+    .envelope-top-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 54%;
+      background: linear-gradient(180deg, #faf8f5 0%, #ece9e2 70%, #dedad2 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 24%, 50% 96%, 0 24%);
+      z-index: 3;
+      transform-origin: top center;
+      transition: transform 1.25s cubic-bezier(0.68, -0.15, 0.265, 1.15), opacity 0.9s ease 0.35s;
+      filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.25));
+    }
+
+    /* Flap Diagonal Shadow Wrapper (since clip-path clips drop-shadow on self) */
+    .flap-shadow-container {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.22));
+      transition: transform 1.3s cubic-bezier(0.77, 0, 0.175, 1) 0.05s, opacity 1s ease 0.3s;
+    }
+
+    .damask-svg-texture {
+      width: 100%;
+      height: 100%;
+      opacity: 0.9;
+    }
+
+    /* Opening Envelope Animation */
+    .invitation-wrapper.opened .flap-shadow-container {
+      transform: translateY(-105%) rotateX(35deg);
+      opacity: 0;
+    }
+
+    .invitation-wrapper.opened .envelope-pocket {
+      transform: translateY(105%);
+      opacity: 0;
+    }
+
+    /* =======================================================
+       BLUE WAX SEAL BUTTON ("TAP TO OPEN")
+       ======================================================= */
+    .blue-seal-btn {
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: clamp(175px, 46vw, 200px);
+      height: clamp(175px, 46vw, 200px);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      outline: none;
+      animation: blueSealPulse 2.5s ease-in-out infinite;
+      transition: transform 0.55s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.45s ease;
+    }
+
+    .blue-seal-btn:active {
+      transform: translate(-50%, -50%) scale(0.93);
+    }
+
+    .invitation-wrapper.opened .blue-seal-btn {
+      animation: none;
+      transform: translate(-50%, -50%) scale(1.35);
+      opacity: 0;
+    }
+
+    @keyframes blueSealPulse {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        filter: drop-shadow(0 14px 20px rgba(0, 25, 55, 0.38));
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.045);
+        filter: drop-shadow(0 18px 28px rgba(10, 125, 205, 0.5));
+      }
+    }
+
+    .seal-label {
+      position: relative;
+      z-index: 2;
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: clamp(1rem, 3.5vw, 1.18rem);
+      line-height: 1.22;
+      color: #ffffff;
+      text-align: center;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 4px rgba(4, 45, 85, 0.75);
+      pointer-events: none;
+    }
+
+    /* Gold Shimmer Particles Canvas */
+    #shimmer-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Replay Button */
+    .replay-btn {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: rgba(7, 19, 48, 0.78);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      color: var(--gold-light);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease 2s;
+    }
+
+    .invitation-wrapper.opened .replay-btn {
+      opacity: 0.9;
+      pointer-events: auto;
+    }
+
+    .replay-btn:hover {
+      background: rgba(13, 33, 79, 0.95);
+    }
+
+    /* Couple Names & Save The Date Info Card */
+    .couple-names-one {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(1.8rem, 5vw, 2.2rem);
+      font-weight: 400;
+      color: #194383;
+      margin-top: 4px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.8s ease 1.35s;
+    }
+    .invitation-wrapper.opened .couple-names-one {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .std-info-card {
+      margin-top: 4px;
+      text-align: center;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.8s ease 1.55s;
+    }
+    .invitation-wrapper.opened .std-info-card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .std-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #d4af37;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      margin-bottom: 2px;
+    }
+    .std-venue {
+      font-size: 0.75rem;
+      letter-spacing: 0.8px;
+      color: #4a6b53;
+      margin-bottom: 3px;
+    }
+    .std-msg {
+      font-size: 0.7rem;
+      font-style: italic;
+      color: #64748b;
+      max-width: 260px;
+      margin: 0 auto 6px;
+    }
+    .std-cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #2357b5, #0d214f);
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(13,33,79,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .std-cta-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 5px 16px rgba(13,33,79,0.45);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shared SVG Patterns & Filters -->
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- 3D Embossed White Floral Damask Pattern for Page 1 Envelope -->
+      <filter id="embossEffect" x="-10%" y="-10%" width="120%" height="120%">
+        <feDropShadow dx="1.2" dy="1.5" stdDeviation="0.8" flood-color="#ffffff" flood-opacity="0.95"/>
+        <feDropShadow dx="-1" dy="-1.2" stdDeviation="0.8" flood-color="#b8b3a8" flood-opacity="0.65"/>
+      </filter>
+
+      <pattern id="damaskPattern" width="120" height="120" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="#dedad2" stroke-width="2.4" stroke-linecap="round" filter="url(#embossEffect)">
+          <!-- Center Fleur-de-lis / Damask Motif -->
+          <path d="M 60,15 C 68,30 85,35 85,52 C 85,65 70,72 60,85 C 50,72 35,65 35,52 C 35,35 52,30 60,15 Z" />
+          <path d="M 60,28 C 65,40 75,45 75,55 C 75,64 60,72 60,72 C 60,72 45,64 45,55 C 45,45 55,40 60,28 Z" fill="#e6e3dc" stroke="none" />
+          <!-- Swirling Baroque Scrolls -->
+          <path d="M 60,85 C 60,102 42,112 25,105 C 12,100 10,82 22,76 C 32,72 38,82 32,88" />
+          <path d="M 60,85 C 60,102 78,112 95,105 C 108,100 110,82 98,76 C 88,72 82,82 88,88" />
+          <path d="M 35,52 C 18,52 8,38 15,22 C 20,10 36,12 40,22 C 42,30 34,35 30,28" />
+          <path d="M 85,52 C 102,52 112,38 105,22 C 100,10 84,12 80,22 C 78,30 86,35 90,28" />
+          <!-- Small 5-Petal Embossed Rosettes -->
+          <circle cx="60" cy="52" r="4.5" fill="#dcd8d0" />
+          <circle cx="15" cy="60" r="3.5" />
+          <circle cx="105" cy="60" r="3.5" />
+          <circle cx="60" cy="108" r="4" />
+        </g>
+      </pattern>
+
+      <!-- Navy Geometric Lattice Pattern for Page 2 Background -->
+      <pattern id="navyLattice" width="44" height="44" patternUnits="userSpaceOnUse">
+        <g stroke="#3b6fd4" stroke-width="0.9" fill="none">
+          <path d="M 22,0 L 44,22 L 22,44 L 0,22 Z" />
+          <path d="M 22,6 C 28,16 28,28 22,38 C 16,28 16,16 22,6 Z" />
+          <path d="M 6,22 C 16,28 28,28 38,22 C 28,16 16,16 6,22 Z" />
+          <circle cx="22" cy="22" r="2.5" fill="#3b6fd4" />
+          <circle cx="0" cy="0" r="2" fill="#3b6fd4" />
+          <circle cx="44" cy="0" r="2" fill="#3b6fd4" />
+          <circle cx="0" cy="44" r="2" fill="#3b6fd4" />
+          <circle cx="44" cy="44" r="2" fill="#3b6fd4" />
+        </g>
+      </pattern>
+
+      <!-- Metallic Gold Foil Gradient -->
+      <linearGradient id="goldFoilGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#a67c1e" />
+        <stop offset="20%" stop-color="#f9e498" />
+        <stop offset="40%" stop-color="#d4af37" />
+        <stop offset="60%" stop-color="#fff3be" />
+        <stop offset="80%" stop-color="#b88a24" />
+        <stop offset="100%" stop-color="#f3d371" />
+      </linearGradient>
+
+      <!-- Reusable Blue Bellflower Blossom -->
+      <radialGradient id="blueBellGrad" cx="50%" cy="65%" r="70%">
+        <stop offset="0%" stop-color="#0d296b" />
+        <stop offset="45%" stop-color="#2968d8" />
+        <stop offset="85%" stop-color="#7eb6ff" />
+        <stop offset="100%" stop-color="#bfd9ff" />
+      </radialGradient>
+
+      <linearGradient id="sageLeafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#8fb399" />
+        <stop offset="50%" stop-color="#5d8368" />
+        <stop offset="100%" stop-color="#3c5945" />
+      </linearGradient>
+
+      <!-- 5-Petal Blue Blossom Component -->
+      <g id="blueBlossom">
+        <path d="M 0,0 C -8,-12 -12,-26 0,-34 C 12,-26 8,-12 0,0 Z" fill="url(#blueBellGrad)" />
+        <path d="M 0,0 C -8,-12 -12,-26 0,-34 C 12,-26 8,-12 0,0 Z" fill="url(#blueBellGrad)" transform="rotate(72)" />
+        <path d="M 0,0 C -8,-12 -12,-26 0,-34 C 12,-26 8,-12 0,0 Z" fill="url(#blueBellGrad)" transform="rotate(144)" />
+        <path d="M 0,0 C -8,-12 -12,-26 0,-34 C 12,-26 8,-12 0,0 Z" fill="url(#blueBellGrad)" transform="rotate(216)" />
+        <path d="M 0,0 C -8,-12 -12,-26 0,-34 C 12,-26 8,-12 0,0 Z" fill="url(#blueBellGrad)" transform="rotate(288)" />
+        <!-- Stamen Center -->
+        <circle cx="0" cy="0" r="4.5" fill="#0a1e4a" />
+        <circle cx="-2" cy="-2" r="1.3" fill="#e0f0ff" />
+        <circle cx="2" cy="-1.5" r="1.3" fill="#e0f0ff" />
+        <circle cx="0" cy="2.5" r="1.3" fill="#e0f0ff" />
+      </g>
+
+      <!-- Side-Profile Bellflower Bud -->
+      <g id="blueSideFlower">
+        <path d="M 0,0 C -10,-8 -14,-24 -6,-32 C -2,-26 0,-22 0,-22 C 0,-22 2,-26 6,-32 C 14,-24 10,-8 0,0 Z" fill="url(#blueBellGrad)" />
+        <path d="M -5,2 L 0,-5 L 5,2 Z" fill="#4f7559" />
+      </g>
+    </defs>
+  </svg>
+
+  <div class="invitation-wrapper" id="invitationWrapper">
+
+    <!-- =======================================================
+         PAGE 1: EMBOSSED ENVELOPE & BLUE WAX SEAL OVERLAY
+         ======================================================= -->
+    <div class="envelope-overlay" id="envelopeOverlay">
+      
+      <!-- Bottom Embossed Envelope Body -->
+      <div class="envelope-pocket">
+        <svg class="damask-svg-texture" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100%" height="100%" fill="url(#damaskPattern)" />
+        </svg>
+      </div>
+
+      <!-- Top Triangular Embossed Flap -->
+      <div class="flap-shadow-container">
+        <div class="envelope-top-flap">
+          <svg class="damask-svg-texture" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="url(#damaskPattern)" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Glossy Cerulean Blue Wax Seal Button -->
+      <button class="blue-seal-btn" id="openSealBtn" aria-label="Tap to Open Invitation">
+        <svg viewBox="0 0 200 200" width="100%" height="100%" style="position:absolute; inset:0;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Glossy Metallic Cerulean Blue Gradients -->
+            <radialGradient id="blueWaxOuter" cx="35%" cy="28%" r="72%">
+              <stop offset="0%" stop-color="#6ce0ff" />
+              <stop offset="28%" stop-color="#1992d4" />
+              <stop offset="72%" stop-color="#085a96" />
+              <stop offset="100%" stop-color="#033159" />
+            </radialGradient>
+
+            <radialGradient id="blueWaxInner" cx="60%" cy="65%" r="75%">
+              <stop offset="0%" stop-color="#4cc3f7" />
+              <stop offset="50%" stop-color="#127bb8" />
+              <stop offset="100%" stop-color="#064273" />
+            </radialGradient>
+
+            <linearGradient id="blueRimLight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#b3f0ff" stop-opacity="0.9"/>
+              <stop offset="50%" stop-color="#0b6ab0" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#022340" stop-opacity="0.95"/>
+            </linearGradient>
+
+            <filter id="blueGroove" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#021d36" flood-opacity="0.7"/>
+            </filter>
+          </defs>
+
+          <!-- Organic Wavy Wax Outer Shape -->
+          <path d="M 100,10 
+                   C 120,7 132,16 148,20 
+                   C 164,24 176,36 178,52 
+                   C 180,68 192,82 189,100 
+                   C 186,118 190,136 177,150 
+                   C 164,164 150,170 136,180 
+                   C 122,190 106,192 90,187 
+                   C 74,182 58,188 45,176 
+                   C 32,164 20,156 15,140 
+                   C 10,124 8,106 13,90 
+                   C 18,74 14,54 26,40 
+                   C 38,26 54,22 68,15 
+                   C 82,8 85,12 100,10 Z" 
+                fill="url(#blueWaxOuter)" />
+
+          <!-- Inner Glossy Ridge -->
+          <path d="M 100,18 
+                   C 117,16 128,24 142,27 
+                   C 156,30 166,40 168,55 
+                   C 170,70 180,82 178,98 
+                   C 176,114 179,130 168,142 
+                   C 157,154 144,160 132,168 
+                   C 120,176 106,178 92,174 
+                   C 78,170 64,175 52,165 
+                   C 40,155 30,148 25,134 
+                   C 20,120 18,104 22,90 
+                   C 26,76 23,58 34,46 
+                   C 45,34 58,30 71,24 
+                   C 84,18 86,20 100,18 Z" 
+                fill="none" stroke="url(#blueRimLight)" stroke-width="3.5" />
+
+          <!-- Engraved Center Circle -->
+          <circle cx="100" cy="100" r="64" fill="url(#blueWaxInner)" stroke="#04355c" stroke-width="4" filter="url(#blueGroove)" />
+          <circle cx="100" cy="100" r="58" fill="none" stroke="#8ce2ff" stroke-width="1.4" stroke-opacity="0.65" />
+
+          <!-- Specular Shine -->
+          <ellipse cx="76" cy="64" rx="34" ry="17" transform="rotate(-25 76 64)" fill="rgba(255, 255, 255, 0.22)" />
+        </svg>
+
+        <span class="seal-label">TAP<br>TO<br>OPEN</span>
+      </button>
+    </div>
+
+    <!-- =======================================================
+         PAGE 2: ROYAL BLUE & GOLD FOIL INVITATION
+         ======================================================= -->
+    <div class="inner-page">
+      
+      <!-- Navy Blue Lattice Pattern Background -->
+      <svg class="navy-pattern-bg" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="url(#navyLattice)" />
+      </svg>
+
+      <!-- Floating Gold Dust Canvas -->
+      <canvas id="shimmer-canvas"></canvas>
+
+      <!-- Top-Right Overlapping Large Blue Flower -->
+      <svg class="corner-flower-tr" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="hibiscusGrad" cx="85%" cy="15%" r="85%">
+            <stop offset="0%" stop-color="#0a2259" />
+            <stop offset="35%" stop-color="#2769d8" />
+            <stop offset="75%" stop-color="#75b2ff" />
+            <stop offset="100%" stop-color="#cce4ff" />
+          </radialGradient>
+        </defs>
+        <g filter="drop-shadow(-3px 5px 8px rgba(0,0,0,0.4))">
+          <!-- Large Veined Petals -->
+          <path d="M 145,15 C 95,5 40,20 15,55 C 10,80 45,95 95,80 C 125,65 145,35 145,15 Z" fill="url(#hibiscusGrad)" />
+          <path d="M 150,20 C 100,45 50,85 55,125 C 75,145 125,135 150,95 Z" fill="url(#hibiscusGrad)" opacity="0.92" />
+          <path d="M 155,10 C 120,-10 75,-5 55,20 C 65,45 110,45 155,10 Z" fill="url(#hibiscusGrad)" opacity="0.85" />
+          <!-- Delicate Petal Veins -->
+          <path d="M 140,20 Q 85,40 35,55 M 140,20 Q 90,55 45,72 M 145,25 Q 100,75 75,115 M 145,25 Q 115,85 100,122" stroke="#15459c" stroke-width="1" fill="none" opacity="0.45" />
+        </g>
+      </svg>
+
+      <!-- Bottom-Left Overlapping Large Blue Flower -->
+      <svg class="corner-flower-bl" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <g filter="drop-shadow(3px -4px 8px rgba(0,0,0,0.4))" transform="rotate(180 80 80)">
+          <path d="M 145,15 C 95,5 40,20 15,55 C 10,80 45,95 95,80 C 125,65 145,35 145,15 Z" fill="url(#hibiscusGrad)" />
+          <path d="M 150,20 C 100,45 50,85 55,125 C 75,145 125,135 150,95 Z" fill="url(#hibiscusGrad)" opacity="0.92" />
+          <path d="M 155,10 C 120,-10 75,-5 55,20 C 65,45 110,45 155,10 Z" fill="url(#hibiscusGrad)" opacity="0.85" />
+          <path d="M 140,20 Q 85,40 35,55 M 140,20 Q 90,55 45,72 M 145,25 Q 100,75 75,115 M 145,25 Q 115,85 100,122" stroke="#15459c" stroke-width="1" fill="none" opacity="0.45" />
+        </g>
+      </svg>
+
+      <!-- Center White Invitation Frame -->
+      <div class="white-card-frame">
+        
+        <!-- Distressed Gold Foil Flake Border SVG -->
+        <svg class="gold-foil-border" viewBox="0 0 340 660" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Main Double Gold Frame -->
+          <rect x="6" y="6" width="328" height="648" fill="none" stroke="url(#goldFoilGrad)" stroke-width="3.5" stroke-dasharray="14 3 6 2 22 4" />
+          <rect x="9" y="9" width="322" height="642" fill="none" stroke="url(#goldFoilGrad)" stroke-width="1.8" stroke-dasharray="5 8 12 4 3 6" />
+          <!-- Outer Distressed Gold Leaf Speckles -->
+          <rect x="3" y="3" width="334" height="654" fill="none" stroke="url(#goldFoilGrad)" stroke-width="2.2" stroke-dasharray="2 14 4 18 1 12" opacity="0.85" />
+          <rect x="12" y="12" width="316" height="636" fill="none" stroke="url(#goldFoilGrad)" stroke-width="1.2" stroke-dasharray="1 16 3 22 2 14" opacity="0.75" />
+        </svg>
+
+        <!-- Top Blue Bellflower Bouquet -->
+        <svg class="bouquet-top" viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg">
+          <g filter="drop-shadow(1px 4px 5px rgba(13,33,79,0.2))">
+            <!-- Sage Green Leaves & Stems -->
+            <path d="M 5,5 Q 50,45 95,75 M 15,5 Q 85,25 165,55 M 10,15 Q 25,55 32,95" stroke="#4a6b53" stroke-width="2.2" fill="none" />
+            <path d="M 8,8 C 5,45 18,75 30,98 C 42,75 38,40 8,8 Z" fill="url(#sageLeafGrad)" />
+            <path d="M 22,5 C 45,32 75,45 105,42 C 82,20 55,8 22,5 Z" fill="url(#sageLeafGrad)" opacity="0.9" />
+            <!-- Blue Bellflowers -->
+            <use href="#blueSideFlower" transform="translate(88, 82) rotate(145) scale(0.95)" />
+            <use href="#blueSideFlower" transform="translate(175, 68) rotate(125) scale(0.9)" />
+            <use href="#blueSideFlower" transform="translate(185, 22) rotate(105) scale(0.65)" />
+            <use href="#blueBlossom" transform="translate(135, 35) rotate(15) scale(0.95)" />
+            <use href="#blueBlossom" transform="translate(118, 72) rotate(40) scale(0.85)" />
+          </g>
+        </svg>
+
+        <!-- Center Typography & RP Monogram -->
+        <div class="card-center-content">
+          <p class="invite-subtitle">join us to celebrate our</p>
+          <h1 class="invite-script-title">Wedding Ceremony</h1>
+
+          <!-- Custom Interlocking Monogram SVG -->
+          <div class="rp-monogram-box" style="display:flex; align-items:center; justify-content:center;">
+            <svg viewBox="0 0 240 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="monogramBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#2e67c9" />
+                  <stop offset="100%" stop-color="#1c499c" />
+                </linearGradient>
+                <linearGradient id="goldMonogram" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fdf497"/>
+                  <stop offset="35%" stop-color="#f5d061"/>
+                  <stop offset="70%" stop-color="#d4af37"/>
+                  <stop offset="100%" stop-color="#aa771c"/>
+                </linearGradient>
+                <filter id="royalShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="3" stdDeviation="3" flood-color="rgba(13,33,79,0.35)"/>
+                </filter>
+              </defs>
+              <text x="75" y="125" font-family="'Cinzel', 'Playfair Display', serif" font-size="105" font-weight="700" fill="url(#monogramBlue)" text-anchor="middle" filter="url(#royalShadow)">[BRIDE_INITIAL]</text>
+              <text x="120" y="110" font-family="'Great Vibes', cursive" font-size="65" fill="url(#goldMonogram)" text-anchor="middle">&amp;</text>
+              <text x="165" y="135" font-family="'Cinzel', 'Playfair Display', serif" font-size="105" font-weight="700" fill="url(#monogramBlue)" text-anchor="middle" filter="url(#royalShadow)">[GROOM_INITIAL]</text>
+            </svg>
+          </div>
+          <h2 class="couple-names-one">[BRIDE_NAME] &amp; [GROOM_NAME]</h2>
+          <div class="std-info-card">
+            <p class="std-date">[WEDDING_DATE]</p>
+            <p class="std-venue">[VENUE_NAME]</p>
+            <p class="std-msg">[SAVE_THE_DATE_MESSAGE]</p>
+            <a href="[DETAILS_URL]" class="std-cta-btn">View Wedding Details &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Bottom Blue Bellflower Bouquet -->
+        <svg class="bouquet-bottom" viewBox="0 0 280 150" xmlns="http://www.w3.org/2000/svg">
+          <g filter="drop-shadow(-1px -3px 5px rgba(13,33,79,0.2))" transform="rotate(180 140 75)">
+            <path d="M 5,5 Q 50,45 95,75 M 15,5 Q 85,25 165,55 M 10,15 Q 25,55 32,95" stroke="#4a6b53" stroke-width="2.2" fill="none" />
+            <path d="M 8,8 C 5,45 18,75 30,98 C 42,75 38,40 8,8 Z" fill="url(#sageLeafGrad)" />
+            <path d="M 22,5 C 45,32 75,45 105,42 C 82,20 55,8 22,5 Z" fill="url(#sageLeafGrad)" opacity="0.9" />
+            <use href="#blueSideFlower" transform="translate(88, 82) rotate(145) scale(0.95)" />
+            <use href="#blueSideFlower" transform="translate(175, 68) rotate(125) scale(0.9)" />
+            <use href="#blueSideFlower" transform="translate(185, 22) rotate(105) scale(0.65)" />
+            <use href="#blueBlossom" transform="translate(135, 35) rotate(15) scale(0.95)" />
+            <use href="#blueBlossom" transform="translate(118, 72) rotate(40) scale(0.85)" />
+          </g>
+        </svg>
+
+      </div>
+
+      <!-- Replay Button -->
+      <button class="replay-btn" id="replayBtn">Replay Opening</button>
+    </div>
+
+  </div>
+
+  <script>
+    const invitationWrapper = document.getElementById('invitationWrapper');
+    const openSealBtn = document.getElementById('openSealBtn');
+    const replayBtn = document.getElementById('replayBtn');
+    const canvas = document.getElementById('shimmer-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let animId;
+    let sparkles = [];
+
+    function resizeCanvas() {
+      canvas.width = invitationWrapper.clientWidth;
+      canvas.height = invitationWrapper.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Subtle Gold & Blue Shimmer Particles
+    class Sparkle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 10;
+        this.size = Math.random() * 2.5 + 1;
+        this.speedY = -(Math.random() * 0.5 + 0.2);
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.alpha = Math.random() * 0.65 + 0.2;
+        this.pulseSpeed = Math.random() * 0.03 + 0.01;
+        this.angle = Math.random() * Math.PI * 2;
+        this.color = Math.random() > 0.35 ? '#f9e498' : '#75b2ff';
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.angle += this.pulseSpeed;
+
+        if (this.y < -10) {
+          this.reset(false);
+        }
+      }
+
+      draw() {
+        const currentAlpha = this.alpha * (0.6 + 0.4 * Math.sin(this.angle));
+        ctx.save();
+        ctx.globalAlpha = currentAlpha;
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function initSparkles() {
+      sparkles = [];
+      for (let i = 0; i < 24; i++) {
+        sparkles.push(new Sparkle());
+      }
+    }
+
+    function animateSparkles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      sparkles.forEach(s => {
+        s.update();
+        s.draw();
+      });
+      animId = requestAnimationFrame(animateSparkles);
+    }
+
+    // Open Envelope on Wax Seal Click
+    openSealBtn.addEventListener('click', () => {
+      invitationWrapper.classList.add('opened');
+      initSparkles();
+      cancelAnimationFrame(animId);
+      animateSparkles();
+    });
+
+    // Replay Animation
+    replayBtn.addEventListener('click', () => {
+      invitationWrapper.classList.remove('opened');
+      setTimeout(() => {
+        cancelAnimationFrame(animId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 600);
+    });
+  </script>
+</body>
+</html>

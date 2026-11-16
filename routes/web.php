@@ -189,10 +189,13 @@ Route::group(['prefix' => 'host', 'as' => 'host.'], function () {
 
         Route::match(['get', 'post'], 'invitation/live-preview', [InvitationController::class, 'livePreview'])->name('invitation.live-preview');
         Route::resource('invitation', InvitationController::class);
+        Route::match(['get', 'post'], 'savedate/preview', [SaveDateController::class, 'preview'])->name('savedate.preview');
+        Route::post('savedate/select-template', [SaveDateController::class, 'selectTemplate'])->name('savedate.select-template');
         Route::resource('savedate', SaveDateController::class);
         Route::get('guestlist/sample', [GuestListController::class, 'downloadSample'])->name('guestlist.downloadSample');
         Route::post('guestlist/import', [GuestListController::class, 'import'])->name('guestlist.import');
         Route::get('guestlist/preview', [GuestListController::class, 'previewTemplate'])->name('guestlist.previewTemplate');
+        Route::get('guestlist/preview-savedate', [GuestListController::class, 'previewSaveDate'])->name('guestlist.previewSaveDate');
         Route::resource('guestlist', GuestListController::class);
         Route::post('guestlist/bulk-send', [GuestListController::class, 'bulkSend'])->name('guestlist.bulkSend');
         Route::post('guestlist/bulk-save-date', [GuestListController::class, 'bulkSaveDate'])->name('guestlist.bulkSaveDate');
